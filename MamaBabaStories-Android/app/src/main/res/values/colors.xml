@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 主色调：温暖橙色系 -->
+    <color name="primary">#FF8C42</color>
+    <color name="primary_dark">#E67635</color>
+    <color name="primary_light">#FFB380</color>
+    <color name="on_primary">#FFFFFF</color>
+
+    <!-- 辅助色 -->
+    <color name="secondary">#FFD166</color>
+    <color name="secondary_dark">#F0BC42</color>
+    <color name="on_secondary">#5D4037</color>
+
+    <!-- 柔和蓝 -->
+    <color name="tertiary">#6BB3D9</color>
+    <color name="tertiary_light">#A8D5EA</color>
+    <color name="on_tertiary">#FFFFFF</color>
+
+    <!-- 背景 -->
+    <color name="background">#FFF8F0</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#FFF1E0</color>
+    <color name="on_background">#3E2723</color>
+    <color name="on_surface">#3E2723</color>
+
+    <!-- 状态色 -->
+    <color name="success">#66BB6A</color>
+    <color name="error">#EF5350</color>
+    <color name="warning">#FFA726</color>
+
+    <!-- 播放器 -->
+    <color name="player_background">#2D1B0E</color>
+    <color name="player_surface">#3E2723</color>
+    <color name="player_accent">#FFB380</color>
+
+    <!-- 通用 -->
+    <color name="divider">#E0D5C7</color>
+    <color name="outline">#D7CBB8</color>
+    <color name="shadow">#1A000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+</resources>

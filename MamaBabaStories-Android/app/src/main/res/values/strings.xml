@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">爸爸妈妈讲故事</string>
+
+    <!-- 底部导航 -->
+    <string name="nav_home">首页</string>
+    <string name="nav_library">故事库</string>
+    <string name="nav_create">AI创作</string>
+    <string name="nav_profile">我的</string>
+
+    <!-- 首页 -->
+    <string name="home_greeting">晚上好，爸爸妈妈</string>
+    <string name="home_subtitle">今天给宝贝讲什么故事呢？</string>
+    <string name="home_recommend">今日推荐</string>
+    <string name="home_recent">最近播放</string>
+    <string name="home_voices">我的声音</string>
+    <string name="home_quick_create">快速创作</string>
+
+    <!-- 故事库 -->
+    <string name="library_title">故事库</string>
+    <string name="library_search_hint">搜索故事…</string>
+    <string name="library_category_all">全部</string>
+    <string name="library_category_fairy">童话</string>
+    <string name="library_category_fable">寓言</string>
+    <string name="library_category_science">科普</string>
+    <string name="library_category_history">历史</string>
+    <string name="library_category_lullaby">睡前</string>
+
+    <!-- 播放器 -->
+    <string name="player_play">播放</string>
+    <string name="player_pause">暂停</string>
+    <string name="player_next">下一个</string>
+    <string name="player_prev">上一个</string>
+    <string name="player_speed">倍速</string>
+    <string name="player_timer">定时</string>
+    <string name="player_download">下载</string>
+    <string name="player_share">分享</string>
+    <string name="player_like">收藏</string>
+
+    <!-- 声音克隆 -->
+    <string name="voice_title">声音克隆</string>
+    <string name="voice_subtitle">录制 3 分钟，克隆你的声音</string>
+    <string name="voice_start_record">开始录制</string>
+    <string name="voice_recording">正在录制…</string>
+    <string name="voice_uploading">上传中…</string>
+    <string name="voice_training">训练中，请稍候…</string>
+    <string name="voice_complete">声音模型已就绪</string>
+    <string name="voice_tip_1">找一个安静的房间</string>
+    <string name="voice_tip_2">用自然的语速朗读</string>
+    <string name="voice_tip_3">距离麦克风 15-20 厘米</string>
+    <string name="voice_quality_good">音质良好</string>
+    <string name="voice_quality_too_loud">声音过大</string>
+    <string name="voice_quality_too_quiet">声音过小</string>
+    <string name="voice_quality_noisy">环境嘈杂</string>
+
+    <!-- AI 创作 -->
+    <string name="create_title">AI 创作故事</string>
+    <string name="create_theme">故事主题</string>
+    <string name="create_character">主角名字</string>
+    <string name="create_character_hint">例如：小兔子豆豆</string>
+    <string name="create_age">适合年龄</string>
+    <string name="create_style">故事风格</string>
+    <string name="create_length">故事长度</string>
+    <string name="create_voice">选择声音</string>
+    <string name="create_generate">生成故事</string>
+    <string name="create_generating">正在创作中…</string>
+
+    <!-- 个人中心 -->
+    <string name="profile_title">我的</string>
+    <string name="profile_member">会员中心</string>
+    <string name="profile_my_stories">我的故事</string>
+    <string name="profile_my_voices">我的声音</string>
+    <string name="profile_downloads">离线下载</string>
+    <string name="profile_favorites">我的收藏</string>
+    <string name="profile_settings">设置</string>
+    <string name="profile_about">关于我们</string>
+    <string name="profile_feedback">意见反馈</string>
+
+    <!-- 通用 -->
+    <string name="common_cancel">取消</string>
+    <string name="common_confirm">确定</string>
+    <string name="common_retry">重试</string>
+    <string name="common_loading">加载中…</string>
+    <string name="common_error">出错了</string>
+    <string name="common_empty">暂无内容</string>
+    <string name="common_minutes">分钟</string>
+    <string name="common_seconds">秒</string>
+</resources>

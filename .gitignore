@@ -1,0 +1,129 @@
+# ===== macOS =====
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+*.swp
+*.swo
+*~
+
+# ===== Xcode / iOS =====
+.DS_Store
+**/build/
+**/DerivedData/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcworkspace/xcuserdata/
+**/*.xcuserstate
+**/xcshareddata/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+*.playgroundbook
+Pods/
+Podfile.lock
+Carthage/Build/
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+*.xccheckout
+*.xcscmblueprint
+*.xcscheme
+xcschemes/*.xcscheme
+!xcschemes/*.xcscheme
+*.xctestrun
+*.app.dSYM
+*.playground
+timeline.xctimeline
+playground.xcworkspace
+.build/
+Package.resolved
+
+# Swift Package Manager
+.swiftpm/
+Packages/
+*.xcodeproj
+
+# ===== Android / Gradle =====
+*.iml
+.gradle/
+**/local.properties
+**/.idea/
+**/.gradle/
+**/build/
+**/captures/
+.externalNativeBuild/
+.cxx/
+local.properties
+gradle-app.setting
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+bin/
+gen/
+out/
+release/
+debug/
+*.log
+*.flc
+*.cxx
+*.hprof
+.kotlin/
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.externalNativeBuild
+.cxx
+captures/
+*.jks
+*.keystore
+google-services.json
+fabric.properties
+
+# ===== IDE =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# ===== OS generated =====
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ===== Secrets / Env =====
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+secrets.json
+config.local.json
+
+# ===== Audio / Video large files (optional, uncomment if needed) =====
+# *.wav
+# *.mp3
+# *.aac
+# *.m4a
+# *.mp4

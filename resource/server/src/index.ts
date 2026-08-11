@@ -30,6 +30,7 @@ app.use(helmet({
       styleSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", 'data:', 'blob:'],
       mediaSrc: ["'self'", 'blob:'],
+      connectSrc: ["'self'"],
     },
   },
 }));

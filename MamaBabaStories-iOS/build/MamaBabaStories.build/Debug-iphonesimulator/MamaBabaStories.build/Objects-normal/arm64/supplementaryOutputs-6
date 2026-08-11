@@ -1,0 +1,23 @@
+{
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/ViewModels/ProfileViewModel.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileViewModel.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileViewModel.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileViewModel.dia",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileViewModel.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileViewModel.swiftdeps"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Views/Profile/ProfileView.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileView.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileView.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileView.dia",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileView.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileView.swiftdeps"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Views/VoiceClone/RecordingView.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/RecordingView.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/RecordingView.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/RecordingView.dia",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/RecordingView.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/RecordingView.swiftdeps"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/App/AppConstants.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AppConstants.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AppConstants.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AppConstants.dia",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AppConstants.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AppConstants.swiftdeps"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Services/Network/APIClient.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIClient.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIClient.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIClient.dia",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIClient.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIClient.swiftdeps"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Services/Network/APIEndpoints.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIEndpoints.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIEndpoints.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIEndpoints.dia",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIEndpoints.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIEndpoints.swiftdeps"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Services/Network/APIError.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIError.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIError.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIError.dia",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIError.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIError.swiftdeps"
+  }
+}

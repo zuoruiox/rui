@@ -1,0 +1,19 @@
+{
+  "" : {
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStoriesTests.build/Objects-normal/arm64/MamaBabaStoriesTests-primary.dia",
+    "emit-module-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStoriesTests.build/Objects-normal/arm64/MamaBabaStoriesTests-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStoriesTests.build/Objects-normal/arm64/MamaBabaStoriesTests-primary-emit-module.dia",
+    "pch" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStoriesTests.build/Objects-normal/arm64/MamaBabaStoriesTests-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStoriesTests.build/Objects-normal/arm64/MamaBabaStoriesTests-primary.swiftdeps"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStoriesTests/MamaBabaStoriesTests.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStoriesTests.build/Objects-normal/arm64/MamaBabaStoriesTests.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStoriesTests.build/Objects-normal/arm64/MamaBabaStoriesTests.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStoriesTests.build/Objects-normal/arm64/MamaBabaStoriesTests.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStoriesTests.build/Objects-normal/arm64/MamaBabaStoriesTests.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStoriesTests.build/Objects-normal/arm64/MamaBabaStoriesTests.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStoriesTests.build/Objects-normal/arm64/MamaBabaStoriesTests.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStoriesTests.build/Objects-normal/arm64/MamaBabaStoriesTests.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStoriesTests.build/Objects-normal/arm64/MamaBabaStoriesTests~partial.swiftmodule"
+  }
+}

@@ -1,0 +1,724 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0B4DCA33F71177503F4EAE07 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA23A7EC09382CF5556132BD /* Logger.swift */; };
+		0CFFC7428BEB75A79A127AC1 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60862DD2818C7EACFD2F6773 /* User.swift */; };
+		0EDF45A17761ADF7BB0B5E51 /* MamaBabaStoriesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4315878A8891B17E3B7764 /* MamaBabaStoriesTests.swift */; };
+		20DB02CE7D60ED1D4AF8B57B /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC7E34453814F4BFF700CCE7 /* AppConstants.swift */; };
+		32D46A8D6E280CD33028D56C /* VoiceModelCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD2F9DC596973B1C7FA463C /* VoiceModelCard.swift */; };
+		32DF76C6974432659E2B9834 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AAFC3459CB8F1897C779690 /* Extensions.swift */; };
+		35FCDCA727983745167BE527 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6881F75F92610351E756DC37 /* ProfileViewModel.swift */; };
+		3E128CA6771EDF3DACA7D0BF /* AICreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5CFD482D9EFDADC0D953419 /* AICreateView.swift */; };
+		4C1A870685A7830764A7F1C0 /* AIStoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0534385769C52E7C4766828E /* AIStoryService.swift */; };
+		52303B8DB79301725B2633E3 /* StoryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C71F89DCF8D1EA9B72655E /* StoryCard.swift */; };
+		53C023B7ADACB4A9ACB1E60D /* Child.swift in Sources */ = {isa = PBXBuildFile; fileRef = 770C5128CC276AB1EB79F304 /* Child.swift */; };
+		5643721D75776661A83846ED /* VoiceCloneViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7024F907F70F915AE467D03C /* VoiceCloneViewModel.swift */; };
+		618EE4A3DAE7047367329583 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7FDB94E09A71F0573687FD9 /* ProfileView.swift */; };
+		6329E2979253C9C6543B436D /* StoryLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FD6B9EE13D8C6B77DE0C9B /* StoryLibraryView.swift */; };
+		64B3F4A1E14A98D8CBCFA4B1 /* AICreateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28C890461F5BF3171E450287 /* AICreateViewModel.swift */; };
+		660077DFE4F5B647C4509B72 /* TTSConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DE55D9AD97C549E9A24C89B /* TTSConfig.swift */; };
+		68F7BCB77D31CE9772246D94 /* APIEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606464AC488B1988036C0BD8 /* APIEndpoints.swift */; };
+		73E5B854C93D956F167838B5 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87C2EFF7008B848400D08E06 /* HomeView.swift */; };
+		746226D184E2DBE915919058 /* AIStoryRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E138A2840D69DEEBD52AC635 /* AIStoryRequest.swift */; };
+		74819C576A32EAE7826B3772 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7461B30EF1789CC0EC86B726 /* Assets.xcassets */; };
+		75D0C3995B25D229D3F38A2A /* MamaBabaStoriesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62590384DEE2871F50F5E43 /* MamaBabaStoriesApp.swift */; };
+		7AD4439CFB04BE2A9C3EC35C /* VoiceCloneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0089ED3D07EC5DE9FFE449 /* VoiceCloneView.swift */; };
+		830860A103087B19163B61DF /* VoiceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97182DC7F6359684025FF5A4 /* VoiceModel.swift */; };
+		8959078F63452A60AFA49417 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE004542BD79867F8A18552C /* KeychainHelper.swift */; };
+		92D684052ED4BB29AC5AD83C /* AudioPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8427D31E083516D3C91E25E /* AudioPlayerManager.swift */; };
+		988EC9364169E7A8B628BDF3 /* VoiceCloneService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937801DF4D5980C7A8743409 /* VoiceCloneService.swift */; };
+		99D44641A50BFC2776809766 /* RecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13D8AB7BE93E76537725E5CC /* RecordingView.swift */; };
+		A37B17E1CEFD62DFB27BAF64 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB47C9B623D0AD7AD00EC4F0 /* HomeViewModel.swift */; };
+		A3CB021A7695E10DA36EE2B0 /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2FCFA440BC889FD0904D34 /* PlayerViewModel.swift */; };
+		A59FD917811C5E2F61125CD7 /* StoryPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D410BA6CB19B2225A8F4BF9 /* StoryPlayerView.swift */; };
+		A847E6419B82BFA05D3B9A22 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C5FB633901A9AC98A17D32 /* MainTabView.swift */; };
+		C3D116AAE846547C9237A537 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018157290253054F023FA2AE /* CustomButton.swift */; };
+		C6951CD33C5C4E8993417866 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12FD66A441C4B86517038169 /* APIClient.swift */; };
+		D1963F7F7D6AD051991B8B96 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9589EA67D7AF9C483FE617 /* AudioRecorder.swift */; };
+		E08778A080977889C5F5AB51 /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5C1F8FB527424F6B5B4BAC /* Story.swift */; };
+		F285D11598A499AD911707D4 /* StoryLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5568C81B9C201B009D88818A /* StoryLibraryViewModel.swift */; };
+		FD375FDE1D632032C3600A9F /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C4DE311C7A6548C672AB1D /* APIError.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		9DD38D65552A86A6C31F9ED7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F4236281FAC9EA49BFE51656 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FD4782E3641123354F51B9AB;
+			remoteInfo = MamaBabaStories;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		018157290253054F023FA2AE /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
+		02FD6B9EE13D8C6B77DE0C9B /* StoryLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryLibraryView.swift; sourceTree = "<group>"; };
+		0534385769C52E7C4766828E /* AIStoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIStoryService.swift; sourceTree = "<group>"; };
+		12FD66A441C4B86517038169 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		13D8AB7BE93E76537725E5CC /* RecordingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingView.swift; sourceTree = "<group>"; };
+		1AAFC3459CB8F1897C779690 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		1DE55D9AD97C549E9A24C89B /* TTSConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSConfig.swift; sourceTree = "<group>"; };
+		28C890461F5BF3171E450287 /* AICreateViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AICreateViewModel.swift; sourceTree = "<group>"; };
+		2C5C1F8FB527424F6B5B4BAC /* Story.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Story.swift; sourceTree = "<group>"; };
+		3A4315878A8891B17E3B7764 /* MamaBabaStoriesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MamaBabaStoriesTests.swift; sourceTree = "<group>"; };
+		463D37542820309D53DC95ED /* MamaBabaStoriesTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MamaBabaStoriesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5568C81B9C201B009D88818A /* StoryLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryLibraryViewModel.swift; sourceTree = "<group>"; };
+		556E3628CC5616BF49D67DCC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		606464AC488B1988036C0BD8 /* APIEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoints.swift; sourceTree = "<group>"; };
+		60862DD2818C7EACFD2F6773 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		6881F75F92610351E756DC37 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		6E2FCFA440BC889FD0904D34 /* PlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
+		7024F907F70F915AE467D03C /* VoiceCloneViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCloneViewModel.swift; sourceTree = "<group>"; };
+		7461B30EF1789CC0EC86B726 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		770C5128CC276AB1EB79F304 /* Child.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Child.swift; sourceTree = "<group>"; };
+		85C4DE311C7A6548C672AB1D /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
+		87C2EFF7008B848400D08E06 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		8D410BA6CB19B2225A8F4BF9 /* StoryPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryPlayerView.swift; sourceTree = "<group>"; };
+		937801DF4D5980C7A8743409 /* VoiceCloneService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCloneService.swift; sourceTree = "<group>"; };
+		97182DC7F6359684025FF5A4 /* VoiceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceModel.swift; sourceTree = "<group>"; };
+		AE004542BD79867F8A18552C /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
+		B7FDB94E09A71F0573687FD9 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		BA0089ED3D07EC5DE9FFE449 /* VoiceCloneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCloneView.swift; sourceTree = "<group>"; };
+		BB47C9B623D0AD7AD00EC4F0 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		C5CFD482D9EFDADC0D953419 /* AICreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AICreateView.swift; sourceTree = "<group>"; };
+		D8427D31E083516D3C91E25E /* AudioPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerManager.swift; sourceTree = "<group>"; };
+		DAFDE5D41EF36673B424E526 /* MamaBabaStories.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MamaBabaStories.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DCD2F9DC596973B1C7FA463C /* VoiceModelCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceModelCard.swift; sourceTree = "<group>"; };
+		E138A2840D69DEEBD52AC635 /* AIStoryRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIStoryRequest.swift; sourceTree = "<group>"; };
+		E1C5FB633901A9AC98A17D32 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		E8C71F89DCF8D1EA9B72655E /* StoryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryCard.swift; sourceTree = "<group>"; };
+		EA23A7EC09382CF5556132BD /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		F62590384DEE2871F50F5E43 /* MamaBabaStoriesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MamaBabaStoriesApp.swift; sourceTree = "<group>"; };
+		FA9589EA67D7AF9C483FE617 /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
+		FC7E34453814F4BFF700CCE7 /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		00B22C79DA27AB297297AE72 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				B7FDB94E09A71F0573687FD9 /* ProfileView.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		516AF99C3DD4B4160DA5EFD7 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				E138A2840D69DEEBD52AC635 /* AIStoryRequest.swift */,
+				770C5128CC276AB1EB79F304 /* Child.swift */,
+				2C5C1F8FB527424F6B5B4BAC /* Story.swift */,
+				1DE55D9AD97C549E9A24C89B /* TTSConfig.swift */,
+				60862DD2818C7EACFD2F6773 /* User.swift */,
+				97182DC7F6359684025FF5A4 /* VoiceModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		536D4F09DD8D498912832395 /* VoiceClone */ = {
+			isa = PBXGroup;
+			children = (
+				937801DF4D5980C7A8743409 /* VoiceCloneService.swift */,
+			);
+			path = VoiceClone;
+			sourceTree = "<group>";
+		};
+		53D88C8423B2E29B2D19FA39 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				FC7E34453814F4BFF700CCE7 /* AppConstants.swift */,
+				F62590384DEE2871F50F5E43 /* MamaBabaStoriesApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		54FD4221A2D15E82A38E6B05 /* MamaBabaStories */ = {
+			isa = PBXGroup;
+			children = (
+				7461B30EF1789CC0EC86B726 /* Assets.xcassets */,
+				556E3628CC5616BF49D67DCC /* Info.plist */,
+				53D88C8423B2E29B2D19FA39 /* App */,
+				516AF99C3DD4B4160DA5EFD7 /* Models */,
+				7C85F3659859232BF30CDEEC /* Services */,
+				94C1A9A61C0AB359FB17AA0A /* Utils */,
+				7BCA4BBFA3B606A94A3C9B86 /* ViewModels */,
+				EAD83E216D1DD22B082F7788 /* Views */,
+			);
+			path = MamaBabaStories;
+			sourceTree = "<group>";
+		};
+		7BCA4BBFA3B606A94A3C9B86 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				28C890461F5BF3171E450287 /* AICreateViewModel.swift */,
+				BB47C9B623D0AD7AD00EC4F0 /* HomeViewModel.swift */,
+				6E2FCFA440BC889FD0904D34 /* PlayerViewModel.swift */,
+				6881F75F92610351E756DC37 /* ProfileViewModel.swift */,
+				5568C81B9C201B009D88818A /* StoryLibraryViewModel.swift */,
+				7024F907F70F915AE467D03C /* VoiceCloneViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		7C85F3659859232BF30CDEEC /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A2E25480528927BDAC963D76 /* AI */,
+				E13FC1C2D80C0D87C720D11A /* Audio */,
+				E1E3775EEE94CDAD80434871 /* Network */,
+				536D4F09DD8D498912832395 /* VoiceClone */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		94C1A9A61C0AB359FB17AA0A /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				1AAFC3459CB8F1897C779690 /* Extensions.swift */,
+				AE004542BD79867F8A18552C /* KeychainHelper.swift */,
+				EA23A7EC09382CF5556132BD /* Logger.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		A2E25480528927BDAC963D76 /* AI */ = {
+			isa = PBXGroup;
+			children = (
+				0534385769C52E7C4766828E /* AIStoryService.swift */,
+			);
+			path = AI;
+			sourceTree = "<group>";
+		};
+		B482AC6FA3CE0226173BF9FC /* StoryLibrary */ = {
+			isa = PBXGroup;
+			children = (
+				02FD6B9EE13D8C6B77DE0C9B /* StoryLibraryView.swift */,
+			);
+			path = StoryLibrary;
+			sourceTree = "<group>";
+		};
+		BE1A69F6E450BD525D82C103 = {
+			isa = PBXGroup;
+			children = (
+				54FD4221A2D15E82A38E6B05 /* MamaBabaStories */,
+				F99FB2BDE999DA923FFDEE54 /* MamaBabaStoriesTests */,
+				D049E483A610E2A393DC02D8 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CDB1C85B1AE80D93A8B91089 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				8D410BA6CB19B2225A8F4BF9 /* StoryPlayerView.swift */,
+			);
+			path = Player;
+			sourceTree = "<group>";
+		};
+		D049E483A610E2A393DC02D8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DAFDE5D41EF36673B424E526 /* MamaBabaStories.app */,
+				463D37542820309D53DC95ED /* MamaBabaStoriesTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DD8BE52397FB41F69C2AFC8B /* AICreate */ = {
+			isa = PBXGroup;
+			children = (
+				C5CFD482D9EFDADC0D953419 /* AICreateView.swift */,
+			);
+			path = AICreate;
+			sourceTree = "<group>";
+		};
+		DE237255D153BC8BE6F3BD64 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				87C2EFF7008B848400D08E06 /* HomeView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		E13FC1C2D80C0D87C720D11A /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				D8427D31E083516D3C91E25E /* AudioPlayerManager.swift */,
+				FA9589EA67D7AF9C483FE617 /* AudioRecorder.swift */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+		E1E3775EEE94CDAD80434871 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				12FD66A441C4B86517038169 /* APIClient.swift */,
+				606464AC488B1988036C0BD8 /* APIEndpoints.swift */,
+				85C4DE311C7A6548C672AB1D /* APIError.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		E201AAE2AC1AF01AF746D177 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				018157290253054F023FA2AE /* CustomButton.swift */,
+				E8C71F89DCF8D1EA9B72655E /* StoryCard.swift */,
+				DCD2F9DC596973B1C7FA463C /* VoiceModelCard.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		EAD83E216D1DD22B082F7788 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E1C5FB633901A9AC98A17D32 /* MainTabView.swift */,
+				DD8BE52397FB41F69C2AFC8B /* AICreate */,
+				E201AAE2AC1AF01AF746D177 /* Components */,
+				DE237255D153BC8BE6F3BD64 /* Home */,
+				CDB1C85B1AE80D93A8B91089 /* Player */,
+				00B22C79DA27AB297297AE72 /* Profile */,
+				B482AC6FA3CE0226173BF9FC /* StoryLibrary */,
+				FA7F12B34741B21925759C37 /* VoiceClone */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		F99FB2BDE999DA923FFDEE54 /* MamaBabaStoriesTests */ = {
+			isa = PBXGroup;
+			children = (
+				3A4315878A8891B17E3B7764 /* MamaBabaStoriesTests.swift */,
+			);
+			path = MamaBabaStoriesTests;
+			sourceTree = "<group>";
+		};
+		FA7F12B34741B21925759C37 /* VoiceClone */ = {
+			isa = PBXGroup;
+			children = (
+				13D8AB7BE93E76537725E5CC /* RecordingView.swift */,
+				BA0089ED3D07EC5DE9FFE449 /* VoiceCloneView.swift */,
+			);
+			path = VoiceClone;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9EBDADCCFC348975FDB6DA21 /* MamaBabaStoriesTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F2FD6AA472A1F9CC3E2503F5 /* Build configuration list for PBXNativeTarget "MamaBabaStoriesTests" */;
+			buildPhases = (
+				E668F7E63EB915F5FB6E4DD3 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				619B3A993FB514CF62DFF056 /* PBXTargetDependency */,
+			);
+			name = MamaBabaStoriesTests;
+			packageProductDependencies = (
+			);
+			productName = MamaBabaStoriesTests;
+			productReference = 463D37542820309D53DC95ED /* MamaBabaStoriesTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		FD4782E3641123354F51B9AB /* MamaBabaStories */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9823B8FC6003D65CD1A39FFD /* Build configuration list for PBXNativeTarget "MamaBabaStories" */;
+			buildPhases = (
+				4F90D5E992CBD0779A8E9B1D /* Sources */,
+				7FF9D3C250063778C9E58868 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MamaBabaStories;
+			packageProductDependencies = (
+			);
+			productName = MamaBabaStories;
+			productReference = DAFDE5D41EF36673B424E526 /* MamaBabaStories.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F4236281FAC9EA49BFE51656 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					9EBDADCCFC348975FDB6DA21 = {
+						ProvisioningStyle = Automatic;
+					};
+					FD4782E3641123354F51B9AB = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 2DB28369D1D748ADAE03FA45 /* Build configuration list for PBXProject "MamaBabaStories" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = BE1A69F6E450BD525D82C103;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = D049E483A610E2A393DC02D8 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FD4782E3641123354F51B9AB /* MamaBabaStories */,
+				9EBDADCCFC348975FDB6DA21 /* MamaBabaStoriesTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7FF9D3C250063778C9E58868 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				74819C576A32EAE7826B3772 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4F90D5E992CBD0779A8E9B1D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E128CA6771EDF3DACA7D0BF /* AICreateView.swift in Sources */,
+				64B3F4A1E14A98D8CBCFA4B1 /* AICreateViewModel.swift in Sources */,
+				746226D184E2DBE915919058 /* AIStoryRequest.swift in Sources */,
+				4C1A870685A7830764A7F1C0 /* AIStoryService.swift in Sources */,
+				C6951CD33C5C4E8993417866 /* APIClient.swift in Sources */,
+				68F7BCB77D31CE9772246D94 /* APIEndpoints.swift in Sources */,
+				FD375FDE1D632032C3600A9F /* APIError.swift in Sources */,
+				20DB02CE7D60ED1D4AF8B57B /* AppConstants.swift in Sources */,
+				92D684052ED4BB29AC5AD83C /* AudioPlayerManager.swift in Sources */,
+				D1963F7F7D6AD051991B8B96 /* AudioRecorder.swift in Sources */,
+				53C023B7ADACB4A9ACB1E60D /* Child.swift in Sources */,
+				C3D116AAE846547C9237A537 /* CustomButton.swift in Sources */,
+				32DF76C6974432659E2B9834 /* Extensions.swift in Sources */,
+				73E5B854C93D956F167838B5 /* HomeView.swift in Sources */,
+				A37B17E1CEFD62DFB27BAF64 /* HomeViewModel.swift in Sources */,
+				8959078F63452A60AFA49417 /* KeychainHelper.swift in Sources */,
+				0B4DCA33F71177503F4EAE07 /* Logger.swift in Sources */,
+				A847E6419B82BFA05D3B9A22 /* MainTabView.swift in Sources */,
+				75D0C3995B25D229D3F38A2A /* MamaBabaStoriesApp.swift in Sources */,
+				A3CB021A7695E10DA36EE2B0 /* PlayerViewModel.swift in Sources */,
+				618EE4A3DAE7047367329583 /* ProfileView.swift in Sources */,
+				35FCDCA727983745167BE527 /* ProfileViewModel.swift in Sources */,
+				99D44641A50BFC2776809766 /* RecordingView.swift in Sources */,
+				E08778A080977889C5F5AB51 /* Story.swift in Sources */,
+				52303B8DB79301725B2633E3 /* StoryCard.swift in Sources */,
+				6329E2979253C9C6543B436D /* StoryLibraryView.swift in Sources */,
+				F285D11598A499AD911707D4 /* StoryLibraryViewModel.swift in Sources */,
+				A59FD917811C5E2F61125CD7 /* StoryPlayerView.swift in Sources */,
+				660077DFE4F5B647C4509B72 /* TTSConfig.swift in Sources */,
+				0CFFC7428BEB75A79A127AC1 /* User.swift in Sources */,
+				988EC9364169E7A8B628BDF3 /* VoiceCloneService.swift in Sources */,
+				7AD4439CFB04BE2A9C3EC35C /* VoiceCloneView.swift in Sources */,
+				5643721D75776661A83846ED /* VoiceCloneViewModel.swift in Sources */,
+				830860A103087B19163B61DF /* VoiceModel.swift in Sources */,
+				32D46A8D6E280CD33028D56C /* VoiceModelCard.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E668F7E63EB915F5FB6E4DD3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0EDF45A17761ADF7BB0B5E51 /* MamaBabaStoriesTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		619B3A993FB514CF62DFF056 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FD4782E3641123354F51B9AB /* MamaBabaStories */;
+			targetProxy = 9DD38D65552A86A6C31F9ED7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		8630601EC3A2EA3C00EE7FF3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = MamaBabaStories/Info.plist;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要访问麦克风来录制您的声音，用于声音克隆功能";
+				INFOPLIST_KEY_UIBackgroundModes = audio;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		AF01777AC83FFABA8F2DDAED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = MamaBabaStories/Info.plist;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要访问麦克风来录制您的声音，用于声音克隆功能";
+				INFOPLIST_KEY_UIBackgroundModes = audio;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B3730DD1436D172022F57EEC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = NO;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_ON_DEMAND_RESOURCES = NO;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MamaBabaStories/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "爸爸妈妈讲故事";
+				INFOPLIST_KEY_NSAppTransportSecurity = "{NSAllowsArbitraryLoads=YES}";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要访问麦克风来录制您的声音，用于声音克隆功能";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIBackgroundModes = audio;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mamababa.stories;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		C367739BC53BAEDDFCD3C26E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MamaBabaStories.app/MamaBabaStories";
+			};
+			name = Release;
+		};
+		C5C2E4408B61C85B5E5BF194 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MamaBabaStories.app/MamaBabaStories";
+			};
+			name = Debug;
+		};
+		FEB5A52CA61A24DD194AE05F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = NO;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_ON_DEMAND_RESOURCES = NO;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MamaBabaStories/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "爸爸妈妈讲故事";
+				INFOPLIST_KEY_NSAppTransportSecurity = "{NSAllowsArbitraryLoads=YES}";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要访问麦克风来录制您的声音，用于声音克隆功能";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIBackgroundModes = audio;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mamababa.stories;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2DB28369D1D748ADAE03FA45 /* Build configuration list for PBXProject "MamaBabaStories" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FEB5A52CA61A24DD194AE05F /* Debug */,
+				B3730DD1436D172022F57EEC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9823B8FC6003D65CD1A39FFD /* Build configuration list for PBXNativeTarget "MamaBabaStories" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AF01777AC83FFABA8F2DDAED /* Debug */,
+				8630601EC3A2EA3C00EE7FF3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F2FD6AA472A1F9CC3E2503F5 /* Build configuration list for PBXNativeTarget "MamaBabaStoriesTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C5C2E4408B61C85B5E5BF194 /* Debug */,
+				C367739BC53BAEDDFCD3C26E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F4236281FAC9EA49BFE51656 /* Project object */;
+}

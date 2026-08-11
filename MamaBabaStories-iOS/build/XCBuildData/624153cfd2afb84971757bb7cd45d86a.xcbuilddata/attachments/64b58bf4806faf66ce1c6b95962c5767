@@ -1,0 +1,359 @@
+{
+  "" : {
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MamaBabaStories-primary.dia",
+    "emit-module-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MamaBabaStories-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MamaBabaStories-primary-emit-module.dia",
+    "pch" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MamaBabaStories-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MamaBabaStories-primary.swiftdeps"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/App/AppConstants.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AppConstants.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AppConstants.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AppConstants.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AppConstants.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AppConstants.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AppConstants.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AppConstants.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AppConstants~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/App/MamaBabaStoriesApp.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MamaBabaStoriesApp.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MamaBabaStoriesApp.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MamaBabaStoriesApp.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MamaBabaStoriesApp.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MamaBabaStoriesApp.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MamaBabaStoriesApp.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MamaBabaStoriesApp.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MamaBabaStoriesApp~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Models/AIStoryRequest.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AIStoryRequest.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AIStoryRequest.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AIStoryRequest.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AIStoryRequest.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AIStoryRequest.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AIStoryRequest.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AIStoryRequest.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AIStoryRequest~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Models/Child.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Child.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Child.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Child.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Child.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Child.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Child.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Child.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Child~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Models/Story.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Story.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Story.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Story.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Story.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Story.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Story.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Story.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Story~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Models/TTSConfig.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/TTSConfig.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/TTSConfig.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/TTSConfig.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/TTSConfig.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/TTSConfig.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/TTSConfig.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/TTSConfig.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/TTSConfig~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Models/User.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/User.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/User.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/User.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/User.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/User.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/User.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/User.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/User~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Models/VoiceModel.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceModel.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceModel.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceModel.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceModel.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceModel.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceModel.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceModel.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceModel~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Services/AI/AIStoryService.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AIStoryService.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AIStoryService.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AIStoryService.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AIStoryService.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AIStoryService.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AIStoryService.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AIStoryService.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AIStoryService~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Services/Audio/AudioPlayerManager.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AudioPlayerManager.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AudioPlayerManager.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AudioPlayerManager.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AudioPlayerManager.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AudioPlayerManager.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AudioPlayerManager.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AudioPlayerManager.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AudioPlayerManager~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Services/Audio/AudioRecorder.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AudioRecorder.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AudioRecorder.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AudioRecorder.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AudioRecorder.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AudioRecorder.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AudioRecorder.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AudioRecorder.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AudioRecorder~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Services/Network/APIClient.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIClient.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIClient.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIClient.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIClient.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIClient.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIClient.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIClient.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIClient~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Services/Network/APIEndpoints.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIEndpoints.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIEndpoints.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIEndpoints.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIEndpoints.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIEndpoints.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIEndpoints.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIEndpoints.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIEndpoints~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Services/Network/APIError.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIError.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIError.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIError.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIError.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIError.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIError.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIError.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/APIError~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Services/VoiceClone/VoiceCloneService.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneService.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneService.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneService.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneService.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneService.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneService.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneService.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneService~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Utils/Extensions.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Extensions.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Extensions.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Extensions.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Extensions.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Extensions.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Extensions.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Extensions.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Extensions~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Utils/KeychainHelper.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/KeychainHelper.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/KeychainHelper.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/KeychainHelper.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/KeychainHelper.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/KeychainHelper.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/KeychainHelper.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/KeychainHelper.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/KeychainHelper~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Utils/Logger.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Logger.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Logger.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Logger.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Logger.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Logger.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Logger.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Logger.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/Logger~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/ViewModels/AICreateViewModel.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AICreateViewModel.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AICreateViewModel.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AICreateViewModel.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AICreateViewModel.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AICreateViewModel.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AICreateViewModel.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AICreateViewModel.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AICreateViewModel~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/ViewModels/HomeViewModel.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/HomeViewModel.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/HomeViewModel.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/HomeViewModel.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/HomeViewModel.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/HomeViewModel.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/HomeViewModel.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/HomeViewModel.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/HomeViewModel~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/ViewModels/PlayerViewModel.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/PlayerViewModel.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/PlayerViewModel.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/PlayerViewModel.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/PlayerViewModel.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/PlayerViewModel.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/PlayerViewModel.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/PlayerViewModel.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/PlayerViewModel~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/ViewModels/ProfileViewModel.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileViewModel.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileViewModel.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileViewModel.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileViewModel.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileViewModel.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileViewModel.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileViewModel.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileViewModel~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/ViewModels/StoryLibraryViewModel.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryLibraryViewModel.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryLibraryViewModel.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryLibraryViewModel.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryLibraryViewModel.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryLibraryViewModel.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryLibraryViewModel.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryLibraryViewModel.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryLibraryViewModel~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/ViewModels/VoiceCloneViewModel.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneViewModel.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneViewModel.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneViewModel.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneViewModel.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneViewModel.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneViewModel.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneViewModel.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneViewModel~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Views/AICreate/AICreateView.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AICreateView.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AICreateView.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AICreateView.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AICreateView.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AICreateView.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AICreateView.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AICreateView.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/AICreateView~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Views/Components/CustomButton.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/CustomButton.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/CustomButton.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/CustomButton.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/CustomButton.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/CustomButton.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/CustomButton.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/CustomButton.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/CustomButton~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Views/Components/StoryCard.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryCard.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryCard.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryCard.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryCard.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryCard.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryCard.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryCard.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryCard~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Views/Components/VoiceModelCard.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceModelCard.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceModelCard.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceModelCard.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceModelCard.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceModelCard.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceModelCard.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceModelCard.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceModelCard~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Views/Home/HomeView.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/HomeView.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/HomeView.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/HomeView.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/HomeView.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/HomeView.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/HomeView.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/HomeView.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/HomeView~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Views/MainTabView.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MainTabView.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MainTabView.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MainTabView.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MainTabView.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MainTabView.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MainTabView.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MainTabView.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/MainTabView~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Views/Player/StoryPlayerView.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryPlayerView.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryPlayerView.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryPlayerView.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryPlayerView.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryPlayerView.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryPlayerView.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryPlayerView.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryPlayerView~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Views/Profile/ProfileView.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileView.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileView.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileView.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileView.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileView.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileView.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileView.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/ProfileView~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Views/StoryLibrary/StoryLibraryView.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryLibraryView.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryLibraryView.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryLibraryView.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryLibraryView.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryLibraryView.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryLibraryView.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryLibraryView.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/StoryLibraryView~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Views/VoiceClone/RecordingView.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/RecordingView.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/RecordingView.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/RecordingView.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/RecordingView.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/RecordingView.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/RecordingView.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/RecordingView.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/RecordingView~partial.swiftmodule"
+  },
+  "/Users/ruizuo/rui/MamaBabaStories-iOS/MamaBabaStories/Views/VoiceClone/VoiceCloneView.swift" : {
+    "const-values" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneView.swiftconstvalues",
+    "dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneView.d",
+    "diagnostics" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneView.dia",
+    "index-unit-output-path" : "/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneView.o",
+    "llvm-bc" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneView.bc",
+    "object" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneView.o",
+    "swift-dependencies" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneView.swiftdeps",
+    "swiftmodule" : "/Users/ruizuo/rui/MamaBabaStories-iOS/build/MamaBabaStories.build/Debug-iphonesimulator/MamaBabaStories.build/Objects-normal/arm64/VoiceCloneView~partial.swiftmodule"
+  }
+}

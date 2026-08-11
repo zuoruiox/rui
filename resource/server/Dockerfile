@@ -38,11 +38,11 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 # 创建上传目录
 RUN mkdir -p uploads/audio uploads/recordings uploads/voices uploads/avatars uploads/covers
 
-EXPOSE 3000
+EXPOSE 9999
 
 # 健康检查
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/auth/me || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:9999/api/auth/me || exit 1
 
 # 启动脚本：生成 Prisma Client → 同步数据库 → 运行种子 → 启动服务
 CMD ["sh", "-c", "npx prisma generate && npx prisma db push && npx prisma db seed && node dist/index.js"]

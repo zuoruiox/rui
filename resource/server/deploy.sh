@@ -127,7 +127,7 @@ start() {
     echo ""
     info "等待服务就绪..."
     for i in $(seq 1 30); do
-        if curl -s http://localhost:${PORT:-3000}/api/auth/me > /dev/null 2>&1; then
+        if curl -s http://localhost:${PORT:-9999}/api/auth/me > /dev/null 2>&1; then
             info "服务就绪！"
             break
         fi
@@ -167,7 +167,7 @@ status() {
     $DOCKER_COMPOSE ps
     echo ""
     echo "--- 健康检查 ---"
-    if curl -s http://localhost:${PORT:-3000}/api/auth/me > /dev/null 2>&1; then
+    if curl -s http://localhost:${PORT:-9999}/api/auth/me > /dev/null 2>&1; then
         info "服务运行正常"
     else
         warn "服务可能未就绪，请稍后重试"
@@ -212,7 +212,7 @@ backup() {
 
 # ========== 显示信息 ==========
 show_info() {
-    PORT=${PORT:-3000}
+    PORT=${PORT:-9999}
     echo ""
     echo "=========================================="
     echo "  爸爸妈妈讲故事 - 服务端"

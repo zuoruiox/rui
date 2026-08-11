@@ -39,7 +39,10 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(morgan('dev'));
 
 // 静态文件 - 管理前端
-app.use('/admin', express.static(path.join(__dirname, '../public')));
+app.use('/admin', express.static(path.join(__dirname, '../../public')));
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/index.html'));
+});
 
 // API 路由
 app.use('/api/auth', authRoutes);

@@ -20,7 +20,7 @@ COPY prisma ./prisma/
 COPY src ./src/
 COPY public ./public/
 
-# 生成 Prisma Client 并编译 TypeScript
+# 生成 Prisma Client 并编译 TypeScript（包含 seed.ts）
 RUN npx prisma generate
 RUN npm run build
 
@@ -38,11 +38,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
-# 安装运行时依赖（生产依赖 + prisma）
+# 安装运行时依赖（生产依赖 + prisma CLI）
 COPY package*.json ./
 RUN npm ci --omit=dev && npm install prisma@5.22.0 @prisma/client@5.22.0
 
-# 从构建阶段复制编译产物
+# 从构建阶段复制编译产物（包含 dist/src 和 dist/prisma）
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/public ./public
@@ -57,5 +57,5 @@ EXPOSE 9999
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:9999/api/auth/me || exit 1
 
-# 启动脚本：生成 Prisma Client → 同步数据库 → 运行种子 → 启动服务
-CMD ["sh", "-c", "npx prisma generate && npx prisma db push && npx prisma db seed && node dist/index.js"]
+# 启动脚本：生成 Prisma Client → 同步数据库 → 运行种子（编译后的 JS）→ 启动服务
+CMD ["sh", "-c", "npx prisma generate && npx prisma db push && node dist/prisma/seed.js && node dist/src/index.js"]

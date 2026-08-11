@@ -27,7 +27,7 @@ ENV NODE_ENV=production
 
 # 安装运行时依赖（生产依赖 + prisma）
 COPY package*.json ./
-RUN npm ci --omit=dev && npm install prisma @prisma/client --save-dev
+RUN npm ci --omit=dev && npm install prisma@5.22.0 @prisma/client@5.22.0
 
 # 从构建阶段复制编译产物
 COPY --from=builder /app/dist ./dist

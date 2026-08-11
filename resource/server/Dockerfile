@@ -1,8 +1,14 @@
 # ========== 构建阶段 ==========
 # 指定 linux/amd64 平台，确保在 x86 服务器上正常运行
-FROM --platform=linux/amd64 node:20-alpine AS builder
+# 使用 Debian 基础镜像（非 Alpine），避免 musl/OpenSSL 兼容性问题
+FROM --platform=linux/amd64 node:20-slim AS builder
 
 WORKDIR /app
+
+# 安装构建依赖
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    openssl \
+    && rm -rf /var/lib/apt/lists/*
 
 # 先复制依赖文件，利用 Docker 缓存层
 COPY package*.json ./
@@ -19,11 +25,18 @@ RUN npx prisma generate
 RUN npm run build
 
 # ========== 运行阶段 ==========
-FROM --platform=linux/amd64 node:20-alpine AS runner
+FROM --platform=linux/amd64 node:20-slim AS runner
 
 WORKDIR /app
 
 ENV NODE_ENV=production
+
+# 安装运行时依赖
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    openssl \
+    ca-certificates \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
 
 # 安装运行时依赖（生产依赖 + prisma）
 COPY package*.json ./

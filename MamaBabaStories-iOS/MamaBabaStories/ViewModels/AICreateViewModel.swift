@@ -12,9 +12,9 @@ import SwiftUI
 @MainActor
 class AICreateViewModel: ObservableObject {
     // MARK: - Published Properties
-    @Published var selectedTheme: StoryTheme = .adventure
-    @Published var selectedStyle: StoryStyle = .warm
-    @Published var selectedAgeGroup: AgeGroup = .preschool
+    @Published var selectedTheme: String = "adventure"
+    @Published var selectedStyle: String = "warm"
+    @Published var selectedAgeGroup: String = "preschool"
     @Published var selectedWordCount: WordCountOption = .medium_500
     @Published var selectedEmotion: TTSemotion = .warm
     @Published var characterName = ""

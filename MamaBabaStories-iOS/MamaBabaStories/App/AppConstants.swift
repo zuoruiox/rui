@@ -18,11 +18,12 @@ enum AppInfo {
 // MARK: - API 配置
 enum APIConfig {
     #if DEBUG
-    static let baseURL = "https://api-dev.mamababa-stories.com/v1"
-    static let wsBaseURL = "wss://api-dev.mamababa-stories.com/v1"
+    // 模拟器使用 Mac 的 IP 地址访问本地服务器
+    static let baseURL = "http://10.21.10.202:9999/api"
+    static let wsBaseURL = "ws://10.21.10.202:9999/api"
     #else
-    static let baseURL = "https://api.mamababa-stories.com/v1"
-    static let wsBaseURL = "wss://api.mamababa-stories.com/v1"
+    static let baseURL = "https://api.mamababa-stories.com/api"
+    static let wsBaseURL = "wss://api.mamababa-stories.com/api"
     #endif
 
     static let timeout: TimeInterval = 30
@@ -135,12 +136,12 @@ enum AppFonts {
         .system(size: size, weight: .semibold, design: .rounded)
     }
 
-    static func body(size: CGFloat = 16) -> Font {
-        .system(size: size, weight: .regular, design: .rounded)
+    static func body(size: CGFloat = 16, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .rounded)
     }
 
-    static func caption(size: CGFloat = 13) -> Font {
-        .system(size: size, weight: .regular, design: .rounded)
+    static func caption(size: CGFloat = 13, weight: Font.Weight = .regular) -> Font {
+        .system(size: size, weight: weight, design: .rounded)
     }
 
     static func button(size: CGFloat = 17) -> Font {

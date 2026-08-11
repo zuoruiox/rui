@@ -161,8 +161,8 @@ struct CustomButton_Previews: PreviewProvider {
             SecondaryButton("选择声音", icon: "mic.fill") {}
             HStack(spacing: 16) {
                 CircleIconButton(icon: "play.fill") {}
-                CircleIconButton(icon: "heart.fill", color: AppColors.softPink) {}
-                CircleIconButton(icon: "bookmark.fill", color: AppColors.gentleBlue) {}
+                CircleIconButton(icon: "heart.fill", action: {}, color: AppColors.softPink)
+                CircleIconButton(icon: "bookmark.fill", action: {}, color: AppColors.gentleBlue)
             }
             HStack {
                 TagButton(title: "冒险", icon: "map.fill", isSelected: true) {}

@@ -55,7 +55,7 @@ struct RecordingView: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
                         if voiceVM.isRecording {
-                            voiceVM.cancel()
+                            voiceVM.cancelRecording()
                         }
                         voiceVM.resetRecordingFlow()
                         dismiss()
@@ -189,8 +189,8 @@ struct RecordingView: View {
             QualityItem(
                 icon: "waveform",
                 text: "环境",
-                isGood: (voiceVM.recordingQuality?.snr ?? 30) >= AudioConfig.minSNR,
-                color: (voiceVM.recordingQuality?.snr ?? 30) >= AudioConfig.minSNR ? AppColors.success : AppColors.warning
+                isGood: (voiceVM.recordingQuality?.snr ?? 30) >= Double(AudioConfig.minSNR),
+                color: (voiceVM.recordingQuality?.snr ?? 30) >= Double(AudioConfig.minSNR) ? AppColors.success : AppColors.warning
             )
             QualityItem(
                 icon: "clock.fill",
@@ -212,7 +212,7 @@ struct RecordingView: View {
             if voiceVM.isRecording {
                 // 删除按钮
                 Button(action: {
-                    voiceVM.cancel()
+                    voiceVM.cancelRecording()
                 }) {
                     VStack(spacing: 6) {
                         ZStack {

@@ -47,7 +47,7 @@ class APIClient: APIClientProtocol {
         self.encoder.dateEncodingStrategy = .iso8601
 
         // 从 Keychain 恢复 token
-        self.authToken = KeychainHelper.shared.get(for: KeychainKeys.authToken)
+        self.authToken = KeychainHelper.shared.getString(for: KeychainKeys.authToken)
     }
 
     // MARK: - Token 管理
@@ -431,31 +431,35 @@ class MockAPIClient: APIClientProtocol {
     func setAuthToken(_ token: String?) {}
 
     private func mockResponse<T: Codable>(for endpoint: APIEndpoint) throws -> T {
-        // 根据端点类型返回合适的 mock 数据
-        let mockData: Any
+        let data: Data
 
         switch endpoint {
         case .getUserProfile:
-            mockData = User.mock
+            data = try JSONEncoder().encode(User.mock)
         case .getVoiceModels:
-            mockData = [VoiceModel.mockMom, VoiceModel.mockDad, VoiceModel.mockTraining]
+            data = try JSONEncoder().encode(PaginatedResponse(
+                list: [VoiceModel.mockMom, VoiceModel.mockDad, VoiceModel.mockTraining],
+                total: 3,
+                page: 1,
+                pageSize: 20,
+                hasMore: false
+            ))
         case .getStories, .getFeaturedStories, .getRecentStories:
-            mockData = PaginatedResponse(
-                items: Story.mockStories,
+            data = try JSONEncoder().encode(PaginatedResponse(
+                list: Story.mockStories,
                 total: Story.mockStories.count,
                 page: 1,
                 pageSize: 20,
                 hasMore: false
-            )
+            ))
         case .getFavorites:
-            mockData = Story.mockFavorites
+            data = try JSONEncoder().encode(Story.mockFavorites)
         case .getChildren:
-            mockData = [Child.mock, Child.mockGirl]
+            data = try JSONEncoder().encode([Child.mock, Child.mockGirl])
         default:
-            mockData = EmptyResponse()
+            data = try JSONEncoder().encode(EmptyResponse())
         }
 
-        let data = try JSONEncoder().encode(mockData)
         return try JSONDecoder().decode(T.self, from: data)
     }
 }

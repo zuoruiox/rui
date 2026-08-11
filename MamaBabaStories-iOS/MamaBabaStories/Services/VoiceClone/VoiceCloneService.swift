@@ -31,7 +31,7 @@ class VoiceCloneService: VoiceCloneServiceProtocol {
     // MARK: - 获取声音模型列表
     func getVoiceModels() async throws -> [VoiceModel] {
         let response: PaginatedResponse<VoiceModel> = try await apiClient.request(.getVoiceModels)
-        return response.items
+        return response.list
     }
 
     // MARK: - 创建声音模型
@@ -177,7 +177,7 @@ class MockVoiceCloneService: VoiceCloneServiceProtocol {
             localURL: audioURL,
             remoteURL: nil,
             duration: duration,
-            fileSize: (try? Data(contentsOf: audioURL).count) ?? 0,
+            fileSize: Int64((try? Data(contentsOf: audioURL).count) ?? 0),
             quality: RecordingQuality(
                 snr: 35,
                 peakLevel: 0.7,

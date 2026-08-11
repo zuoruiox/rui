@@ -20,19 +20,19 @@ struct AIStoryRequest: Codable {
     let language: String
 
     init(
-        theme: StoryTheme,
+        theme: String,
         characters: [String],
-        style: StoryStyle,
-        targetAge: AgeGroup,
+        style: String,
+        targetAge: String,
         wordCount: Int = 500,
         customPrompt: String? = nil,
         childName: String? = nil,
         includeMorals: Bool = true
     ) {
-        self.theme = theme.rawValue
+        self.theme = theme
         self.characters = characters
-        self.style = style.rawValue
-        self.targetAge = targetAge.rawValue
+        self.style = style
+        self.targetAge = targetAge
         self.wordCount = wordCount
         self.customPrompt = customPrompt
         self.childName = childName
@@ -128,7 +128,7 @@ enum WordCountOption: Int, CaseIterable, Identifiable {
 }
 
 // MARK: - 情感选项
-enum TTSemotion: String, CaseIterable, Identifiable {
+enum TTSemotion: String, CaseIterable, Codable, Identifiable {
     case warm = "温暖"
     case cheerful = "欢快"
     case gentle = "温柔"

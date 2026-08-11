@@ -9,6 +9,7 @@
 import Foundation
 import AVFoundation
 import Accelerate
+import Darwin
 
 // MARK: - 录音状态
 enum RecordingState: Equatable {
@@ -38,7 +39,6 @@ class AudioRecorder: NSObject {
     private var audioEngine: AVAudioEngine?
     private var inputNode: AVAudioInputNode?
     private var audioFile: AVAudioFile?
-    private var mixerNode: AVAudioMixerNode?
 
     // 录音配置
     private let sampleRate: Double = AudioConfig.sampleRate
@@ -169,10 +169,15 @@ class AudioRecorder: NSObject {
             return
         }
 
-        // 配置音频会话
+        // 配置音频会话 - 使用 playAndRecord 以支持播放和录音同时进行
         let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetooth])
-        try session.setActive(true)
+        do {
+            try session.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetooth, .mixWithOthers])
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
+        } catch {
+            Logger.error("配置录音音频会话失败: \(error)", category: .audio)
+            throw error
+        }
 
         state = .preparing
 
@@ -259,6 +264,9 @@ class AudioRecorder: NSObject {
         // 计算最终质量
         let quality = calculateQuality()
         delegate?.recorder(self, didDetectQuality: quality)
+
+        // 恢复音频会话为播放模式
+        restorePlaybackSession()
     }
 
     // MARK: - 取消录音
@@ -277,6 +285,9 @@ class AudioRecorder: NSObject {
         resetRecordingState()
         state = .idle
         Logger.info("录音已取消", category: .audio)
+
+        // 恢复音频会话为播放模式
+        restorePlaybackSession()
     }
 
     // MARK: - 获取当前录音时长
@@ -355,17 +366,20 @@ class AudioRecorder: NSObject {
             throw NSError(domain: "AudioRecorder", code: -3, userInfo: [NSLocalizedDescriptionKey: "无法创建目标音频格式"])
         }
 
-        // 安装 tap 来获取音频数据
+        // 安装 tap 来获取音频数据（使用输入节点的原生格式）
         let bufferSize: AVAudioFrameCount = 1024
         input.installTap(onBus: 0, bufferSize: bufferSize, format: inputFormat) { [weak self] buffer, time in
             self?.processAudioBuffer(buffer, format: inputFormat, targetFormat: targetFormat)
         }
 
-        mixerNode = AVAudioMixerNode()
-        if let mixer = mixerNode {
-            engine.attach(mixer)
-            engine.connect(input, to: mixer, format: targetFormat)
-        }
+        // 将输入节点通过 mixer 连接到输出（确保音频引擎有完整的信号链）
+        // mixer 音量设为0，避免录音时的回声/反馈
+        let outputNode = engine.outputNode
+        let mixer = AVAudioMixerNode()
+        engine.attach(mixer)
+        engine.connect(input, to: mixer, format: inputFormat)
+        engine.connect(mixer, to: outputNode, format: inputFormat)
+        mixer.outputVolume = 0
 
         engine.prepare()
     }
@@ -460,44 +474,51 @@ class AudioRecorder: NSObject {
 
     // MARK: - 计算录音质量
     private func calculateQuality() -> RecordingQuality {
-        bufferQueue.sync {
-            let snr: Double
-            if noiseEnergy > 0 {
-                snr = 10 * log10(Double(signalEnergy / noiseEnergy))
-            } else {
-                snr = 100  // 无噪声
-            }
-
-            let clippingRatio = totalSamples > 0 ? Double(clippingCount) / Double(totalSamples) : 0
-            let hasClipping = clippingRatio > 0.001  // 超过0.1%削波
-            let isTooQuiet = peakLevel < 0.05
-            let isTooLoud = peakLevel > 0.98
-
-            // 计算综合评分
-            var score = 100.0
-            if snr < AudioConfig.minSNR { score -= 30 }
-            else if snr < 25 { score -= 10 }
-            if hasClipping { score -= 25 }
-            if isTooQuiet { score -= 20 }
-            if isTooLoud { score -= 15 }
-            score = max(0, min(100, score))
-
-            return RecordingQuality(
-                snr: snr,
-                peakLevel: peakLevel,
-                hasClipping: hasClipping,
-                isTooQuiet: isTooQuiet,
-                isTooLoud: isTooLoud,
-                overallScore: score
-            )
+        var quality: RecordingQuality?
+        let (sigE, noiE, peak, clip, total) = bufferQueue.sync { () -> (Float, Float, Float, Int, Int) in
+            return (self.signalEnergy, self.noiseEnergy, self.peakLevel, self.clippingCount, self.totalSamples)
         }
+
+        let snr: Double
+        if noiE > 0 {
+            snr = 10.0 * log10(Double(sigE / noiE))
+        } else {
+            snr = 100
+        }
+
+        let clippingRatio = total > 0 ? Double(clip) / Double(total) : 0
+        let hasClipping = clippingRatio > 0.001
+        let isTooQuiet = peak < 0.05
+        let isTooLoud = peak > 0.98
+
+        var score = 100.0
+        if snr < Double(AudioConfig.minSNR) { score -= 30 }
+        else if snr < 25 { score -= 10 }
+        if hasClipping { score -= 25 }
+        if isTooQuiet { score -= 20 }
+        if isTooLoud { score -= 15 }
+        score = max(0, min(100, score))
+
+        quality = RecordingQuality(
+            snr: snr,
+            peakLevel: peak,
+            hasClipping: hasClipping,
+            isTooQuiet: isTooQuiet,
+            isTooLoud: isTooLoud,
+            overallScore: score
+        )
+        return quality!
     }
 
     // MARK: - 写入 WAV 文件
     private func writeWAVFile(to url: URL) throws {
+        var wavData: Data?
+        var writeError: Error?
+
         bufferQueue.sync {
             guard !audioBufferList.isEmpty else {
-                throw NSError(domain: "AudioRecorder", code: -4, userInfo: [NSLocalizedDescriptionKey: "没有录音数据"])
+                writeError = NSError(domain: "AudioRecorder", code: -4, userInfo: [NSLocalizedDescriptionKey: "没有录音数据"])
+                return
             }
 
             // 音频后处理：降噪和归一化
@@ -522,8 +543,8 @@ class AudioRecorder: NSObject {
 
             // fmt subchunk
             header.append("fmt ".data(using: .ascii)!)
-            header.append(withUnsafeBytes(of: UInt32(16).littleEndian) { Data($0) })  // Subchunk1Size
-            header.append(withUnsafeBytes(of: UInt16(1).littleEndian) { Data($0) })   // PCM format
+            header.append(withUnsafeBytes(of: UInt32(16).littleEndian) { Data($0) })
+            header.append(withUnsafeBytes(of: UInt16(1).littleEndian) { Data($0) })
             header.append(withUnsafeBytes(of: UInt16(numChannels).littleEndian) { Data($0) })
             header.append(withUnsafeBytes(of: UInt32(sampleRateVal).littleEndian) { Data($0) })
             header.append(withUnsafeBytes(of: UInt32(byteRate).littleEndian) { Data($0) })
@@ -542,12 +563,19 @@ class AudioRecorder: NSObject {
                 pcmData.append(withUnsafeBytes(of: intSample.littleEndian) { Data($0) })
             }
 
-            // 写入文件
-            let wavData = header + pcmData
-            try wavData.write(to: url)
-
-            Logger.info("WAV 文件已保存: \(url.path), 大小: \(wavData.count) bytes", category: .audio)
+            wavData = header + pcmData
         }
+
+        if let error = writeError {
+            throw error
+        }
+
+        guard let data = wavData else {
+            throw NSError(domain: "AudioRecorder", code: -5, userInfo: [NSLocalizedDescriptionKey: "无法生成WAV数据"])
+        }
+
+        try data.write(to: url)
+        Logger.info("WAV 文件已保存: \(url.path), 大小: \(data.count) bytes", category: .audio)
     }
 
     // MARK: - 音频归一化
@@ -564,6 +592,18 @@ class AudioRecorder: NSObject {
 
         // 应用增益
         vDSP_vsmul(samples, 1, [gain], &samples, 1, UInt(samples.count))
+    }
+
+    // MARK: - 恢复播放音频会话
+    private func restorePlaybackSession() {
+        let session = AVAudioSession.sharedInstance()
+        do {
+            try session.setCategory(.playback, mode: .spokenAudio, options: [.allowBluetooth, .allowAirPlay])
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
+            Logger.debug("已恢复播放音频会话", category: .audio)
+        } catch {
+            Logger.error("恢复播放音频会话失败: \(error)", category: .audio)
+        }
     }
 
     // MARK: - 重置录音状态

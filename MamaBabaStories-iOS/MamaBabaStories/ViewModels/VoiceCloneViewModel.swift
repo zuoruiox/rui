@@ -247,7 +247,7 @@ class VoiceCloneViewModel: ObservableObject {
             localURL: fileURL,
             remoteURL: nil,
             duration: duration,
-            fileSize: (try? Data(contentsOf: fileURL).count) ?? 0,
+            fileSize: Int64((try? Data(contentsOf: fileURL).count) ?? 0),
             quality: quality,
             createdAt: Date(),
             isUploaded: false,
@@ -368,15 +368,15 @@ class VoiceCloneViewModel: ObservableObject {
     func tryVoiceModel(_ model: VoiceModel, text: String = "你好呀，宝贝！我是妈妈，今天给你讲一个好听的故事。") {
         Task {
             do {
-                let audioURL = try await voiceService.synthesizeSpeech(text: text, voiceModelId: model.id)
+                let audioURL = try await voiceService.synthesizeSpeech(text: text, voiceModelId: model.id, config: nil)
                 AudioPlayerManager.shared.play(story: Story(
                     id: "preview_\(model.id)",
                     title: "试听 - \(model.name)",
                     content: text,
                     summary: nil,
-                    theme: .family,
-                    style: .warm,
-                    targetAgeGroup: .preschool,
+                    theme: "family",
+                    style: "warm",
+                    targetAgeGroup: "preschool",
                     coverImageURL: nil,
                     coverGradient: nil,
                     coverEmoji: model.ownerType.emoji,
@@ -400,6 +400,18 @@ class VoiceCloneViewModel: ObservableObject {
                 showError = true
             }
         }
+    }
+
+    // MARK: - 取消录音
+    func cancelRecording() {
+        audioRecorder.cancel()
+        isRecording = false
+        isPaused = false
+        recordingDuration = 0
+        recordingTimer?.invalidate()
+        waveformUpdateTimer?.invalidate()
+        waveformData = Array(repeating: 0, count: 50)
+        currentMeterLevel = 0
     }
 
     // MARK: - 重置录音流程

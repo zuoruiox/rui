@@ -40,12 +40,12 @@ struct StoryCard: View {
                     }
 
                     HStack(spacing: 4) {
-                        Text(story.theme.rawValue)
+                        Text(story.themeDisplayName)
                             .font(AppFonts.caption(size: 10))
                             .padding(.horizontal, 8)
                             .padding(.vertical, 3)
-                            .background(story.theme.color.opacity(0.2))
-                            .foregroundColor(story.theme.color.opacity(0.8))
+                            .background(themeColor(story.theme).opacity(0.2))
+                            .foregroundColor(themeColor(story.theme).opacity(0.8))
                             .cornerRadius(6)
 
                         if story.isAIGenerated {
@@ -127,9 +127,23 @@ struct StoryCoverView: View {
 
     private var gradientColors: Gradient {
         if let hexColors = story.coverGradient, hexColors.count >= 2 {
-            return Gradient(colors: hexColors.compactMap { Color(hex: $0) })
+            return Gradient(colors: hexColors.map { Color(hex: $0) })
         }
-        return Gradient(colors: [story.theme.color, story.theme.color.opacity(0.6)])
+        return Gradient(colors: [themeColor(story.theme), themeColor(story.theme).opacity(0.6)])
+    }
+}
+
+// MARK: - 主题颜色辅助函数
+private func themeColor(_ theme: String) -> Color {
+    switch theme {
+    case "adventure", "courage", "冒险", "勇气": return AppColors.softOrange
+    case "friendship", "友谊": return AppColors.softPink
+    case "family", "kindness", "家庭", "善良": return AppColors.warmYellow
+    case "animals", "nature", "动物", "自然": return AppColors.softGreen
+    case "magic", "魔法": return AppColors.gentleBlue
+    case "space", "太空": return Color(red: 0.5, green: 0.4, blue: 0.8)
+    case "bedtime", "睡前": return AppColors.gentleBlue
+    default: return AppColors.softOrange
     }
 }
 
@@ -217,25 +231,6 @@ struct FeaturedStoryCard: View {
             )
         }
         .buttonStyle(PlainButtonStyle())
-    }
-}
-
-// MARK: - Color Hex 扩展
-extension Color {
-    init?(hex: String) {
-        var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
-        hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
-
-        guard hexSanitized.count == 6 else { return nil }
-
-        var rgb: UInt64 = 0
-        Scanner(string: hexSanitized).scanHexInt64(&rgb)
-
-        let r = Double((rgb & 0xFF0000) >> 16) / 255.0
-        let g = Double((rgb & 0x00FF00) >> 8) / 255.0
-        let b = Double(rgb & 0x0000FF) / 255.0
-
-        self.init(red: r, green: g, blue: b)
     }
 }
 

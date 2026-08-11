@@ -24,44 +24,61 @@ class HomeViewModel: ObservableObject {
     @Published var quickActions: [QuickAction] = []
 
     // MARK: - Services
+    private let apiClient: APIClientProtocol
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
-    init() {
+    init(apiClient: APIClientProtocol = APIClient.shared) {
+        self.apiClient = apiClient
         updateGreeting()
         setupQuickActions()
-        loadMockData()
+        // 初始化时加载数据
+        Task { await loadData() }
     }
 
     // MARK: - 加载数据
     func loadData() async {
         isLoading = true
         errorMessage = nil
+        defer { isLoading = false }
 
         do {
-            // 模拟网络请求
-            try await Task.sleep(nanoseconds: 500_000_000)
+            // 并行加载精选故事和推荐故事
+            async let storiesResponse: PaginatedResponse<Story> = apiClient.request(
+                .getStories(page: 1, pageSize: 10, theme: nil, isFavorite: nil)
+            )
 
-            // 实际项目中使用 API
-            // featuredStories = try await apiClient.request(.getFeaturedStories)
-            // recentStories = try await apiClient.request(.getRecentStories(limit: 5))
-            // voiceModels = try await voiceService.getVoiceModels()
+            let result = try await storiesResponse
 
-            isLoading = false
+            // 精选推荐：取前 3 个
+            featuredStories = Array(result.list.prefix(3))
+
+            // 最近播放：暂时用全部故事（后端暂无历史记录接口时的降级）
+            recentStories = Array(result.list.prefix(5))
+
+            // 推荐：打乱顺序
+            recommendedStories = result.list.shuffled()
+
+            // 标记已下载的故事
+            for i in 0..<featuredStories.count {
+                featuredStories[i].isDownloaded = AudioPlayerManager.shared.isDownloaded(storyId: featuredStories[i].id)
+            }
+            for i in 0..<recentStories.count {
+                recentStories[i].isDownloaded = AudioPlayerManager.shared.isDownloaded(storyId: recentStories[i].id)
+            }
+            for i in 0..<recommendedStories.count {
+                recommendedStories[i].isDownloaded = AudioPlayerManager.shared.isDownloaded(storyId: recommendedStories[i].id)
+            }
+
+            // 更新快捷操作的"继续收听"
+            if let firstStory = recentStories.first {
+                quickActions[0].story = firstStory
+            }
         } catch {
             errorMessage = error.localizedDescription
             showError = true
-            isLoading = false
+            Logger.error("首页加载失败: \(error)", category: .network)
         }
-    }
-
-    // MARK: - 加载 Mock 数据（预览和开发用）
-    private func loadMockData() {
-        featuredStories = Array(Story.mockStories.prefix(3))
-        recentStories = Array(Story.mockStories.suffix(4))
-        recommendedStories = Story.mockStories.shuffled()
-        voiceModels = [VoiceModel.mockMom, VoiceModel.mockDad]
-        currentChild = Child.mock
     }
 
     // MARK: - 更新问候语
@@ -86,8 +103,8 @@ class HomeViewModel: ObservableObject {
     // MARK: - 快捷操作
     private func setupQuickActions() {
         quickActions = [
-            QuickAction(id: "continue", title: "继续收听", icon: "play.circle.fill", color: AppColors.softOrange, story: Story.mockStories.first),
-            QuickAction(id: "bedtime", title: "睡前故事", icon: "moon.stars.fill", color: AppColors.gentleBlue, theme: .bedtime),
+            QuickAction(id: "continue", title: "继续收听", icon: "play.circle.fill", color: AppColors.softOrange, story: nil),
+            QuickAction(id: "bedtime", title: "睡前故事", icon: "moon.stars.fill", color: AppColors.gentleBlue, theme: "bedtime"),
             QuickAction(id: "ai_create", title: "AI创作", icon: "sparkles", color: AppColors.warmYellow, action: .aiCreate),
             QuickAction(id: "voice_clone", title: "声音克隆", icon: "mic.fill", color: AppColors.softPink, action: .voiceClone)
         ]
@@ -100,8 +117,8 @@ class HomeViewModel: ObservableObject {
     }
 
     // MARK: - 获取主题故事
-    func storiesForTheme(_ theme: StoryTheme) -> [Story] {
-        return Story.mockStories.filter { $0.theme == theme }
+    func storiesForTheme(_ theme: String) -> [Story] {
+        return recommendedStories.filter { $0.theme == theme }
     }
 }
 
@@ -112,7 +129,7 @@ struct QuickAction: Identifiable {
     let icon: String
     let color: Color
     var story: Story? = nil
-    var theme: StoryTheme? = nil
+    var theme: String? = nil
     var action: ActionType = .none
 
     enum ActionType {

@@ -17,7 +17,7 @@ class StoryLibraryViewModel: ObservableObject {
     @Published var favoriteStories: [Story] = []
     @Published var downloadedStories: [Story] = []
     @Published var playHistory: [PlayHistory] = []
-    @Published var selectedTheme: StoryTheme? = nil
+    @Published var selectedTheme: String? = nil
     @Published var searchText = ""
     @Published var isLoading = false
     @Published var errorMessage: String?
@@ -31,24 +31,52 @@ class StoryLibraryViewModel: ObservableObject {
     @Published var categories: [StoryCategory] = []
     @Published var selectedCategory: String? = nil
 
+    // MARK: - 服务
+    private let apiClient: APIClientProtocol
+    private let pageSize = 20
+
     // MARK: - Init
-    init() {
+    init(apiClient: APIClientProtocol = APIClient.shared) {
+        self.apiClient = apiClient
         setupCategories()
-        loadMockData()
         setupSearch()
+        // 初始化时加载本地下载状态
+        refreshDownloadedStatus()
+        // 自动加载第一页
+        Task { await loadData() }
     }
 
     // MARK: - 加载数据
     func loadData() async {
+        guard !isLoading else { return }
         isLoading = true
         defer { isLoading = false }
 
         do {
-            try await Task.sleep(nanoseconds: 500_000_000)
-            // 实际项目中调用 API
+            let response: PaginatedResponse<Story> = try await apiClient.request(
+                .getStories(page: currentPage, pageSize: pageSize, theme: selectedTheme, isFavorite: nil)
+            )
+
+            // 标记已下载的故事
+            var stories = response.list
+            for i in 0..<stories.count {
+                stories[i].isDownloaded = AudioPlayerManager.shared.isDownloaded(storyId: stories[i].id)
+            }
+
+            if currentPage == 1 {
+                allStories = stories
+            } else {
+                allStories.append(contentsOf: stories)
+            }
+
+            hasMore = response.hasMore
+            filteredStories = filterStories(searchText: searchText, theme: selectedTheme)
+            favoriteStories = allStories.filter { $0.isFavorite }
+            downloadedStories = allStories.filter { $0.isDownloaded }
         } catch {
             errorMessage = error.localizedDescription
             showError = true
+            Logger.error("加载故事列表失败: \(error)", category: .network)
         }
     }
 
@@ -59,23 +87,26 @@ class StoryLibraryViewModel: ObservableObject {
         await loadData()
     }
 
-    // MARK: - Mock 数据
-    private func loadMockData() {
-        allStories = Story.mockStories
-        filteredStories = Story.mockStories
-        favoriteStories = Story.mockFavorites
-        downloadedStories = Story.mockStories.filter { $0.isDownloaded }
+    // MARK: - 刷新
+    func refresh() async {
+        currentPage = 1
+        hasMore = true
+        await loadData()
     }
 
     // MARK: - 分类设置
     private func setupCategories() {
-        categories = StoryTheme.allCases.map { theme in
+        let themes = ["冒险", "友谊", "家庭", "动物", "魔法", "太空", "自然", "睡前", "勇气", "善良"]
+        let icons = ["map.fill", "heart.fill", "house.fill", "pawprint.fill", "sparkles",
+                     "moon.stars.fill", "leaf.fill", "moon.fill", "shield.fill", "hand.raised.fill"]
+
+        categories = zip(themes, icons).map { theme, icon in
             StoryCategory(
-                id: theme.rawValue,
-                name: theme.rawValue,
-                icon: theme.icon,
+                id: theme,
+                name: theme,
+                icon: icon,
                 theme: theme,
-                stories: Story.mockStories.filter { $0.theme == theme }
+                stories: nil
             )
         }
     }
@@ -92,10 +123,10 @@ class StoryLibraryViewModel: ObservableObject {
             .assign(to: &$filteredStories)
     }
 
-    private func filterStories(searchText: String, theme: StoryTheme?) -> [Story] {
+    private func filterStories(searchText: String, theme: String?) -> [Story] {
         var result = allStories
 
-        if let theme = theme {
+        if let theme = theme, !theme.isEmpty {
             result = result.filter { $0.theme == theme }
         }
 
@@ -111,41 +142,27 @@ class StoryLibraryViewModel: ObservableObject {
     }
 
     // MARK: - 选择主题
-    func selectTheme(_ theme: StoryTheme?) {
+    func selectTheme(_ theme: String?) {
         selectedTheme = theme
+        currentPage = 1
+        hasMore = true
+        Task { await loadData() }
     }
 
     // MARK: - 收藏/取消收藏
     func toggleFavorite(for story: Story) {
-        if let index = allStories.firstIndex(where: { $0.id == story.id }) {
-            allStories[index] = Story(
-                id: allStories[index].id,
-                title: allStories[index].title,
-                content: allStories[index].content,
-                summary: allStories[index].summary,
-                theme: allStories[index].theme,
-                style: allStories[index].style,
-                targetAgeGroup: allStories[index].targetAgeGroup,
-                coverImageURL: allStories[index].coverImageURL,
-                coverGradient: allStories[index].coverGradient,
-                coverEmoji: allStories[index].coverEmoji,
-                audioURL: allStories[index].audioURL,
-                localAudioPath: allStories[index].localAudioPath,
-                duration: allStories[index].duration,
-                wordCount: allStories[index].wordCount,
-                voiceModelId: allStories[index].voiceModelId,
-                voiceModelName: allStories[index].voiceModelName,
-                isAIGenerated: allStories[index].isAIGenerated,
-                isFavorite: !allStories[index].isFavorite,
-                isDownloaded: allStories[index].isDownloaded,
-                playCount: allStories[index].playCount,
-                createdAt: allStories[index].createdAt,
-                updatedAt: Date(),
-                tags: allStories[index].tags,
-                characters: allStories[index].characters
-            )
-            filteredStories = filterStories(searchText: searchText, theme: selectedTheme)
-            favoriteStories = allStories.filter { $0.isFavorite }
+        Task {
+            do {
+                let _: EmptyResponse? = try await apiClient.requestOptional(.toggleFavorite(id: story.id))
+                if let index = allStories.firstIndex(where: { $0.id == story.id }) {
+                    allStories[index].isFavorite.toggle()
+                    filteredStories = filterStories(searchText: searchText, theme: selectedTheme)
+                    favoriteStories = allStories.filter { $0.isFavorite }
+                }
+            } catch {
+                errorMessage = "操作失败: \(error.localizedDescription)"
+                showError = true
+            }
         }
     }
 
@@ -166,32 +183,8 @@ class StoryLibraryViewModel: ObservableObject {
 
             // 更新故事状态
             if let index = allStories.firstIndex(where: { $0.id == story.id }) {
-                allStories[index] = Story(
-                    id: allStories[index].id,
-                    title: allStories[index].title,
-                    content: allStories[index].content,
-                    summary: allStories[index].summary,
-                    theme: allStories[index].theme,
-                    style: allStories[index].style,
-                    targetAgeGroup: allStories[index].targetAgeGroup,
-                    coverImageURL: allStories[index].coverImageURL,
-                    coverGradient: allStories[index].coverGradient,
-                    coverEmoji: allStories[index].coverEmoji,
-                    audioURL: allStories[index].audioURL,
-                    localAudioPath: player.localFileURL(for: story.id).path,
-                    duration: allStories[index].duration,
-                    wordCount: allStories[index].wordCount,
-                    voiceModelId: allStories[index].voiceModelId,
-                    voiceModelName: allStories[index].voiceModelName,
-                    isAIGenerated: allStories[index].isAIGenerated,
-                    isFavorite: allStories[index].isFavorite,
-                    isDownloaded: true,
-                    playCount: allStories[index].playCount,
-                    createdAt: allStories[index].createdAt,
-                    updatedAt: Date(),
-                    tags: allStories[index].tags,
-                    characters: allStories[index].characters
-                )
+                allStories[index].isDownloaded = true
+                allStories[index].localAudioPath = player.localFileURL(for: story.id).path
                 downloadedStories = allStories.filter { $0.isDownloaded }
             }
 
@@ -199,10 +192,14 @@ class StoryLibraryViewModel: ObservableObject {
             if downloadProgress.isEmpty {
                 showingDownloadProgress = false
             }
+            toast("下载完成", type: .success)
         } catch {
             errorMessage = "下载失败: \(error.localizedDescription)"
             showError = true
             downloadProgress.removeValue(forKey: story.id)
+            if downloadProgress.isEmpty {
+                showingDownloadProgress = false
+            }
         }
     }
 
@@ -210,40 +207,30 @@ class StoryLibraryViewModel: ObservableObject {
     func deleteDownload(for story: Story) {
         try? AudioPlayerManager.shared.deleteDownload(storyId: story.id)
         if let index = allStories.firstIndex(where: { $0.id == story.id }) {
-            allStories[index] = Story(
-                id: allStories[index].id,
-                title: allStories[index].title,
-                content: allStories[index].content,
-                summary: allStories[index].summary,
-                theme: allStories[index].theme,
-                style: allStories[index].style,
-                targetAgeGroup: allStories[index].targetAgeGroup,
-                coverImageURL: allStories[index].coverImageURL,
-                coverGradient: allStories[index].coverGradient,
-                coverEmoji: allStories[index].coverEmoji,
-                audioURL: allStories[index].audioURL,
-                localAudioPath: nil,
-                duration: allStories[index].duration,
-                wordCount: allStories[index].wordCount,
-                voiceModelId: allStories[index].voiceModelId,
-                voiceModelName: allStories[index].voiceModelName,
-                isAIGenerated: allStories[index].isAIGenerated,
-                isFavorite: allStories[index].isFavorite,
-                isDownloaded: false,
-                playCount: allStories[index].playCount,
-                createdAt: allStories[index].createdAt,
-                updatedAt: Date(),
-                tags: allStories[index].tags,
-                characters: allStories[index].characters
-            )
+            allStories[index].isDownloaded = false
+            allStories[index].localAudioPath = nil
             downloadedStories = allStories.filter { $0.isDownloaded }
         }
     }
 
-    // MARK: - 刷新
-    func refresh() async {
-        currentPage = 1
-        hasMore = true
-        await loadData()
+    // MARK: - 刷新本地下载状态
+    private func refreshDownloadedStatus() {
+        for i in 0..<allStories.count {
+            allStories[i].isDownloaded = AudioPlayerManager.shared.isDownloaded(storyId: allStories[i].id)
+        }
+        downloadedStories = allStories.filter { $0.isDownloaded }
     }
+
+    // MARK: - Toast 辅助
+    private func toast(_ message: String, type: ToastType = .info) {
+        // 简单的通知方式，实际项目可使用专门的 Toast 组件
+        NotificationCenter.default.post(name: NSNotification.Name("ToastNotification"), object: nil, userInfo: [
+            "message": message,
+            "type": type.rawValue
+        ])
+    }
+}
+
+enum ToastType: String {
+    case success, error, info, warning
 }

@@ -24,8 +24,8 @@ struct VoiceModelCard: View {
                         .fill(
                             LinearGradient(
                                 gradient: Gradient(colors: [
-                                    Color(hex: voiceModel.coverColor ?? "#FFB74D") ?? AppColors.warmYellow,
-                                    (Color(hex: voiceModel.coverColor ?? "#FFB74D") ?? AppColors.warmYellow).opacity(0.6)
+                                    Color(hex: voiceModel.coverColor ?? "#FFB74D"),
+                                    Color(hex: voiceModel.coverColor ?? "#FFB74D").opacity(0.6)
                                 ]),
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing

@@ -1,0 +1,2360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>爸爸妈妈讲故事 - 管理后台</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --primary: #FF8C42;
+  --primary-dark: #E67329;
+  --primary-light: #FFA76B;
+  --bg: #FFF8F0;
+  --bg-card: #FFFFFF;
+  --text: #2D2A26;
+  --text-light: #6B6560;
+  --text-muted: #A09A94;
+  --border: #F0E6DA;
+  --danger: #E74C3C;
+  --danger-dark: #C0392B;
+  --success: #27AE60;
+  --warning: #F39C12;
+  --info: #3498DB;
+  --sidebar-width: 220px;
+  --header-height: 60px;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+a { color: var(--primary); text-decoration: none; }
+button { cursor: pointer; font-family: inherit; }
+input, select, textarea { font-family: inherit; font-size: 14px; }
+
+/* ===== Login Page ===== */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #FFF8F0 0%, #FFE8D6 100%);
+}
+.login-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 40px;
+  width: 400px;
+  box-shadow: 0 20px 60px rgba(255, 140, 66, 0.15);
+}
+.login-logo {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+.login-subtitle {
+  text-align: center;
+  color: var(--text-light);
+  margin-bottom: 32px;
+  font-size: 13px;
+}
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: var(--text);
+  font-size: 13px;
+}
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.15);
+}
+.form-textarea { min-height: 100px; resize: vertical; }
+.form-row { display: flex; gap: 12px; }
+.form-row .form-group { flex: 1; }
+.form-hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.form-error { color: var(--danger); font-size: 12px; margin-top: 4px; }
+.login-hint {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--text-muted);
+  background: #FFF8F0;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+/* ===== Buttons ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-secondary { background: #F0E6DA; color: var(--text); }
+.btn-secondary:hover { background: #E5D9C9; }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { background: var(--danger-dark); }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-lg { padding: 12px 20px; font-size: 15px; width: 100%; }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ===== Layout ===== */
+.app-layout { display: none; min-height: 100vh; }
+.app-layout.active { display: flex; }
+.sidebar {
+  width: var(--sidebar-width);
+  background: #fff;
+  border-right: 1px solid var(--border);
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  overflow-y: auto;
+  z-index: 10;
+}
+.sidebar-logo {
+  padding: 20px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sidebar-menu { padding: 12px 0; }
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  border-left: 3px solid transparent;
+}
+.menu-item:hover { background: var(--bg); color: var(--primary); }
+.menu-item.active {
+  background: var(--bg);
+  color: var(--primary);
+  border-left-color: var(--primary);
+  font-weight: 600;
+}
+.menu-icon { font-size: 18px; }
+
+.main {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+}
+.header {
+  height: var(--header-height);
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.header-title { font-size: 18px; font-weight: 600; }
+.header-right { display: flex; align-items: center; gap: 16px; }
+.user-info { display: flex; align-items: center; gap: 8px; }
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+.user-name { font-weight: 500; }
+
+.content { padding: 24px; flex: 1; }
+.page { display: none; }
+.page.active { display: block; }
+
+/* ===== Cards ===== */
+.card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  margin-bottom: 20px;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.card-title { font-size: 16px; font-weight: 600; }
+
+/* ===== Stats ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+.stat-icon.orange { background: #FFF0E3; color: var(--primary); }
+.stat-icon.blue { background: #E3F0FF; color: var(--info); }
+.stat-icon.green { background: #E3FFF0; color: var(--success); }
+.stat-icon.purple { background: #F0E3FF; color: #9B59B6; }
+.stat-value { font-size: 24px; font-weight: 700; }
+.stat-label { font-size: 13px; color: var(--text-light); margin-top: 2px; }
+
+/* ===== Dashboard Grid ===== */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 900px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+}
+
+/* ===== Table ===== */
+.table-wrapper { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+thead th {
+  text-align: left;
+  padding: 12px;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-light);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+tbody td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+tbody tr:nth-child(even) { background: #FDFAF6; }
+tbody tr:hover { background: #FFF5EB; }
+.table-actions { display: flex; gap: 6px; }
+
+/* ===== Badges ===== */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.badge-success { background: #E3FFF0; color: var(--success); }
+.badge-warning { background: #FFF5E3; color: var(--warning); }
+.badge-danger { background: #FFE3E3; color: var(--danger); }
+.badge-info { background: #E3F0FF; color: var(--info); }
+.badge-muted { background: #F0E6DA; color: var(--text-light); }
+.badge-primary { background: #FFF0E3; color: var(--primary); }
+
+/* ===== Toolbar ===== */
+.toolbar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.toolbar .search-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.toolbar .search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+.toolbar select {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+}
+
+/* ===== Pagination ===== */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-top: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.pagination-info { color: var(--text-light); font-size: 13px; }
+.pagination-btns { display: flex; gap: 4px; }
+.page-btn {
+  min-width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 6px;
+  padding: 0 8px;
+  font-size: 13px;
+}
+.page-btn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+.page-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ===== Modal ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 640px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.modal-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
+}
+.modal-title { font-size: 16px; font-weight: 600; }
+.modal-close {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  color: var(--text-light);
+  border-radius: 6px;
+}
+.modal-close:hover { background: var(--bg); }
+.modal-body { padding: 20px; }
+.modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+}
+
+/* ===== Checkbox ===== */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+.checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+}
+
+/* ===== Toast ===== */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.toast {
+  padding: 12px 20px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 13px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  animation: slideIn 0.3s ease;
+  max-width: 360px;
+}
+.toast-success { background: var(--success); }
+.toast-error { background: var(--danger); }
+.toast-info { background: var(--info); }
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* ===== Loading ===== */
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-muted);
+}
+.spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===== Empty ===== */
+.empty {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-muted);
+}
+.empty-icon { font-size: 48px; margin-bottom: 12px; }
+
+/* ===== File groups ===== */
+.file-group { margin-bottom: 20px; }
+.file-group-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.file-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+}
+.file-item {
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 12px;
+  word-break: break-all;
+}
+.file-item-name { font-weight: 500; margin-bottom: 4px; }
+.file-item-meta { color: var(--text-muted); font-size: 11px; }
+
+/* ===== Progress bar ===== */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 4px;
+  transition: width 0.3s;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .form-row { flex-direction: column; gap: 0; }
+}
+
+/* ===== Upload Page ===== */
+.upload-container { max-width: 800px; margin: 0 auto; }
+.upload-card { padding: 0; }
+.upload-form { padding: 24px; }
+.upload-section {
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.upload-section:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+}
+.optional { color: var(--text-muted); font-size: 13px; font-weight: 400; }
+.required { color: var(--danger); }
+
+/* Upload Zone */
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #FFFAF5;
+  position: relative;
+}
+.upload-zone:hover, .upload-zone.dragover {
+  border-color: var(--primary);
+  background: #FFF3E8;
+}
+.upload-zone-inner { pointer-events: none; }
+.upload-icon { font-size: 40px; margin-bottom: 8px; }
+.upload-text { font-size: 15px; color: var(--text); font-weight: 500; margin-bottom: 4px; }
+.upload-hint { font-size: 12px; color: var(--text-muted); }
+
+/* File Info */
+.file-info {
+  background: #F8F9FA;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 12px;
+}
+.file-info-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.file-icon { font-size: 24px; }
+.file-name { flex: 1; font-weight: 500; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file-size { font-size: 12px; color: var(--text-muted); }
+.btn-icon {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.btn-icon:hover { color: var(--danger); background: rgba(231,76,60,0.1); }
+
+/* Subtitle Preview */
+.subtitle-preview-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 12px 0 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.subtitle-list {
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 13px;
+}
+.subtitle-item {
+  display: flex;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid #f5f0ea;
+}
+.subtitle-time {
+  color: var(--primary);
+  font-family: monospace;
+  font-size: 12px;
+  white-space: nowrap;
+  min-width: 140px;
+}
+.subtitle-text { color: var(--text); flex: 1; }
+
+/* Upload Actions */
+.upload-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  margin-top: 0;
+}
+
+/* Result Card */
+#uploadResultContent { padding: 20px; }
+.result-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+.result-icon { font-size: 20px; }
+.result-label { color: var(--text-light); min-width: 80px; }
+.result-value { font-weight: 500; }
+.result-success { color: var(--success); }
+</style>
+</head>
+<body>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Login Page -->
+<div class="login-page" id="loginPage">
+  <div class="login-card">
+    <div class="login-logo">📖 爸爸妈妈讲故事</div>
+    <div class="login-subtitle">服务端管理后台</div>
+    <form id="loginForm">
+      <div class="form-group">
+        <label class="form-label">邮箱</label>
+        <input type="email" class="form-input" id="loginEmail" placeholder="请输入邮箱" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">密码</label>
+        <input type="password" class="form-input" id="loginPassword" placeholder="请输入密码" required>
+      </div>
+      <div class="form-error" id="loginError"></div>
+      <button type="submit" class="btn btn-primary btn-lg" id="loginBtn">登 录</button>
+    </form>
+    <div class="login-hint">
+      默认管理员账号：admin@mamababa.com / admin123456
+    </div>
+  </div>
+</div>
+
+<!-- App Layout -->
+<div class="app-layout" id="appLayout">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">📖 管理后台</div>
+    <nav class="sidebar-menu" id="sidebarMenu">
+      <div class="menu-item active" data-page="dashboard"><span class="menu-icon">📊</span>仪表盘</div>
+      <div class="menu-item" data-page="upload"><span class="menu-icon">⬆️</span>上传故事</div>
+      <div class="menu-item" data-page="stories"><span class="menu-icon">📚</span>故事管理</div>
+      <div class="menu-item" data-page="categories"><span class="menu-icon">📂</span>分类管理</div>
+      <div class="menu-item" data-page="users"><span class="menu-icon">👥</span>用户管理</div>
+      <div class="menu-item" data-page="voices"><span class="menu-icon">🎤</span>声音模型</div>
+      <div class="menu-item" data-page="files"><span class="menu-icon">📁</span>文件管理</div>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <header class="header">
+      <div class="header-title" id="headerTitle">仪表盘</div>
+      <div class="header-right">
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar">A</div>
+          <span class="user-name" id="userName">管理员</span>
+        </div>
+        <button class="btn btn-secondary btn-sm" id="logoutBtn">退出</button>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- Dashboard Page -->
+      <div class="page active" id="page-dashboard">
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-card"><div class="stat-icon orange">👥</div><div><div class="stat-value" id="statUsers">-</div><div class="stat-label">用户总数</div></div></div>
+          <div class="stat-card"><div class="stat-icon blue">📚</div><div><div class="stat-value" id="statStories">-</div><div class="stat-label">故事总数</div></div></div>
+          <div class="stat-card"><div class="stat-icon purple">🎤</div><div><div class="stat-value" id="statVoices">-</div><div class="stat-label">声音模型总数</div></div></div>
+          <div class="stat-card"><div class="stat-icon green">✨</div><div><div class="stat-value" id="statNewUsers">-</div><div class="stat-label">今日新增用户</div></div></div>
+        </div>
+        <div class="dashboard-grid">
+          <div class="card">
+            <div class="card-header"><div class="card-title">最近注册用户</div></div>
+            <div class="table-wrapper">
+              <table>
+                <thead><tr><th>昵称</th><th>邮箱</th><th>注册时间</th></tr></thead>
+                <tbody id="recentUsersBody"><tr><td colspan="3" class="loading"><span class="spinner"></span></td></tr></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">最近上传声音模型</div></div>
+            <div class="table-wrapper">
+              <table>
+                <thead><tr><th>模型名称</th><th>用户</th><th>状态</th><th>创建时间</th></tr></thead>
+                <tbody id="recentVoicesBody"><tr><td colspan="4" class="loading"><span class="spinner"></span></td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload Story Page -->
+      <div class="page" id="page-upload">
+        <div class="upload-container">
+          <div class="card upload-card">
+            <div class="card-header">
+              <div class="card-title">📤 上传新故事</div>
+              <div class="card-subtitle">填写故事信息，上传音频和字幕文件</div>
+            </div>
+            <form id="uploadForm" class="upload-form">
+              <!-- Step 1: Basic Info -->
+              <div class="upload-section">
+                <div class="section-title"><span class="step-num">1</span> 基本信息</div>
+                <div class="form-group">
+                  <label class="form-label">故事标题 <span class="required">*</span></label>
+                  <input type="text" class="form-input" id="uploadTitle" placeholder="输入故事标题" required>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">主题</label>
+                    <select class="form-select" id="uploadTheme">
+                      <option value="adventure">冒险</option>
+                      <option value="friendship">友情</option>
+                      <option value="family">家庭</option>
+                      <option value="animals">动物</option>
+                      <option value="magic">魔法</option>
+                      <option value="bedtime">睡前</option>
+                      <option value="courage">勇气</option>
+                      <option value="kindness">善良</option>
+                      <option value="fairy">童话</option>
+                      <option value="science">科普</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">风格</label>
+                    <select class="form-select" id="uploadStyle">
+                      <option value="warm">温馨</option>
+                      <option value="humorous">幽默</option>
+                      <option value="fairy">童话</option>
+                      <option value="poetic">诗意</option>
+                      <option value="educational">教育</option>
+                      <option value="exciting">刺激</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">年龄段</label>
+                    <select class="form-select" id="uploadAgeGroup">
+                      <option value="toddler">2-3岁</option>
+                      <option value="preschool" selected>4-5岁</option>
+                      <option value="earlyElementary">6-8岁</option>
+                      <option value="lateElementary">9-12岁</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">分类</label>
+                    <select class="form-select" id="uploadCategory"><option value="">选择分类</option></select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">封面 Emoji</label>
+                    <input type="text" class="form-input" id="uploadCoverEmoji" placeholder="📖" value="📖" style="font-size:20px;text-align:center;">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">状态</label>
+                    <select class="form-select" id="uploadStatus">
+                      <option value="published">已发布</option>
+                      <option value="draft">草稿</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">故事简介</label>
+                  <textarea class="form-textarea" id="uploadSummary" rows="2" placeholder="简短描述故事内容..."></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">故事正文</label>
+                  <textarea class="form-textarea" id="uploadContent" rows="6" placeholder="输入故事完整内容..."></textarea>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">标签（逗号分隔）</label>
+                    <input type="text" class="form-input" id="uploadTags" placeholder="如: 勇敢, 友谊, 森林">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">角色（逗号分隔）</label>
+                    <input type="text" class="form-input" id="uploadCharacters" placeholder="如: 小兔子, 小松鼠">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 2: Audio Upload -->
+              <div class="upload-section">
+                <div class="section-title"><span class="step-num">2</span> 音频文件</div>
+                <div class="upload-zone" id="audioUploadZone">
+                  <input type="file" id="audioFileInput" accept="audio/*" style="display:none;">
+                  <div class="upload-zone-inner" id="audioUploadInner">
+                    <div class="upload-icon">🎵</div>
+                    <div class="upload-text">点击或拖拽上传音频文件</div>
+                    <div class="upload-hint">支持 MP3, WAV, M4A, AAC, OGG, FLAC 格式，最大 200MB</div>
+                  </div>
+                  <div class="file-info" id="audioFileInfo" style="display:none;">
+                    <div class="file-info-row">
+                      <span class="file-icon">🎵</span>
+                      <span class="file-name" id="audioFileName"></span>
+                      <span class="file-size" id="audioFileSize"></span>
+                      <button type="button" class="btn-icon" id="removeAudioBtn">✕</button>
+                    </div>
+                    <audio id="audioPreview" controls style="width:100%;margin-top:8px;"></audio>
+                  </div>
+                </div>
+                <div class="form-row" style="margin-top:12px;">
+                  <div class="form-group">
+                    <label class="form-label">时长（秒）</label>
+                    <input type="number" class="form-input" id="uploadDuration" placeholder="自动检测或手动输入" min="0">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 3: Subtitle Upload -->
+              <div class="upload-section">
+                <div class="section-title"><span class="step-num">3</span> 字幕文件 <span class="optional">（可选）</span></div>
+                <div class="upload-zone" id="subtitleUploadZone">
+                  <input type="file" id="subtitleFileInput" accept=".srt,.vtt,.lrc,.ass,.ssa" style="display:none;">
+                  <div class="upload-zone-inner" id="subtitleUploadInner">
+                    <div class="upload-icon">📝</div>
+                    <div class="upload-text">点击或拖拽上传字幕文件</div>
+                    <div class="upload-hint">支持 SRT, VTT, LRC, ASS, SSA 格式</div>
+                  </div>
+                  <div class="file-info" id="subtitleFileInfo" style="display:none;">
+                    <div class="file-info-row">
+                      <span class="file-icon">📝</span>
+                      <span class="file-name" id="subtitleFileName"></span>
+                      <span class="file-size" id="subtitleFileSize"></span>
+                      <span class="badge badge-success" id="subtitleCueCount"></span>
+                      <button type="button" class="btn-icon" id="removeSubtitleBtn">✕</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group" style="margin-top:12px;">
+                  <label class="form-label">或直接粘贴字幕内容（SRT格式）</label>
+                  <textarea class="form-textarea" id="uploadSubtitleText" rows="4" placeholder="1&#10;00:00:01,000 --> 00:00:05,000&#10;这是第一行字幕..."></textarea>
+                </div>
+                <div id="subtitlePreview" style="display:none;">
+                  <div class="subtitle-preview-header">字幕预览 <span id="subtitlePreviewCount"></span></div>
+                  <div class="subtitle-list" id="subtitleList"></div>
+                </div>
+              </div>
+
+              <!-- Step 4: Cover Image -->
+              <div class="upload-section">
+                <div class="section-title"><span class="step-num">4</span> 封面图片 <span class="optional">（可选）</span></div>
+                <div class="upload-zone" id="coverUploadZone">
+                  <input type="file" id="coverFileInput" accept="image/*" style="display:none;">
+                  <div class="upload-zone-inner" id="coverUploadInner">
+                    <div class="upload-icon">🖼️</div>
+                    <div class="upload-text">点击或拖拽上传封面图片</div>
+                    <div class="upload-hint">支持 JPG, PNG, GIF, WebP, SVG 格式，最大 10MB</div>
+                  </div>
+                  <div class="file-info" id="coverFileInfo" style="display:none;">
+                    <div class="file-info-row">
+                      <img id="coverPreviewImg" style="width:60px;height:60px;object-fit:cover;border-radius:8px;">
+                      <span class="file-name" id="coverFileName"></span>
+                      <span class="file-size" id="coverFileSize"></span>
+                      <button type="button" class="btn-icon" id="removeCoverBtn">✕</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Submit -->
+              <div class="upload-actions">
+                <button type="button" class="btn btn-secondary" id="resetUploadBtn">重置</button>
+                <button type="submit" class="btn btn-primary btn-lg" id="submitUploadBtn">
+                  <span id="submitBtnText">🚀 上传故事</span>
+                  <span id="submitBtnLoading" style="display:none;">上传中...</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Upload Result -->
+          <div class="card" id="uploadResultCard" style="display:none;">
+            <div class="card-header"><div class="card-title">✅ 上传结果</div></div>
+            <div id="uploadResultContent"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stories Page -->
+      <div class="page" id="page-stories">
+        <div class="card">
+          <div class="toolbar">
+            <input type="text" class="search-input" id="storySearch" placeholder="搜索故事标题...">
+            <select id="storyThemeFilter">
+              <option value="">全部主题</option>
+              <option value="adventure">冒险</option>
+              <option value="friendship">友情</option>
+              <option value="family">家庭</option>
+              <option value="animals">动物</option>
+              <option value="magic">魔法</option>
+              <option value="bedtime">睡前</option>
+              <option value="courage">勇气</option>
+              <option value="kindness">善良</option>
+              <option value="fairy">童话</option>
+              <option value="science">科普</option>
+            </select>
+            <select id="storyAgeFilter">
+              <option value="">全部年龄段</option>
+              <option value="toddler">2-3岁</option>
+              <option value="preschool">4-5岁</option>
+              <option value="earlyElementary">6-8岁</option>
+              <option value="lateElementary">9-12岁</option>
+            </select>
+            <select id="storyStatusFilter">
+              <option value="">全部状态</option>
+              <option value="draft">草稿</option>
+              <option value="published">已发布</option>
+              <option value="archived">已归档</option>
+            </select>
+            <button class="btn btn-primary" id="newStoryBtn">+ 新建故事</button>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr>
+                <th>标题</th><th>分类</th><th>主题</th><th>年龄段</th><th>播放</th><th>收藏</th><th>状态</th><th>创建时间</th><th>操作</th>
+              </tr></thead>
+              <tbody id="storiesBody"></tbody>
+            </table>
+          </div>
+          <div class="pagination" id="storiesPagination"></div>
+        </div>
+      </div>
+
+      <!-- Categories Page -->
+      <div class="page" id="page-categories">
+        <div class="card">
+          <div class="toolbar">
+            <div style="flex:1"></div>
+            <button class="btn btn-primary" id="newCategoryBtn">+ 新建分类</button>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr>
+                <th>图标</th><th>名称</th><th>描述</th><th>故事数量</th><th>排序</th><th>操作</th>
+              </tr></thead>
+              <tbody id="categoriesBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Users Page -->
+      <div class="page" id="page-users">
+        <div class="card">
+          <div class="toolbar">
+            <input type="text" class="search-input" id="userSearch" placeholder="搜索昵称或邮箱...">
+            <select id="userRoleFilter">
+              <option value="">全部角色</option>
+              <option value="user">普通用户</option>
+              <option value="admin">管理员</option>
+            </select>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr>
+                <th>昵称</th><th>邮箱</th><th>角色</th><th>会员等级</th><th>会员到期</th><th>注册时间</th><th>操作</th>
+              </tr></thead>
+              <tbody id="usersBody"></tbody>
+            </table>
+          </div>
+          <div class="pagination" id="usersPagination"></div>
+        </div>
+      </div>
+
+      <!-- Voices Page -->
+      <div class="page" id="page-voices">
+        <div class="card">
+          <div class="toolbar">
+            <select id="voiceStatusFilter">
+              <option value="">全部状态</option>
+              <option value="recording">录音中</option>
+              <option value="training">训练中</option>
+              <option value="ready">就绪</option>
+              <option value="failed">失败</option>
+            </select>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr>
+                <th>模型名称</th><th>用户</th><th>类型</th><th>状态</th><th>进度</th><th>录音数</th><th>创建时间</th><th>操作</th>
+              </tr></thead>
+              <tbody id="voicesBody"></tbody>
+            </table>
+          </div>
+          <div class="pagination" id="voicesPagination"></div>
+        </div>
+      </div>
+
+      <!-- Files Page -->
+      <div class="page" id="page-files">
+        <div class="card">
+          <div class="card-header"><div class="card-title">文件统计</div></div>
+          <div class="stats-grid" id="fileStats">
+            <div class="stat-card"><div class="stat-icon orange">🎵</div><div><div class="stat-value" id="fileAudioCount">-</div><div class="stat-label">音频文件</div></div></div>
+            <div class="stat-card"><div class="stat-icon blue">🎙️</div><div><div class="stat-value" id="fileRecordCount">-</div><div class="stat-label">录音文件</div></div></div>
+            <div class="stat-card"><div class="stat-icon green">🖼️</div><div><div class="stat-value" id="fileAvatarCount">-</div><div class="stat-label">头像文件</div></div></div>
+            <div class="stat-card"><div class="stat-icon purple">📷</div><div><div class="stat-value" id="fileCoverCount">-</div><div class="stat-label">封面文件</div></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">文件浏览</div><button class="btn btn-secondary btn-sm" id="refreshFilesBtn">刷新</button></div>
+          <div id="fileBrowser"><div class="loading"><span class="spinner"></span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Story Modal -->
+<div class="modal-overlay" id="storyModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="storyModalTitle">新建故事</div>
+      <button class="modal-close" onclick="closeModal('storyModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="storyId">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">标题 *</label>
+          <input type="text" class="form-input" id="storyTitle" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">封面 Emoji</label>
+          <input type="text" class="form-input" id="storyCoverEmoji" placeholder="📖" maxlength="4">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">摘要</label>
+        <input type="text" class="form-input" id="storySummary" placeholder="故事简短摘要">
+      </div>
+      <div class="form-group">
+        <label class="form-label">内容</label>
+        <textarea class="form-textarea" id="storyContent" rows="6" placeholder="故事正文内容"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">主题</label>
+          <select class="form-select" id="storyTheme">
+            <option value="adventure">冒险</option>
+            <option value="friendship">友情</option>
+            <option value="family">家庭</option>
+            <option value="animals">动物</option>
+            <option value="magic">魔法</option>
+            <option value="bedtime">睡前</option>
+            <option value="courage">勇气</option>
+            <option value="kindness">善良</option>
+            <option value="fairy">童话</option>
+            <option value="science">科普</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">风格</label>
+          <select class="form-select" id="storyStyle">
+            <option value="warm">温馨</option>
+            <option value="humorous">幽默</option>
+            <option value="fairy">童话</option>
+            <option value="poetic">诗意</option>
+            <option value="educational">教育</option>
+            <option value="exciting">刺激</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">年龄段</label>
+          <select class="form-select" id="storyAgeGroup">
+            <option value="toddler">2-3岁</option>
+            <option value="preschool">4-5岁</option>
+            <option value="earlyElementary">6-8岁</option>
+            <option value="lateElementary">9-12岁</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">分类</label>
+          <select class="form-select" id="storyCategory"></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">时长（秒）</label>
+          <input type="number" class="form-input" id="storyDuration" min="0" step="0.5">
+        </div>
+        <div class="form-group">
+          <label class="form-label">字数</label>
+          <input type="number" class="form-input" id="storyWordCount" min="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">标签（逗号分隔）</label>
+        <input type="text" class="form-input" id="storyTags" placeholder="勇敢, 友谊, 成长">
+      </div>
+      <div class="form-group">
+        <label class="form-label">角色（逗号分隔）</label>
+        <input type="text" class="form-input" id="storyCharacters" placeholder="小兔子, 小熊">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">状态</label>
+          <select class="form-select" id="storyStatus">
+            <option value="draft">草稿</option>
+            <option value="published">已发布</option>
+            <option value="archived">已归档</option>
+          </select>
+        </div>
+        <div class="form-group" style="display:flex;align-items:flex-end;">
+          <label class="checkbox-label">
+            <input type="checkbox" id="storyIsPremium">
+            <span>付费故事（Premium）</span>
+          </label>
+        </div>
+      </div>
+      <div class="form-group" id="audioUploadGroup" style="display:none;">
+        <label class="form-label">上传音频</label>
+        <input type="file" class="form-input" id="storyAudioFile" accept="audio/*">
+        <div class="form-hint" id="audioUploadHint"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('storyModal')">取消</button>
+      <button class="btn btn-primary" id="saveStoryBtn">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Category Modal -->
+<div class="modal-overlay" id="categoryModal">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <div class="modal-title" id="categoryModalTitle">新建分类</div>
+      <button class="modal-close" onclick="closeModal('categoryModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="categoryId">
+      <div class="form-group">
+        <label class="form-label">名称 *</label>
+        <input type="text" class="form-input" id="categoryName" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">图标（Emoji）</label>
+        <input type="text" class="form-input" id="categoryIcon" placeholder="📚" maxlength="4">
+      </div>
+      <div class="form-group">
+        <label class="form-label">描述</label>
+        <textarea class="form-textarea" id="categoryDescription" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">排序（数字越小越靠前）</label>
+        <input type="number" class="form-input" id="categorySort" value="0" min="0">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('categoryModal')">取消</button>
+      <button class="btn btn-primary" id="saveCategoryBtn">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- User Modal -->
+<div class="modal-overlay" id="userModal">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <div class="modal-title">编辑用户</div>
+      <button class="modal-close" onclick="closeModal('userModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editUserId">
+      <div class="form-group">
+        <label class="form-label">昵称</label>
+        <input type="text" class="form-input" id="editUserNickname" disabled>
+      </div>
+      <div class="form-group">
+        <label class="form-label">邮箱</label>
+        <input type="email" class="form-input" id="editUserEmail" disabled>
+      </div>
+      <div class="form-group">
+        <label class="form-label">角色</label>
+        <select class="form-select" id="editUserRole">
+          <option value="user">普通用户</option>
+          <option value="admin">管理员</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">会员等级</label>
+        <select class="form-select" id="editUserMembership">
+          <option value="free">免费</option>
+          <option value="basic">基础会员</option>
+          <option value="premium">高级会员</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">会员到期时间</label>
+        <input type="date" class="form-input" id="editUserMembershipExpiry">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('userModal')">取消</button>
+      <button class="btn btn-primary" id="saveUserBtn">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Voice Detail Modal -->
+<div class="modal-overlay" id="voiceModal">
+  <div class="modal" style="max-width:720px;">
+    <div class="modal-header">
+      <div class="modal-title">声音模型详情</div>
+      <button class="modal-close" onclick="closeModal('voiceModal')">&times;</button>
+    </div>
+    <div class="modal-body" id="voiceModalBody">
+      <div class="loading"><span class="spinner"></span></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('voiceModal')">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Dialog -->
+<div class="modal-overlay" id="confirmDialog">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header">
+      <div class="modal-title" id="confirmTitle">确认操作</div>
+    </div>
+    <div class="modal-body">
+      <div id="confirmMessage" style="font-size:14px;color:var(--text);line-height:1.6;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="confirmCancelBtn">取消</button>
+      <button class="btn btn-danger" id="confirmOkBtn">确认删除</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ State ============
+const API_BASE = '/api';
+const state = {
+  token: localStorage.getItem('admin_token') || '',
+  user: JSON.parse(localStorage.getItem('admin_user') || 'null'),
+  currentPage: 'dashboard',
+  categories: [],
+  stories: { page: 1, pageSize: 10, total: 0 },
+  users: { page: 1, pageSize: 10, total: 0 },
+  voices: { page: 1, pageSize: 10, total: 0 },
+};
+
+// ============ API Helper ============
+async function api(path, options = {}) {
+  const headers = options.headers || {};
+  if (state.token) headers['Authorization'] = `Bearer ${state.token}`;
+  if (!(options.body instanceof FormData) && options.body && !headers['Content-Type']) {
+    headers['Content-Type'] = 'application/json';
+  }
+  try {
+    const res = await fetch(API_BASE + path, { ...options, headers });
+    const data = await res.json().catch(() => ({ code: res.status, message: res.statusText }));
+    if (res.status === 401) {
+      logout();
+      throw new Error('未授权，请重新登录');
+    }
+    if (data.code !== 0) {
+      throw new Error(data.message || '请求失败');
+    }
+    return data.data;
+  } catch (err) {
+    toast(err.message, 'error');
+    throw err;
+  }
+}
+
+// ============ Confirm Dialog ============
+function showConfirm(message, options = {}) {
+  return new Promise((resolve) => {
+    const dialog = document.getElementById('confirmDialog');
+    const titleEl = document.getElementById('confirmTitle');
+    const msgEl = document.getElementById('confirmMessage');
+    const okBtn = document.getElementById('confirmOkBtn');
+    const cancelBtn = document.getElementById('confirmCancelBtn');
+
+    titleEl.textContent = options.title || '确认操作';
+    msgEl.textContent = message;
+    okBtn.textContent = options.okText || '确认';
+    okBtn.className = 'btn ' + (options.okClass || 'btn-primary');
+
+    const cleanup = () => {
+      dialog.classList.remove('active');
+      okBtn.onclick = null;
+      cancelBtn.onclick = null;
+    };
+
+    okBtn.onclick = () => { cleanup(); resolve(true); };
+    cancelBtn.onclick = () => { cleanup(); resolve(false); };
+
+    dialog.classList.add('active');
+  });
+}
+
+// ============ Toast ============
+function toast(msg, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.textContent = msg;
+  container.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }, 3000);
+}
+
+// ============ Modal ============
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+// ============ Auth ============
+function logout() {
+  state.token = '';
+  state.user = null;
+  localStorage.removeItem('admin_token');
+  localStorage.removeItem('admin_user');
+  document.getElementById('appLayout').classList.remove('active');
+  document.getElementById('loginPage').style.display = 'flex';
+}
+
+async function login(email, password) {
+  const data = await api('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+  state.token = data.token;
+  state.user = data.user;
+  localStorage.setItem('admin_token', data.token);
+  localStorage.setItem('admin_user', JSON.stringify(data.user));
+  initApp();
+}
+
+function initAuthUI() {
+  if (state.user) {
+    document.getElementById('userName').textContent = state.user.nickname || state.user.email || '管理员';
+    document.getElementById('userAvatar').textContent = (state.user.nickname || state.user.email || 'A').charAt(0).toUpperCase();
+  }
+}
+
+// ============ Navigation ============
+const pageTitles = {
+  dashboard: '仪表盘',
+  upload: '上传故事',
+  stories: '故事管理',
+  categories: '分类管理',
+  users: '用户管理',
+  voices: '声音模型',
+  files: '文件管理',
+};
+
+function navigate(page) {
+  state.currentPage = page;
+  document.querySelectorAll('.menu-item').forEach(m => m.classList.toggle('active', m.dataset.page === page));
+  document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === `page-${page}`));
+  document.getElementById('headerTitle').textContent = pageTitles[page] || '';
+  // Load page data
+  if (page === 'dashboard') loadDashboard();
+  else if (page === 'upload') initUploadPage();
+  else if (page === 'stories') loadStories();
+  else if (page === 'categories') loadCategories();
+  else if (page === 'users') loadUsers();
+  else if (page === 'voices') loadVoices();
+  else if (page === 'files') loadFiles();
+}
+
+// ============ Formatting ============
+function fmtDate(d) {
+  if (!d) return '-';
+  const date = new Date(d);
+  if (isNaN(date.getTime())) return d;
+  return date.toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+}
+function fmtDateShort(d) {
+  if (!d) return '-';
+  const date = new Date(d);
+  if (isNaN(date.getTime())) return d;
+  return date.toLocaleDateString('zh-CN');
+}
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function statusBadge(status) {
+  const map = {
+    published: ['已发布', 'success'], draft: ['草稿', 'warning'], archived: ['已归档', 'muted'],
+    ready: ['就绪', 'success'], training: ['训练中', 'warning'], recording: ['录音中', 'info'], failed: ['失败', 'danger'],
+    admin: ['管理员', 'primary'], user: ['用户', 'muted'],
+    free: ['免费', 'muted'], basic: ['基础', 'info'], premium: ['高级', 'primary'],
+  };
+  const [text, cls] = map[status] || [status, 'muted'];
+  return `<span class="badge badge-${cls}">${text}</span>`;
+}
+function themeLabel(t) {
+  const map = { adventure: '冒险', friendship: '友情', family: '家庭', animals: '动物', magic: '魔法', bedtime: '睡前', courage: '勇气', kindness: '善良', fairy: '童话', science: '科普', fable: '寓言', life: '生活', fantasy: '奇幻' };
+  return map[t] || t || '-';
+}
+function styleLabel(s) {
+  const map = { warm: '温馨', humorous: '幽默', funny: '幽默', fairy: '童话', poetic: '诗意', educational: '教育', exciting: '刺激', adventure: '冒险' };
+  return map[s] || s || '-';
+}
+function ageLabel(a) {
+  const map = { toddler: '2-3岁', preschool: '4-5岁', earlyElementary: '6-8岁', lateElementary: '9-12岁' };
+  return map[a] || a || '-';
+}
+function ownerTypeLabel(t) {
+  const map = { mom: '妈妈', dad: '爸爸', kid: '孩子', custom: '自定义' };
+  return map[t] || t || '-';
+}
+function parseJsonField(val) {
+  if (!val) return [];
+  if (Array.isArray(val)) return val;
+  if (typeof val === 'string') {
+    try {
+      const parsed = JSON.parse(val);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {}
+    // comma-separated fallback
+    return val.split(',').map(s => s.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+// ============ Dashboard ============
+async function loadDashboard() {
+  try {
+    const stats = await api('/users/stats');
+    document.getElementById('statUsers').textContent = stats.totalUsers ?? stats.userCount ?? '-';
+    document.getElementById('statStories').textContent = stats.totalStories ?? stats.storyCount ?? '-';
+    document.getElementById('statVoices').textContent = stats.totalVoices ?? stats.voiceCount ?? '-';
+    document.getElementById('statNewUsers').textContent = stats.todayNewUsers ?? stats.newUsersToday ?? '-';
+  } catch (e) { /* toast already shown */ }
+
+  // Recent users
+  const recentUsersEl = document.getElementById('recentUsersBody');
+  recentUsersEl.innerHTML = '<tr><td colspan="3" class="loading"><span class="spinner"></span></td></tr>';
+  try {
+    const u = await api('/users?page=1&pageSize=10');
+    const list = u.list || u.users || [];
+    if (!list.length) { recentUsersEl.innerHTML = '<tr><td colspan="3" class="empty">暂无数据</td></tr>'; }
+    else {
+      recentUsersEl.innerHTML = list.map(x => `<tr>
+        <td>${escapeHtml(x.nickname || '-')}</td>
+        <td>${escapeHtml(x.email || '-')}</td>
+        <td>${fmtDate(x.createdAt || x.created_at)}</td>
+      </tr>`).join('');
+    }
+  } catch { recentUsersEl.innerHTML = '<tr><td colspan="3" class="empty">加载失败</td></tr>'; }
+
+  // Recent voices
+  const rv = document.getElementById('recentVoicesBody');
+  rv.innerHTML = '<tr><td colspan="4" class="loading"><span class="spinner"></span></td></tr>';
+  try {
+    const v = await api('/voices/all?page=1&pageSize=10');
+    const list = v.list || v.voices || [];
+    if (!list.length) { rv.innerHTML = '<tr><td colspan="4" class="empty">暂无数据</td></tr>'; }
+    else {
+      rv.innerHTML = list.map(x => `<tr>
+        <td>${escapeHtml(x.name || x.modelName || '-')}</td>
+        <td>${escapeHtml(x.user?.nickname || x.userNickname || '-')}</td>
+        <td>${statusBadge(x.status)}</td>
+        <td>${fmtDate(x.createdAt || x.created_at)}</td>
+      </tr>`).join('');
+    }
+  } catch { rv.innerHTML = '<tr><td colspan="4" class="empty">加载失败</td></tr>'; }
+}
+
+// ============ Categories ============
+async function loadCategories() {
+  const body = document.getElementById('categoriesBody');
+  body.innerHTML = '<tr><td colspan="6" class="loading"><span class="spinner"></span></td></tr>';
+  try {
+    const list = await api('/stories/categories');
+    state.categories = Array.isArray(list) ? list : (list.list || []);
+    if (!state.categories.length) { body.innerHTML = '<tr><td colspan="6" class="empty">暂无分类</td></tr>'; }
+    else {
+      body.innerHTML = state.categories.map(c => `<tr>
+        <td style="font-size:24px;">${escapeHtml(c.icon || '📂')}</td>
+        <td>${escapeHtml(c.name)}</td>
+        <td>${escapeHtml(c.description || '-')}</td>
+        <td>${c.storyCount ?? c.story_count ?? 0}</td>
+        <td>${c.sortOrder ?? c.sort ?? 0}</td>
+        <td class="table-actions">
+          <button class="btn btn-secondary btn-sm" onclick="editCategory('${c.id}')">编辑</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteCategory('${c.id}')">删除</button>
+        </td>
+      </tr>`).join('');
+    }
+    // Update category selects
+    const catOptions = '<option value="">无分类</option>' + state.categories.map(c => `<option value="${c.id}">${c.icon || '📂'} ${escapeHtml(c.name)}</option>`).join('');
+    const sel = document.getElementById('storyCategory');
+    if (sel) sel.innerHTML = catOptions;
+    const uploadSel = document.getElementById('uploadCategory');
+    if (uploadSel) uploadSel.innerHTML = '<option value="">选择分类</option>' + state.categories.map(c => `<option value="${c.id}">${c.icon || '📂'} ${escapeHtml(c.name)}</option>`).join('');
+  } catch { body.innerHTML = '<tr><td colspan="6" class="empty">加载失败</td></tr>'; }
+}
+
+function openCategoryModal(cat) {
+  document.getElementById('categoryId').value = cat?.id || '';
+  document.getElementById('categoryName').value = cat?.name || '';
+  document.getElementById('categoryIcon').value = cat?.icon || '';
+  document.getElementById('categoryDescription').value = cat?.description || '';
+  document.getElementById('categorySort').value = cat?.sortOrder ?? cat?.sort ?? 0;
+  document.getElementById('categoryModalTitle').textContent = cat ? '编辑分类' : '新建分类';
+  openModal('categoryModal');
+}
+
+function editCategory(id) {
+  const cat = state.categories.find(c => c.id == id);
+  openCategoryModal(cat);
+}
+
+async function deleteCategory(id) {
+  const ok = await showConfirm('确定要删除该分类吗？', { title: '删除分类', okText: '确认删除', okClass: 'btn-danger' });
+  if (!ok) return;
+  try {
+    await api(`/stories/categories/${id}`, { method: 'DELETE' });
+    toast('删除成功', 'success');
+    loadCategories();
+  } catch {}
+}
+
+document.getElementById('newCategoryBtn').onclick = () => openCategoryModal(null);
+document.getElementById('saveCategoryBtn').onclick = async () => {
+  const id = document.getElementById('categoryId').value;
+  const payload = {
+    name: document.getElementById('categoryName').value.trim(),
+    icon: document.getElementById('categoryIcon').value.trim(),
+    description: document.getElementById('categoryDescription').value.trim(),
+    sortOrder: parseInt(document.getElementById('categorySort').value) || 0,
+  };
+  if (!payload.name) { toast('请输入分类名称', 'error'); return; }
+  try {
+    if (id) await api(`/stories/categories/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+    else await api('/stories/categories', { method: 'POST', body: JSON.stringify(payload) });
+    toast('保存成功', 'success');
+    closeModal('categoryModal');
+    loadCategories();
+  } catch {}
+};
+
+// ============ Stories ============
+async function loadStories() {
+  await loadCategories(); // ensure categories loaded
+  const body = document.getElementById('storiesBody');
+  body.innerHTML = '<tr><td colspan="9" class="loading"><span class="spinner"></span></td></tr>';
+  const params = new URLSearchParams({
+    page: state.stories.page,
+    pageSize: state.stories.pageSize,
+    keyword: document.getElementById('storySearch').value.trim(),
+    theme: document.getElementById('storyThemeFilter').value,
+    targetAgeGroup: document.getElementById('storyAgeFilter').value,
+    status: document.getElementById('storyStatusFilter').value,
+  });
+  try {
+    const data = await api(`/stories?${params}`);
+    const list = data.list || data.stories || [];
+    const pg = data.pagination || { page: state.stories.page, pageSize: state.stories.pageSize, total: list.length, totalPages: 1 };
+    state.stories.total = pg.total;
+    if (!list.length) { body.innerHTML = '<tr><td colspan="9" class="empty">暂无故事</td></tr>'; }
+    else {
+      body.innerHTML = list.map(s => {
+        const catName = s.category?.name || state.categories.find(c => c.id == s.categoryId)?.name || '-';
+        return `<tr>
+          <td><strong>${escapeHtml(s.coverEmoji || '📖')} ${escapeHtml(s.title)}</strong></td>
+          <td>${escapeHtml(catName)}</td>
+          <td>${themeLabel(s.theme)}</td>
+          <td>${ageLabel(s.targetAgeGroup)}</td>
+          <td>${s.playCount ?? 0}</td>
+          <td>${s.favoriteCount ?? 0}</td>
+          <td>${statusBadge(s.status)}</td>
+          <td>${fmtDate(s.createdAt)}</td>
+          <td class="table-actions">
+            <button class="btn btn-secondary btn-sm" onclick="editStory('${s.id}')">编辑</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteStory('${s.id}')">删除</button>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+    renderPagination('storiesPagination', pg, p => { state.stories.page = p; loadStories(); });
+  } catch { body.innerHTML = '<tr><td colspan="9" class="empty">加载失败</td></tr>'; }
+}
+
+function openStoryModal(story) {
+  document.getElementById('storyId').value = story?.id || '';
+  document.getElementById('storyTitle').value = story?.title || '';
+  document.getElementById('storyCoverEmoji').value = story?.coverEmoji || '📖';
+  document.getElementById('storySummary').value = story?.summary || '';
+  document.getElementById('storyContent').value = story?.content || '';
+  document.getElementById('storyTheme').value = story?.theme || 'adventure';
+  document.getElementById('storyStyle').value = story?.style || 'warm';
+  document.getElementById('storyAgeGroup').value = story?.targetAgeGroup || 'preschool';
+  document.getElementById('storyCategory').value = story?.categoryId || '';
+  document.getElementById('storyDuration').value = story?.duration ?? '';
+  document.getElementById('storyWordCount').value = story?.wordCount ?? '';
+  document.getElementById('storyTags').value = parseJsonField(story?.tags).join(', ');
+  document.getElementById('storyCharacters').value = parseJsonField(story?.characters).join(', ');
+  document.getElementById('storyStatus').value = story?.status || 'draft';
+  document.getElementById('storyIsPremium').checked = !!story?.isPremium;
+  document.getElementById('storyAudioFile').value = '';
+  document.getElementById('audioUploadHint').textContent = story?.audioUrl ? '当前已有音频，上传新音频将覆盖' : '';
+  document.getElementById('audioUploadGroup').style.display = story ? 'block' : 'block';
+  document.getElementById('storyModalTitle').textContent = story ? '编辑故事' : '新建故事';
+  openModal('storyModal');
+}
+
+function editStory(id) {
+  api(`/stories/${id}`).then(s => openStoryModal(s)).catch(() => {});
+}
+
+async function deleteStory(id) {
+  const ok = await showConfirm('确定要删除该故事吗？', { title: '删除故事', okText: '确认删除', okClass: 'btn-danger' });
+  if (!ok) return;
+  try {
+    await api(`/stories/${id}`, { method: 'DELETE' });
+    toast('删除成功', 'success');
+    loadStories();
+  } catch {}
+}
+
+document.getElementById('newStoryBtn').onclick = () => openStoryModal(null);
+
+document.getElementById('saveStoryBtn').onclick = async () => {
+  const id = document.getElementById('storyId').value;
+  const title = document.getElementById('storyTitle').value.trim();
+  if (!title) { toast('请输入标题', 'error'); return; }
+  const payload = {
+    title,
+    coverEmoji: document.getElementById('storyCoverEmoji').value.trim() || '📖',
+    summary: document.getElementById('storySummary').value.trim(),
+    content: document.getElementById('storyContent').value,
+    theme: document.getElementById('storyTheme').value,
+    style: document.getElementById('storyStyle').value,
+    targetAgeGroup: document.getElementById('storyAgeGroup').value,
+    categoryId: document.getElementById('storyCategory').value || null,
+    duration: parseFloat(document.getElementById('storyDuration').value) || 0,
+    wordCount: parseInt(document.getElementById('storyWordCount').value) || 0,
+    tags: document.getElementById('storyTags').value.split(',').map(s => s.trim()).filter(Boolean),
+    characters: document.getElementById('storyCharacters').value.split(',').map(s => s.trim()).filter(Boolean),
+    status: document.getElementById('storyStatus').value,
+    isPremium: document.getElementById('storyIsPremium').checked,
+  };
+  try {
+    let savedId = id;
+    if (id) {
+      await api(`/stories/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+    } else {
+      const created = await api('/stories', { method: 'POST', body: JSON.stringify(payload) });
+      savedId = created.id || id;
+    }
+    // Upload audio if selected
+    const audioFile = document.getElementById('storyAudioFile').files[0];
+    if (audioFile && savedId) {
+      const fd = new FormData();
+      fd.append('audio', audioFile);
+      document.getElementById('audioUploadHint').textContent = '正在上传音频...';
+      await api(`/stories/${savedId}/audio`, { method: 'POST', body: fd });
+    }
+    toast('保存成功', 'success');
+    closeModal('storyModal');
+    loadStories();
+  } catch {}
+};
+
+// Story search/filter
+let storySearchTimer;
+document.getElementById('storySearch').addEventListener('input', () => {
+  clearTimeout(storySearchTimer);
+  storySearchTimer = setTimeout(() => { state.stories.page = 1; loadStories(); }, 400);
+});
+['storyThemeFilter', 'storyAgeFilter', 'storyStatusFilter'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => { state.stories.page = 1; loadStories(); });
+});
+
+// ============ Users ============
+async function loadUsers() {
+  const body = document.getElementById('usersBody');
+  body.innerHTML = '<tr><td colspan="7" class="loading"><span class="spinner"></span></td></tr>';
+  const params = new URLSearchParams({
+    page: state.users.page,
+    pageSize: state.users.pageSize,
+    keyword: document.getElementById('userSearch').value.trim(),
+    role: document.getElementById('userRoleFilter').value,
+  });
+  try {
+    const data = await api(`/users?${params}`);
+    const list = data.list || data.users || [];
+    const pg = data.pagination || { page: state.users.page, pageSize: state.users.pageSize, total: list.length, totalPages: 1 };
+    state.users.total = pg.total;
+    if (!list.length) { body.innerHTML = '<tr><td colspan="7" class="empty">暂无用户</td></tr>'; }
+    else {
+      body.innerHTML = list.map(u => `<tr>
+        <td>${escapeHtml(u.nickname || '-')}</td>
+        <td>${escapeHtml(u.email || '-')}</td>
+        <td>${statusBadge(u.role)}</td>
+        <td>${statusBadge(u.membershipTier || 'free')}</td>
+        <td>${fmtDateShort(u.membershipExpireAt)}</td>
+        <td>${fmtDate(u.createdAt)}</td>
+        <td class="table-actions">
+          <button class="btn btn-secondary btn-sm" onclick="editUser('${u.id}')">编辑</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteUser('${u.id}')">删除</button>
+        </td>
+      </tr>`).join('');
+    }
+    renderPagination('usersPagination', pg, p => { state.users.page = p; loadUsers(); });
+  } catch { body.innerHTML = '<tr><td colspan="7" class="empty">加载失败</td></tr>'; }
+}
+
+function editUser(id) {
+  api(`/users/${id}`).then(u => {
+    document.getElementById('editUserId').value = u.id;
+    document.getElementById('editUserNickname').value = u.nickname || '';
+    document.getElementById('editUserEmail').value = u.email || '';
+    document.getElementById('editUserRole').value = u.role || 'user';
+    document.getElementById('editUserMembership').value = u.membershipTier || 'free';
+    const exp = u.membershipExpireAt;
+    document.getElementById('editUserMembershipExpiry').value = exp ? new Date(exp).toISOString().slice(0, 10) : '';
+    openModal('userModal');
+  }).catch(() => {});
+}
+
+async function deleteUser(id) {
+  const ok = await showConfirm('确定要删除该用户吗？此操作不可恢复。', { title: '删除用户', okText: '确认删除', okClass: 'btn-danger' });
+  if (!ok) return;
+  try {
+    await api(`/users/${id}`, { method: 'DELETE' });
+    toast('删除成功', 'success');
+    loadUsers();
+  } catch {}
+}
+
+document.getElementById('saveUserBtn').onclick = async () => {
+  const id = document.getElementById('editUserId').value;
+  const expiryVal = document.getElementById('editUserMembershipExpiry').value;
+  const payload = {
+    role: document.getElementById('editUserRole').value,
+    membershipTier: document.getElementById('editUserMembership').value,
+    membershipExpireAt: expiryVal ? new Date(expiryVal).toISOString() : null,
+  };
+  try {
+    await api(`/users/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+    toast('保存成功', 'success');
+    closeModal('userModal');
+    loadUsers();
+  } catch {}
+};
+
+let userSearchTimer;
+document.getElementById('userSearch').addEventListener('input', () => {
+  clearTimeout(userSearchTimer);
+  userSearchTimer = setTimeout(() => { state.users.page = 1; loadUsers(); }, 400);
+});
+document.getElementById('userRoleFilter').addEventListener('change', () => { state.users.page = 1; loadUsers(); });
+
+// ============ Voices ============
+async function loadVoices() {
+  const body = document.getElementById('voicesBody');
+  body.innerHTML = '<tr><td colspan="8" class="loading"><span class="spinner"></span></td></tr>';
+  const params = new URLSearchParams({
+    page: state.voices.page,
+    pageSize: state.voices.pageSize,
+    status: document.getElementById('voiceStatusFilter').value,
+  });
+  try {
+    const data = await api(`/voices/all?${params}`);
+    const list = data.list || data.voices || [];
+    const pg = data.pagination || { page: state.voices.page, pageSize: state.voices.pageSize, total: list.length, totalPages: 1 };
+    state.voices.total = pg.total;
+    if (!list.length) { body.innerHTML = '<tr><td colspan="8" class="empty">暂无声音模型</td></tr>'; }
+    else {
+      body.innerHTML = list.map(v => {
+        const progress = Math.round((v.progress ?? 0) * 100);
+        const recCount = v._count?.recordings ?? v.recordingCount ?? 0;
+        return `<tr>
+          <td>${escapeHtml(v.name || '-')}</td>
+          <td>${escapeHtml(v.user?.nickname || '-')}</td>
+          <td>${ownerTypeLabel(v.ownerType)}</td>
+          <td>${statusBadge(v.status)}</td>
+          <td><div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${progress}%</div></td>
+          <td>${recCount}</td>
+          <td>${fmtDate(v.createdAt)}</td>
+          <td class="table-actions">
+            <button class="btn btn-secondary btn-sm" onclick="viewVoice('${v.id}')">详情</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteVoice('${v.id}')">删除</button>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+    renderPagination('voicesPagination', pg, p => { state.voices.page = p; loadVoices(); });
+  } catch { body.innerHTML = '<tr><td colspan="8" class="empty">加载失败</td></tr>'; }
+}
+
+async function viewVoice(id) {
+  const body = document.getElementById('voiceModalBody');
+  body.innerHTML = '<div class="loading"><span class="spinner"></span></div>';
+  openModal('voiceModal');
+  try {
+    const v = await api(`/voices/${id}`);
+    const recordings = v.recordings || [];
+    body.innerHTML = `
+      <div style="margin-bottom:16px;">
+        <h3 style="margin-bottom:8px;">${escapeHtml(v.name || '声音模型')}</h3>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--text-light);">
+          <span>类型：${ownerTypeLabel(v.ownerType)}</span>
+          <span>状态：${statusBadge(v.status)}</span>
+          <span>进度：${Math.round((v.progress ?? 0) * 100)}%</span>
+          <span>创建时间：${fmtDate(v.createdAt)}</span>
+        </div>
+      </div>
+      <div>
+        <h4 style="margin-bottom:8px;font-size:14px;">录音列表（${recordings.length}）</h4>
+        ${recordings.length ? `<div class="table-wrapper"><table>
+          <thead><tr><th>#</th><th>文件名</th><th>时长</th><th>大小</th><th>创建时间</th><th>播放</th></tr></thead>
+          <tbody>${recordings.map((r, i) => `<tr>
+            <td>${i + 1}</td>
+            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(r.filePath?.split('/').pop() || '-')}</td>
+            <td>${r.duration ? r.duration.toFixed(1) + 's' : '-'}</td>
+            <td>${r.fileSize ? (r.fileSize / 1024).toFixed(1) + ' KB' : '-'}</td>
+            <td>${fmtDate(r.createdAt)}</td>
+            <td>${r.filePath ? `<audio controls src="${escapeHtml(r.filePath)}" style="height:28px;"></audio>` : '-'}</td>
+          </tr>`).join('')}</tbody>
+        </table></div>` : '<div class="empty">暂无录音</div>'}
+      </div>
+    `;
+  } catch { body.innerHTML = '<div class="empty">加载失败</div>'; }
+}
+
+async function deleteVoice(id) {
+  const ok = await showConfirm('确定要删除该声音模型及其所有录音吗？', { title: '删除声音模型', okText: '确认删除', okClass: 'btn-danger' });
+  if (!ok) return;
+  try {
+    await api(`/voices/${id}`, { method: 'DELETE' });
+    toast('删除成功', 'success');
+    loadVoices();
+  } catch {}
+}
+
+document.getElementById('voiceStatusFilter').addEventListener('change', () => { state.voices.page = 1; loadVoices(); });
+
+// ============ Files ============
+async function loadFiles() {
+  const browser = document.getElementById('fileBrowser');
+  browser.innerHTML = '<div class="loading"><span class="spinner"></span></div>';
+  const groups = [
+    { key: 'audio', label: '🎵 音频文件' },
+    { key: 'recordings', label: '🎙️ 录音文件' },
+    { key: 'avatars', label: '🖼️ 头像文件' },
+    { key: 'covers', label: '📷 封面文件' },
+    { key: 'subtitles', label: '📝 字幕文件' },
+  ];
+  let html = '';
+  let counts = {};
+  for (const g of groups) {
+    try {
+      const data = await api(`/files/list/${g.key}`);
+      const files = data.files || [];
+      counts[g.key] = files.length;
+      html += `<div class="file-group">
+        <div class="file-group-title">${g.label}（${files.length} 个文件）</div>
+        ${files.length ? `<div class="file-list">${files.slice(0, 50).map(f => `<div class="file-item">
+          <div class="file-item-name">${escapeHtml(f.name)}</div>
+          <div class="file-item-meta">${fmtFileSize(f.size)} · ${fmtDateShort(f.createdAt)}</div>
+          <a href="${escapeHtml(f.url)}" target="_blank" style="font-size:11px;color:var(--primary);">查看/下载</a>
+        </div>`).join('')}</div>` : '<div style="color:var(--text-muted);font-size:13px;padding:8px 0;">暂无文件</div>'}
+        ${files.length > 50 ? `<div style="font-size:12px;color:var(--text-muted);margin-top:8px;">仅显示前50个文件</div>` : ''}
+      </div>`;
+    } catch {
+      html += `<div class="file-group"><div class="file-group-title">${g.label}</div><div style="color:var(--danger);font-size:13px;">加载失败</div></div>`;
+      counts[g.key] = 0;
+    }
+  }
+  document.getElementById('fileAudioCount').textContent = counts.audio || 0;
+  document.getElementById('fileRecordCount').textContent = counts.recordings || 0;
+  document.getElementById('fileAvatarCount').textContent = counts.avatars || 0;
+  document.getElementById('fileCoverCount').textContent = counts.covers || 0;
+  browser.innerHTML = html || '<div class="empty">暂无文件数据</div>';
+}
+
+document.getElementById('refreshFilesBtn').onclick = loadFiles;
+
+// ============ Pagination ============
+function renderPagination(containerId, pg, onChange) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const page = pg.page || 1;
+  const totalPages = pg.totalPages || Math.ceil((pg.total || 0) / (pg.pageSize || 10)) || 1;
+  const total = pg.total || 0;
+  let btns = '';
+  const maxVisible = 5;
+  let start = Math.max(1, page - Math.floor(maxVisible / 2));
+  let end = Math.min(totalPages, start + maxVisible - 1);
+  start = Math.max(1, end - maxVisible + 1);
+  for (let i = start; i <= end; i++) {
+    btns += `<button class="page-btn ${i === page ? 'active' : ''}" data-page="${i}">${i}</button>`;
+  }
+  container.innerHTML = `
+    <div class="pagination-info">共 ${total} 条，第 ${page}/${totalPages} 页</div>
+    <div class="pagination-btns">
+      <button class="page-btn" data-page="1" ${page <= 1 ? 'disabled' : ''}>首页</button>
+      <button class="page-btn" data-page="${page - 1}" ${page <= 1 ? 'disabled' : ''}>上一页</button>
+      ${btns}
+      <button class="page-btn" data-page="${page + 1}" ${page >= totalPages ? 'disabled' : ''}>下一页</button>
+      <button class="page-btn" data-page="${totalPages}" ${page >= totalPages ? 'disabled' : ''}>末页</button>
+    </div>
+  `;
+  container.querySelectorAll('.page-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const p = parseInt(btn.dataset.page);
+      if (p >= 1 && p <= totalPages && p !== page) onChange(p);
+    });
+  });
+}
+
+// ============ Init ============
+function initApp() {
+  if (state.token) {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('appLayout').classList.add('active');
+    initAuthUI();
+    navigate('dashboard');
+  } else {
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('appLayout').classList.remove('active');
+  }
+}
+
+// Login form
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const btn = document.getElementById('loginBtn');
+  const errEl = document.getElementById('loginError');
+  errEl.textContent = '';
+  btn.disabled = true;
+  btn.textContent = '登录中...';
+  try {
+    await login(email, password);
+    toast('登录成功', 'success');
+  } catch (err) {
+    errEl.textContent = err.message || '登录失败';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '登 录';
+  }
+});
+
+// Sidebar navigation
+document.getElementById('sidebarMenu').addEventListener('click', (e) => {
+  const item = e.target.closest('.menu-item');
+  if (item) navigate(item.dataset.page);
+});
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  const ok = await showConfirm('确定要退出登录吗？', { title: '退出登录', okText: '退出', okClass: 'btn-secondary' });
+  if (ok) {
+    logout();
+    toast('已退出登录', 'info');
+  }
+});
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.classList.remove('active');
+  });
+});
+
+// ESC to close modal
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+  }
+});
+
+// ============ Upload Page ============
+let uploadFiles = { audio: null, subtitle: null, cover: null };
+let parsedSubtitles = null;
+
+function fmtFileSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/(1024*1024)).toFixed(1) + ' MB';
+}
+
+function fmtSrtTime(seconds) {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+  const ms = Math.floor((seconds % 1) * 1000);
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')},${String(ms).padStart(3,'0')}`;
+}
+
+function parseSRTClient(text) {
+  const cues = [];
+  // Normalize line endings and strip VTT header
+  let normalized = text.replace(/\r\n/g, '\n').trim();
+  if (normalized.startsWith('WEBVTT')) {
+    normalized = normalized.replace(/^WEBVTT.*?\n\n/s, '');
+  }
+  const blocks = normalized.split(/\n\n+/);
+  for (const block of blocks) {
+    const lines = block.split('\n').filter(l => l.trim());
+    if (lines.length < 2) continue;
+    let idx = 0;
+    // Skip optional sequence number
+    if (/^\d+$/.test(lines[0].trim())) idx = 1;
+    const timeLine = lines[idx];
+    if (!timeLine || !timeLine.includes('-->')) continue;
+    const [startStr, endStr] = timeLine.split('-->').map(s => s.trim().split(' ')[0]); // strip cue settings
+    const parseTime = (str) => {
+      // Support both SRT (00:00:01,000) and VTT (00:00:01.000 or 00:01.000)
+      const cleaned = str.replace(',', '.');
+      const parts = cleaned.split(':');
+      if (parts.length === 3) {
+        const [h, m, sMs] = parts;
+        const [s, ms] = sMs.split('.');
+        return parseInt(h)*3600 + parseInt(m)*60 + parseInt(s) + (parseInt((ms || '0').padEnd(3, '0'))/1000);
+      } else if (parts.length === 2) {
+        const [m, sMs] = parts;
+        const [s, ms] = sMs.split('.');
+        return parseInt(m)*60 + parseInt(s) + (parseInt((ms || '0').padEnd(3, '0'))/1000);
+      }
+      return 0;
+    };
+    const text = lines.slice(idx+1).join('\n').trim();
+    if (text) {
+      cues.push({
+        index: cues.length+1,
+        startTime: parseTime(startStr),
+        endTime: parseTime(endStr),
+        text: text
+      });
+    }
+  }
+  return cues;
+}
+
+function setupUploadZone(zoneId, inputId, type, onFileSelected) {
+  const zone = document.getElementById(zoneId);
+  const input = document.getElementById(inputId);
+  if (!zone || !input) return;
+
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    zone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file) { input.files = e.dataTransfer.files; onFileSelected(file); }
+  });
+  input.addEventListener('change', () => {
+    if (input.files[0]) onFileSelected(input.files[0]);
+  });
+}
+
+function showFileInfo(type, file) {
+  const infoEl = document.getElementById(type + 'FileInfo');
+  const innerEl = document.getElementById(type + 'UploadInner');
+  const nameEl = document.getElementById(type + 'FileName');
+  const sizeEl = document.getElementById(type + 'FileSize');
+  if (!infoEl || !file) {
+    if (infoEl) infoEl.style.display = 'none';
+    if (innerEl) innerEl.style.display = '';
+    return;
+  }
+  innerEl.style.display = 'none';
+  infoEl.style.display = 'block';
+  nameEl.textContent = file.name;
+  sizeEl.textContent = fmtFileSize(file.size);
+}
+
+function initUploadPage() {
+  if (window._uploadInitialized) return;
+  window._uploadInitialized = true;
+
+  // Load categories if not already loaded
+  if (!state.categories.length) {
+    api('/stories/categories').then(cats => {
+      state.categories = Array.isArray(cats) ? cats : (cats.list || []);
+      const sel = document.getElementById('uploadCategory');
+      sel.innerHTML = '<option value="">选择分类</option>' + state.categories.map(c =>
+        `<option value="${c.id}">${c.icon || '📂'} ${c.name}</option>`
+      ).join('');
+    }).catch(() => {});
+  }
+
+  // Audio upload
+  setupUploadZone('audioUploadZone', 'audioFileInput', 'audio', (file) => {
+    if (file.size > 200 * 1024 * 1024) { toast('音频文件不能超过 200MB', 'error'); return; }
+    uploadFiles.audio = file;
+    showFileInfo('audio', file);
+    const preview = document.getElementById('audioPreview');
+    preview.src = URL.createObjectURL(file);
+    preview.onloadedmetadata = () => {
+      document.getElementById('uploadDuration').value = Math.round(preview.duration);
+    };
+  });
+  document.getElementById('removeAudioBtn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    uploadFiles.audio = null;
+    document.getElementById('audioFileInput').value = '';
+    showFileInfo('audio', null);
+    document.getElementById('audioPreview').src = '';
+  });
+
+  // Subtitle upload
+  setupUploadZone('subtitleUploadZone', 'subtitleFileInput', 'subtitle', (file) => {
+    uploadFiles.subtitle = file;
+    showFileInfo('subtitle', file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const cues = parseSRTClient(e.target.result);
+      parsedSubtitles = cues;
+      document.getElementById('subtitleCueCount').textContent = cues.length > 0 ? `${cues.length} 条字幕` : '解析失败';
+      showSubtitlePreview(cues);
+    };
+    reader.readAsText(file);
+  });
+  document.getElementById('removeSubtitleBtn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    uploadFiles.subtitle = null;
+    parsedSubtitles = null;
+    document.getElementById('subtitleFileInput').value = '';
+    showFileInfo('subtitle', null);
+    document.getElementById('subtitlePreview').style.display = 'none';
+    document.getElementById('uploadSubtitleText').value = '';
+  });
+
+  // Subtitle text input
+  let subtitleTextTimer;
+  document.getElementById('uploadSubtitleText').addEventListener('input', () => {
+    clearTimeout(subtitleTextTimer);
+    subtitleTextTimer = setTimeout(() => {
+      const text = document.getElementById('uploadSubtitleText').value.trim();
+      if (text) {
+        const cues = parseSRTClient(text);
+        parsedSubtitles = cues;
+        showSubtitlePreview(cues);
+      } else {
+        document.getElementById('subtitlePreview').style.display = 'none';
+      }
+    }, 500);
+  });
+
+  // Cover upload
+  setupUploadZone('coverUploadZone', 'coverFileInput', 'cover', (file) => {
+    if (file.size > 10 * 1024 * 1024) { toast('封面图片不能超过 10MB', 'error'); return; }
+    uploadFiles.cover = file;
+    showFileInfo('cover', file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      document.getElementById('coverPreviewImg').src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+  document.getElementById('removeCoverBtn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    uploadFiles.cover = null;
+    document.getElementById('coverFileInput').value = '';
+    showFileInfo('cover', null);
+    document.getElementById('coverPreviewImg').src = '';
+  });
+
+  // Reset button
+  document.getElementById('resetUploadBtn').addEventListener('click', resetUploadForm);
+
+  // Form submit
+  document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await submitUpload();
+  });
+}
+
+function showSubtitlePreview(cues) {
+  const preview = document.getElementById('subtitlePreview');
+  const list = document.getElementById('subtitleList');
+  const count = document.getElementById('subtitlePreviewCount');
+  if (!cues || cues.length === 0) {
+    preview.style.display = 'none';
+    return;
+  }
+  preview.style.display = 'block';
+  count.textContent = `（${cues.length} 条）`;
+  list.innerHTML = cues.slice(0, 50).map(c => `
+    <div class="subtitle-item">
+      <span class="subtitle-time">${fmtSrtTime(c.startTime)} → ${fmtSrtTime(c.endTime)}</span>
+      <span class="subtitle-text">${escapeHtml(c.text)}</span>
+    </div>
+  `).join('');
+  if (cues.length > 50) {
+    list.innerHTML += `<div style="text-align:center;color:var(--text-muted);padding:8px;font-size:12px;">仅显示前 50 条，共 ${cues.length} 条</div>`;
+  }
+}
+
+function resetUploadForm() {
+  document.getElementById('uploadForm').reset();
+  document.getElementById('uploadCoverEmoji').value = '📖';
+  uploadFiles = { audio: null, subtitle: null, cover: null };
+  parsedSubtitles = null;
+  showFileInfo('audio', null);
+  showFileInfo('subtitle', null);
+  showFileInfo('cover', null);
+  document.getElementById('audioPreview').src = '';
+  document.getElementById('coverPreviewImg').src = '';
+  document.getElementById('subtitlePreview').style.display = 'none';
+  document.getElementById('uploadResultCard').style.display = 'none';
+  document.getElementById('submitBtnText').style.display = '';
+  document.getElementById('submitBtnLoading').style.display = 'none';
+  document.getElementById('submitUploadBtn').disabled = false;
+}
+
+async function submitUpload() {
+  const title = document.getElementById('uploadTitle').value.trim();
+  const content = document.getElementById('uploadContent').value.trim();
+  if (!title) { toast('请输入故事标题', 'error'); return; }
+  if (!content) { toast('请输入故事内容', 'error'); return; }
+
+  const btn = document.getElementById('submitUploadBtn');
+  btn.disabled = true;
+  document.getElementById('submitBtnText').style.display = 'none';
+  document.getElementById('submitBtnLoading').style.display = '';
+
+  try {
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('content', content);
+    const summary = document.getElementById('uploadSummary').value.trim();
+    if (summary) formData.append('summary', summary);
+    formData.append('theme', document.getElementById('uploadTheme').value);
+    formData.append('style', document.getElementById('uploadStyle').value);
+    formData.append('targetAgeGroup', document.getElementById('uploadAgeGroup').value);
+    formData.append('coverEmoji', document.getElementById('uploadCoverEmoji').value.trim() || '📖');
+    formData.append('status', document.getElementById('uploadStatus').value);
+
+    const catId = document.getElementById('uploadCategory').value;
+    if (catId) formData.append('categoryId', catId);
+
+    const tags = document.getElementById('uploadTags').value.trim();
+    if (tags) formData.append('tags', tags);
+    const chars = document.getElementById('uploadCharacters').value.trim();
+    if (chars) formData.append('characters', chars);
+
+    const duration = document.getElementById('uploadDuration').value;
+    if (duration) formData.append('duration', duration);
+
+    if (uploadFiles.audio) formData.append('audio', uploadFiles.audio);
+    if (uploadFiles.subtitle) formData.append('subtitle', uploadFiles.subtitle);
+    else if (document.getElementById('uploadSubtitleText').value.trim()) {
+      formData.append('subtitles', document.getElementById('uploadSubtitleText').value.trim());
+      formData.append('subtitleFormat', 'srt');
+    }
+    if (uploadFiles.cover) formData.append('cover', uploadFiles.cover);
+
+    const story = await api('/stories/upload', { method: 'POST', body: formData });
+    toast('故事上传成功！', 'success');
+
+    const resultCard = document.getElementById('uploadResultCard');
+    const resultContent = document.getElementById('uploadResultContent');
+    resultCard.style.display = 'block';
+    const subCount = Array.isArray(story.subtitles) ? story.subtitles.length : 0;
+    resultContent.innerHTML = `
+      <div class="result-item"><span class="result-icon">✅</span><span class="result-label">标题</span><span class="result-value result-success">${escapeHtml(story.title)}</span></div>
+      <div class="result-item"><span class="result-icon">🎯</span><span class="result-label">ID</span><span class="result-value">${story.id}</span></div>
+      <div class="result-item"><span class="result-icon">🎵</span><span class="result-label">音频</span><span class="result-value">${story.audioUrl ? '✅ 已上传' : '❌ 未上传'}</span></div>
+      <div class="result-item"><span class="result-icon">📝</span><span class="result-label">字幕</span><span class="result-value">${subCount > 0 ? '✅ ' + subCount + ' 条' : '❌ 无字幕'}</span></div>
+      <div class="result-item"><span class="result-icon">⏱️</span><span class="result-label">时长</span><span class="result-value">${story.duration || 0} 秒</span></div>
+      <div class="result-item"><span class="result-icon">📊</span><span class="result-label">状态</span><span class="result-value">${statusBadge(story.status)}</span></div>
+      <div style="margin-top:16px;display:flex;gap:8px;">
+        <button class="btn btn-primary" onclick="navigate('stories');loadStories();">查看故事列表</button>
+        <button class="btn btn-secondary" onclick="resetUploadForm();">继续上传</button>
+      </div>
+    `;
+    resultCard.scrollIntoView({ behavior: 'smooth' });
+  } catch (err) {
+    // api() already shows toast
+  } finally {
+    btn.disabled = false;
+    document.getElementById('submitBtnText').style.display = '';
+    document.getElementById('submitBtnLoading').style.display = 'none';
+  }
+}
+
+// Auto-verify token on load
+(async function() {
+  if (state.token) {
+    try {
+      const me = await api('/auth/me');
+      state.user = me;
+      localStorage.setItem('admin_user', JSON.stringify(me));
+    } catch {
+      // token invalid, will be redirected to login
+    }
+  }
+  initApp();
+})();
+</script>
+</body>
+</html>

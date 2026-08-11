@@ -285,7 +285,7 @@ extension FileManager {
 
     /// 临时目录 URL
     static var temporaryDirectory: URL {
-        `default`.temporaryDirectory
+        URL(fileURLWithPath: NSTemporaryDirectory())
     }
 
     /// 获取目录大小（字节）

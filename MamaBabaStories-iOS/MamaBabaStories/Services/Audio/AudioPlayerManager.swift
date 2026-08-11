@@ -391,10 +391,32 @@ class AudioPlayerManager: NSObject, ObservableObject {
         var audioURL: URL?
         if let localPath = story.localAudioPath {
             audioURL = URL(fileURLWithPath: localPath)
-        } else if let urlString = story.audioURL, let url = URL(string: urlString) {
-            audioURL = url
         } else if isDownloaded(storyId: story.id) {
             audioURL = localFileURL(for: story.id)
+        } else if let urlString = story.audioURL, !urlString.isEmpty {
+            if urlString.hasPrefix("http") {
+                audioURL = URL(string: urlString)
+            } else if urlString.hasPrefix("/api/") {
+                // 绝对路径，直接拼 host
+                let baseURLString = APIConfig.baseURL
+                if let baseURL = URL(string: baseURLString), let host = baseURL.host {
+                    let scheme = baseURL.scheme ?? "http"
+                    let portPart = baseURL.port != nil ? ":\(baseURL.port!)" : ""
+                    audioURL = URL(string: "\(scheme)://\(host)\(portPart)\(urlString)")
+                } else {
+                    audioURL = URL(string: baseURLString + urlString)
+                }
+            } else {
+                // 相对路径，拼接 baseURL
+                let baseURLString = APIConfig.baseURL
+                let fullPath = baseURLString + (urlString.hasPrefix("/") ? "" : "/") + urlString
+                audioURL = URL(string: fullPath)
+            }
+        }
+
+        // 如果没有有效音频，生成测试音频用于演示
+        if audioURL == nil {
+            audioURL = generateTestAudio(for: story)
         }
 
         guard let url = audioURL else {
@@ -570,22 +592,80 @@ class AudioPlayerManager: NSObject, ObservableObject {
 
     // MARK: - 下载管理
     func downloadStory(_ story: Story, progressHandler: ((Double) -> Void)? = nil) async throws {
-        guard let audioURLString = story.audioURL,
-              let url = URL(string: audioURLString) else {
+        guard let audioURLString = story.audioURL, !audioURLString.isEmpty else {
             throw NSError(domain: "AudioPlayer", code: -3, userInfo: [NSLocalizedDescriptionKey: "音频URL无效"])
+        }
+
+        // 处理相对路径
+        let url: URL
+        if audioURLString.hasPrefix("http") {
+            guard let remoteURL = URL(string: audioURLString) else {
+                throw NSError(domain: "AudioPlayer", code: -3, userInfo: [NSLocalizedDescriptionKey: "音频URL无效"])
+            }
+            url = remoteURL
+        } else if audioURLString.hasPrefix("/api/") {
+            // 绝对路径（如 /api/files/audio/xxx，直接拼 host
+            let baseURLString = APIConfig.baseURL
+            // 提取 host 部分（去掉 /api 后缀）
+            if let baseURL = URL(string: baseURLString), let host = baseURL.host {
+                let scheme = baseURL.scheme ?? "http"
+                let portPart = baseURL.port != nil ? ":\(baseURL.port!)" : ""
+                let fullPath = "\(scheme)://\(host)\(portPart)\(audioURLString)"
+                guard let remoteURL = URL(string: fullPath) else {
+                    throw NSError(domain: "AudioPlayer", code: -3, userInfo: [NSLocalizedDescriptionKey: "音频URL无效"])
+                }
+                url = remoteURL
+            } else {
+                guard let remoteURL = URL(string: baseURLString + audioURLString) else {
+                    throw NSError(domain: "AudioPlayer", code: -3, userInfo: [NSLocalizedDescriptionKey: "音频URL无效"])
+                }
+                url = remoteURL
+            }
+        } else {
+            // 相对路径，拼接 baseURL
+            let baseURLString = APIConfig.baseURL
+            let fullPath = baseURLString + (audioURLString.hasPrefix("/") ? "" : "/") + audioURLString
+            guard let remoteURL = URL(string: fullPath) else {
+                throw NSError(domain: "AudioPlayer", code: -3, userInfo: [NSLocalizedDescriptionKey: "音频URL无效"])
+            }
+            url = remoteURL
         }
 
         let destinationURL = localFileURL(for: story.id)
 
-        // 使用 URLSession 下载
-        let (tempURL, _) = try await URLSession.shared.download(from: url)
+        // 使用 URLSession 下载（带进度）
+        let downloadTask = downloadSession?.downloadTask(with: url)
+        downloadTask?.taskDescription = story.id
+        downloadTask?.resume()
 
-        // 移动到目标位置
-        if FileManager.default.fileExists(atPath: destinationURL.path) {
-            try FileManager.default.removeItem(at: destinationURL)
+        // 简单的进度轮询（实际项目可使用 delegate 模式）
+        var lastProgress: Double = 0
+        let startTime = Date()
+        while let task = downloadTask, task.state == .running {
+            try await Task.sleep(nanoseconds: 200_000_000) // 200ms
+            let progress = Double(task.countOfBytesReceived) / Double(max(task.countOfBytesExpectedToReceive, 1))
+            if abs(progress - lastProgress) > 0.01 {
+                progressHandler?(progress)
+                lastProgress = progress
+            }
+            // 超时保护 5 分钟
+            if Date().timeIntervalSince(startTime) > 300 {
+                task.cancel()
+                throw NSError(domain: "AudioPlayer", code: -4, userInfo: [NSLocalizedDescriptionKey: "下载超时"])
+            }
         }
-        try FileManager.default.moveItem(at: tempURL, to: destinationURL)
 
+        // 检查结果
+        if downloadTask?.error != nil {
+            throw downloadTask!.error!
+        }
+
+        // 文件已在 delegate 中移动，确认存在
+        if !FileManager.default.fileExists(atPath: destinationURL.path) {
+            throw NSError(domain: "AudioPlayer", code: -5, userInfo: [NSLocalizedDescriptionKey: "下载文件未找到"])
+        }
+
+        progressHandler?(1.0)
         Logger.info("故事下载完成: \(story.title)", category: .audio)
     }
 
@@ -612,6 +692,81 @@ class AudioPlayerManager: NSObject, ObservableObject {
         return String(format: "%02d:%02d", minutes, seconds)
     }
 }
+
+    // MARK: - 生成测试音频
+    /// 为没有有效音频的故事生成一段测试音频（正弦波音调），用于演示播放功能
+    private func generateTestAudio(for story: Story) -> URL? {
+        let tempDir = NSTemporaryDirectory()
+        let fileName = "test_\(story.id).wav"
+        let fileURL = URL(fileURLWithPath: tempDir).appendingPathComponent(fileName)
+
+        // 如果已存在，直接返回
+        if FileManager.default.fileExists(atPath: fileURL.path) {
+            return fileURL
+        }
+
+        let sampleRate: Double = 22050
+        let duration = min(story.duration, 30)  // 最多生成30秒测试音频
+        let totalSamples = Int(sampleRate * duration)
+
+        // 根据故事ID选择不同的音调频率
+        let hash = abs(story.id.hashValue)
+        let frequencies: [Double] = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25]
+        let freq = frequencies[hash % frequencies.count]
+        let freq2 = frequencies[(hash / 7) % frequencies.count]
+
+        // 生成 WAV 文件
+        var wavData = Data()
+
+        // WAV header
+        let numChannels: UInt16 = 1
+        let bitsPerSample: UInt16 = 16
+        let byteRate = UInt32(sampleRate * Double(numChannels) * Double(bitsPerSample) / 8)
+        let blockAlign = UInt16(numChannels * bitsPerSample / 8)
+        let dataSize = UInt32(totalSamples * Int(bitsPerSample) / 8)
+        let fileSize = UInt32(44 + dataSize)
+
+        wavData.append("RIFF".data(using: .ascii)!)
+        wavData.append(withUnsafeBytes(of: (fileSize - 8).littleEndian) { Data($0) })
+        wavData.append("WAVE".data(using: .ascii)!)
+        wavData.append("fmt ".data(using: .ascii)!)
+        wavData.append(withUnsafeBytes(of: UInt32(16).littleEndian) { Data($0) })
+        wavData.append(withUnsafeBytes(of: UInt16(1).littleEndian) { Data($0) })  // PCM
+        wavData.append(withUnsafeBytes(of: numChannels.littleEndian) { Data($0) })
+        wavData.append(withUnsafeBytes(of: UInt32(sampleRate).littleEndian) { Data($0) })
+        wavData.append(withUnsafeBytes(of: byteRate.littleEndian) { Data($0) })
+        wavData.append(withUnsafeBytes(of: blockAlign.littleEndian) { Data($0) })
+        wavData.append(withUnsafeBytes(of: bitsPerSample.littleEndian) { Data($0) })
+        wavData.append("data".data(using: .ascii)!)
+        wavData.append(withUnsafeBytes(of: dataSize.littleEndian) { Data($0) })
+
+        // 生成带包络的正弦波（避免爆音）
+        let envelopeSamples = Int(sampleRate * 0.05)  // 50ms 淡入淡出
+        for i in 0..<totalSamples {
+            let t = Double(i) / sampleRate
+            // 两个频率叠加，更悦耳
+            var sample = sin(2 * .pi * freq * t) * 0.3 + sin(2 * .pi * freq2 * t) * 0.2
+
+            // 应用包络
+            if i < envelopeSamples {
+                sample *= Double(i) / Double(envelopeSamples)
+            } else if i > totalSamples - envelopeSamples {
+                sample *= Double(totalSamples - i) / Double(envelopeSamples)
+            }
+
+            let intSample = Int16(max(-1.0, min(1.0, sample)) * Double(Int16.max))
+            wavData.append(withUnsafeBytes(of: intSample.littleEndian) { Data($0) })
+        }
+
+        do {
+            try wavData.write(to: fileURL)
+            Logger.info("已生成测试音频: \(fileURL.lastPathComponent), 时长: \(duration)s", category: .audio)
+            return fileURL
+        } catch {
+            Logger.error("生成测试音频失败: \(error)", category: .audio)
+            return nil
+        }
+    }
 
 // MARK: - URLSessionDownloadDelegate
 extension AudioPlayerManager: URLSessionDownloadDelegate {

@@ -100,8 +100,8 @@ struct AICreateView: View {
                 GridItem(.adaptive(minimum: 70), spacing: 10)
             ], spacing: 10) {
                 ForEach(StoryTheme.allCases) { theme in
-                    ThemeSelectCard(theme: theme, isSelected: aiVM.selectedTheme == theme) {
-                        aiVM.selectedTheme = theme
+                    ThemeSelectCard(theme: theme, isSelected: aiVM.selectedTheme == theme.rawValue) {
+                        aiVM.selectedTheme = theme.rawValue
                     }
                 }
             }
@@ -143,8 +143,8 @@ struct AICreateView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
                     ForEach(StoryStyle.allCases) { style in
-                        TagButton(title: style.rawValue, icon: nil, isSelected: aiVM.selectedStyle == style) {
-                            aiVM.selectedStyle = style
+                        TagButton(title: style.rawValue, icon: nil, isSelected: aiVM.selectedStyle == style.rawValue) {
+                            aiVM.selectedStyle = style.rawValue
                         }
                     }
                 }
@@ -162,8 +162,8 @@ struct AICreateView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
                     ForEach(AgeGroup.allCases) { age in
-                        TagButton(title: age.rawValue, icon: nil, isSelected: aiVM.selectedAgeGroup == age) {
-                            aiVM.selectedAgeGroup = age
+                        TagButton(title: age.rawValue, icon: nil, isSelected: aiVM.selectedAgeGroup == age.rawValue) {
+                            aiVM.selectedAgeGroup = age.rawValue
                         }
                     }
                 }
@@ -185,34 +185,43 @@ struct AICreateView: View {
             }
 
             ForEach(WordCountOption.allCases) { option in
-                Button(action: {
-                    aiVM.selectedWordCount = option
-                }) {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(option.displayName)
-                                .font(AppFonts.body(size: 15, weight: aiVM.selectedWordCount == option ? .semibold : .regular))
-                                .foregroundColor(AppColors.textPrimary)
-                        }
-                        Spacer()
-                        if aiVM.selectedWordCount == option {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(AppColors.softOrange)
-                        }
-                    }
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(aiVM.selectedWordCount == option ? AppColors.softOrange.opacity(0.1) : AppColors.surface)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(aiVM.selectedWordCount == option ? AppColors.softOrange : Color.clear, lineWidth: 1.5)
-                            )
-                    )
-                }
-                .buttonStyle(PlainButtonStyle())
+                lengthOptionRow(option: option)
             }
         }
+    }
+
+    private func lengthOptionRow(option: WordCountOption) -> some View {
+        let isSelected = aiVM.selectedWordCount == option
+        let bgColor = isSelected ? AppColors.softOrange.opacity(0.1) : AppColors.surface
+        let strokeColor = isSelected ? AppColors.softOrange : Color.clear
+        let fontWeight: Font.Weight = isSelected ? .semibold : .regular
+
+        return Button(action: {
+            aiVM.selectedWordCount = option
+        }) {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(option.displayName)
+                        .font(AppFonts.body(size: 15, weight: fontWeight))
+                        .foregroundColor(AppColors.textPrimary)
+                }
+                Spacer()
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(AppColors.softOrange)
+                }
+            }
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(bgColor)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(strokeColor, lineWidth: 1.5)
+                    )
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 
     // MARK: - 声音选择
@@ -349,7 +358,7 @@ struct GeneratedStoryView: View {
                             RoundedRectangle(cornerRadius: Layout.largeCornerRadius)
                                 .fill(
                                     LinearGradient(
-                                        gradient: Gradient(colors: (story.coverGradient.compactMap { Color(hex: $0) }) + [AppColors.warmYellow]),
+                                        gradient: Gradient(colors: story.coverGradient.map { Color(hex: $0) } + [AppColors.warmYellow]),
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
                                     )

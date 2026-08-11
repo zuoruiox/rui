@@ -14,7 +14,7 @@ struct Child: Codable, Identifiable, Hashable {
     var gender: Gender
     var birthDate: Date
     var avatarEmoji: String
-    var favoriteThemes: [StoryTheme]
+    var favoriteThemes: [String]
     var createdAt: Date
 
     // 计算年龄
@@ -61,7 +61,7 @@ extension Child {
         gender: .boy,
         birthDate: Calendar.current.date(byAdding: .year, value: -5, to: Date()) ?? Date(),
         avatarEmoji: "🦁",
-        favoriteThemes: [.animals, .adventure, .magic],
+        favoriteThemes: ["animals", "adventure", "magic"],
         createdAt: Calendar.current.date(byAdding: .month, value: -2, to: Date()) ?? Date()
     )
 
@@ -71,7 +71,7 @@ extension Child {
         gender: .girl,
         birthDate: Calendar.current.date(byAdding: .year, value: -4, to: Date()) ?? Date(),
         avatarEmoji: "🦄",
-        favoriteThemes: [.magic, .friendship, .fairy],
+        favoriteThemes: ["magic", "friendship", "family"],
         createdAt: Date()
     )
 }

@@ -114,9 +114,9 @@ struct StoryLibraryView: View {
                     libraryVM.selectTheme(nil)
                 }
 
-                ForEach(StoryTheme.allCases) { theme in
-                    TagButton(title: theme.rawValue, icon: theme.icon, isSelected: libraryVM.selectedTheme == theme, color: theme.color) {
-                        libraryVM.selectTheme(libraryVM.selectedTheme == theme ? nil : theme)
+                ForEach(libraryVM.categories) { category in
+                    TagButton(title: category.name, icon: category.icon, isSelected: libraryVM.selectedTheme == category.theme, color: themeColor(for: category.theme ?? "")) {
+                        libraryVM.selectTheme(libraryVM.selectedTheme == category.theme ? nil : category.theme)
                     }
                 }
             }
@@ -194,6 +194,20 @@ struct StoryLibraryView: View {
         case 1: return "还没有收藏的故事\n快去发现喜欢的故事吧"
         case 2: return "还没有下载的故事\n下载后可离线收听"
         default: return libraryVM.searchText.isEmpty ? "暂无故事" : "没有找到相关故事"
+        }
+    }
+
+    // MARK: - 主题颜色映射
+    private func themeColor(for theme: String) -> Color {
+        switch theme {
+        case "adventure", "courage", "冒险", "勇气": return AppColors.softOrange
+        case "friendship", "友谊": return AppColors.softPink
+        case "family", "kindness", "家庭", "善良": return AppColors.warmYellow
+        case "animals", "nature", "动物", "自然": return AppColors.softGreen
+        case "magic", "魔法": return AppColors.gentleBlue
+        case "space", "太空": return Color(red: 0.5, green: 0.4, blue: 0.8)
+        case "bedtime", "睡前": return AppColors.gentleBlue
+        default: return AppColors.softOrange
         }
     }
 }

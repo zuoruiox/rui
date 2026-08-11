@@ -1,0 +1,224 @@
+// Prisma Schema for MamaBabaStories Server
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== 用户系统 ====================
+
+model User {
+  id                String         @id @default(cuid())
+  email             String?        @unique
+  phone             String?        @unique
+  password          String?
+  nickname          String
+  avatar            String?
+  role              String         @default("user")
+  membershipTier    String         @default("free")
+  membershipExpireAt DateTime?
+  children          Child[]
+  voiceModels       VoiceModel[]
+  favorites         Favorite[]
+  playHistory       PlayHistory[]
+  playlists         Playlist[]
+  downloads         Download[]
+  aiStories         AIStory[]
+  createdStories    Story[]        @relation("StoryCreator")
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([role])
+}
+
+model Child {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  gender    String?
+  birthday  DateTime?
+  ageGroup  String?
+  interests String?
+  avatar    String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// ==================== 故事内容系统 ====================
+
+model Story {
+  id              String         @id @default(cuid())
+  title           String
+  content         String
+  summary         String?
+  theme           String
+  style           String
+  targetAgeGroup  String
+  coverEmoji      String         @default("📖")
+  coverGradient   String?
+  coverImageUrl   String?
+  audioUrl        String?
+  subtitleUrl     String?
+  subtitleFormat  String?
+  subtitles       String?
+  duration        Int            @default(0)
+  wordCount       Int            @default(0)
+  tags            String?
+  characters      String?
+  status          String         @default("published")
+  isAIGenerated   Boolean        @default(false)
+  isPremium       Boolean        @default(false)
+  playCount       Int            @default(0)
+  favoriteCount   Int            @default(0)
+  createdById     String?
+  createdBy       User?          @relation("StoryCreator", fields: [createdById], references: [id])
+  favorites       Favorite[]
+  playHistory     PlayHistory[]
+  downloads       Download[]
+  categoryId      String?
+  category        StoryCategory? @relation(fields: [categoryId], references: [id])
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([theme])
+  @@index([targetAgeGroup])
+  @@index([status])
+  @@index([playCount(sort: Desc)])
+}
+
+model StoryCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  icon        String   @default("📚")
+  description String?
+  sortOrder   Int      @default(0)
+  stories     Story[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storyId   String
+  story     Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, storyId])
+}
+
+model PlayHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storyId   String
+  story     Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  position  Int      @default(0)
+  duration  Int      @default(0)
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Playlist {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  coverEmoji  String   @default("📋")
+  storyIds    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Download {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storyId   String
+  story     Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  filePath  String
+  fileSize  Int      @default(0)
+  quality   String   @default("standard")
+  createdAt DateTime @default(now())
+
+  @@unique([userId, storyId])
+}
+
+// ==================== 声音克隆系统 ====================
+
+model VoiceModel {
+  id           String            @id @default(cuid())
+  userId       String
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  ownerType    String            @default("mom")
+  emoji        String            @default("🎤")
+  status       String            @default("draft")
+  progress     Float             @default(0)
+  quality      String?
+  modelPath    String?
+  recordings   RecordingSample[]
+  previewUrl   String?
+  errorMessage String?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  trainedAt    DateTime?
+
+  @@index([userId])
+  @@index([status])
+}
+
+model RecordingSample {
+  id           String     @id @default(cuid())
+  voiceModelId String
+  voiceModel   VoiceModel @relation(fields: [voiceModelId], references: [id], onDelete: Cascade)
+  filePath     String
+  duration     Float      @default(0)
+  fileSize     Int        @default(0)
+  quality      String?
+  promptText   String?
+  sortOrder    Int        @default(0)
+  createdAt    DateTime   @default(now())
+}
+
+// ==================== AI故事系统 ====================
+
+model AIStory {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title          String
+  content        String
+  theme          String?
+  style          String?
+  targetAgeGroup String?
+  characters     String?
+  prompt         String?
+  length         String?
+  audioUrl       String?
+  voiceModelId   String?
+  duration       Int      @default(0)
+  status         String   @default("generated")
+  isPublic       Boolean  @default(false)
+  playCount      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// ==================== 系统配置 ====================
+
+model SystemConfig {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}

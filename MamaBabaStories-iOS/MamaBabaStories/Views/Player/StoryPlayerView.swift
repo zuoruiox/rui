@@ -87,7 +87,7 @@ struct StoryPlayerView: View {
         ZStack {
             AppColors.background
             if let story = playerVM.currentStory {
-                let colors = story.coverGradient?.compactMap { Color(hex: $0) } ?? [story.theme.color.opacity(0.3), AppColors.background]
+                let colors = story.coverGradient?.map { Color(hex: $0) } ?? [themeColor(story.theme).opacity(0.3), AppColors.background]
                 LinearGradient(
                     gradient: Gradient(colors: colors + [AppColors.background]),
                     startPoint: .top,
@@ -322,6 +322,20 @@ struct PlaylistView: View {
             }
         }
         .presentationDetents([.medium, .large])
+    }
+}
+
+// MARK: - 主题颜色辅助函数
+private func themeColor(_ theme: String) -> Color {
+    switch theme {
+    case "adventure", "courage", "冒险", "勇气": return AppColors.softOrange
+    case "friendship", "友谊": return AppColors.softPink
+    case "family", "kindness", "家庭", "善良": return AppColors.warmYellow
+    case "animals", "nature", "动物", "自然": return AppColors.softGreen
+    case "magic", "魔法": return AppColors.gentleBlue
+    case "space", "太空": return Color(red: 0.5, green: 0.4, blue: 0.8)
+    case "bedtime", "睡前": return AppColors.gentleBlue
+    default: return AppColors.softOrange
     }
 }
 

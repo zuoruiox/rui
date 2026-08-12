@@ -78,8 +78,8 @@ enum AudioConfig {
 
 // MARK: - 语音克隆配置
 enum VoiceCloneConfig {
-    static let minRecordings = 3
-    static let maxRecordings = 10
+    static let minRecordings = 1
+    static let maxRecordings = 3
     static let pollingInterval: TimeInterval = 3.0
     static let maxPollingAttempts = 60  // 最多轮询3分钟
 }

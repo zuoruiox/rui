@@ -171,7 +171,7 @@ struct VoiceCloneView: View {
                 TipRow(icon: "mic", text: "距离麦克风20-30厘米，保持正常音量")
                 TipRow(icon: "text.bubble", text: "清晰自然地朗读提示文字")
                 TipRow(icon: "clock", text: "每段录音建议5秒以上")
-                TipRow(icon: "number", text: "至少录制3段，越多效果越好")
+                TipRow(icon: "number", text: "录制1-3段即可，越多效果越好")
             }
         }
         .padding(18)

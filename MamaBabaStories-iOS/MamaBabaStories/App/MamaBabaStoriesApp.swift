@@ -20,6 +20,7 @@ struct MamaBabaStoriesApp: App {
     @StateObject private var voiceCloneViewModel = VoiceCloneViewModel()
     @StateObject private var aiCreateViewModel = AICreateViewModel()
     @StateObject private var profileViewModel = ProfileViewModel()
+    @State private var isAppReady = false
 
     // MARK: - Init
     init() {
@@ -30,7 +31,10 @@ struct MamaBabaStoriesApp: App {
     var body: some Scene {
         WindowGroup {
             Group {
-                if authService.isAuthenticated {
+                if !isAppReady {
+                    // 启动画面
+                    LaunchView()
+                } else if authService.isAuthenticated {
                     MainTabView()
                         .transition(.opacity)
                 } else {
@@ -38,6 +42,7 @@ struct MamaBabaStoriesApp: App {
                         .transition(.opacity)
                 }
             }
+            .animation(.easeInOut(duration: 0.3), value: isAppReady)
             .animation(.easeInOut(duration: 0.3), value: authService.isAuthenticated)
             .environmentObject(authService)
             .environmentObject(playerViewModel)
@@ -46,8 +51,10 @@ struct MamaBabaStoriesApp: App {
             .environmentObject(voiceCloneViewModel)
             .environmentObject(aiCreateViewModel)
             .environmentObject(profileViewModel)
-            .onAppear {
-                setupRemoteCommandCenter()
+            .task {
+                // 启动时验证现有 token
+                await authService.validateExistingToken()
+                isAppReady = true
             }
             .onChange(of: authService.isAuthenticated) { _, authenticated in
                 if authenticated {
@@ -57,6 +64,9 @@ struct MamaBabaStoriesApp: App {
                         await voiceCloneViewModel.loadData()
                     }
                 }
+            }
+            .onAppear {
+                setupRemoteCommandCenter()
             }
         }
     }
@@ -131,6 +141,47 @@ struct MamaBabaStoriesApp: App {
             }
             playerViewModel?.seek(to: event.positionTime)
             return .success
+        }
+    }
+}
+
+// MARK: - 启动画面
+struct LaunchView: View {
+    @State private var animate = false
+
+    var body: some View {
+        ZStack {
+            AppColors.background.ignoresSafeArea()
+
+            VStack(spacing: 20) {
+                ZStack {
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                gradient: Gradient(colors: [AppColors.warmYellow, AppColors.softOrange]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 100, height: 100)
+                        .scaleEffect(animate ? 1.0 : 0.8)
+                        .animation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true), value: animate)
+
+                    Image(systemName: "book.fill")
+                        .font(.system(size: 44))
+                        .foregroundColor(.white)
+                }
+
+                Text("爸爸妈妈讲故事")
+                    .font(AppFonts.title(size: 24))
+                    .foregroundColor(AppColors.textPrimary)
+
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: AppColors.softOrange))
+            }
+        }
+        .onAppear {
+            animate = true
         }
     }
 }

@@ -27,21 +27,44 @@ class AuthService: ObservableObject {
     @Published var showError = false
 
     private let apiClient: APIClientProtocol
+    private var hasValidatedToken = false
 
     init(apiClient: APIClientProtocol = APIClient.shared) {
         self.apiClient = apiClient
-        // 检查是否已有 token
-        if let token = KeychainHelper.shared.getString(for: KeychainKeys.authToken) {
-            APIClient.shared.setAuthToken(token)
-            isAuthenticated = true
-        }
     }
 
-    // MARK: - 设备自动登录（首次启动）
+    // MARK: - 验证现有 token（App 启动时调用）
+    func validateExistingToken() async {
+        guard let token = KeychainHelper.shared.getString(for: KeychainKeys.authToken) else {
+            isAuthenticated = false
+            return
+        }
+
+        APIClient.shared.setAuthToken(token)
+
+        // 用 /auth/me 验证 token 是否有效
+        do {
+            let user: User = try await apiClient.request(.getMe)
+            currentUser = user
+            isAuthenticated = true
+            Logger.info("Token 验证成功: \(user.nickname)", category: .network)
+        } catch {
+            // token 无效，清除
+            Logger.warning("Token 验证失败，清除: \(error)", category: .network)
+            APIClient.shared.setAuthToken(nil)
+            KeychainHelper.shared.delete(for: KeychainKeys.authToken)
+            isAuthenticated = false
+            currentUser = nil
+        }
+        hasValidatedToken = true
+    }
+
+    // MARK: - 设备自动登录（游客模式）
     func deviceLogin() async {
         guard !isAuthenticated else { return }
 
         isLoading = true
+        errorMessage = nil
         defer { isLoading = false }
 
         do {
@@ -61,6 +84,7 @@ class AuthService: ObservableObject {
     // MARK: - 邮箱登录
     func loginWithEmail(email: String, password: String) async -> Bool {
         isLoading = true
+        errorMessage = nil
         defer { isLoading = false }
 
         do {

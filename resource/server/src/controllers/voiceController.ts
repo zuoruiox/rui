@@ -6,10 +6,10 @@ import { success, fail, paginated } from '../utils/response';
 import { AuthRequest } from '../middlewares/auth';
 import { uploadAudio, uploadDirs } from '../middlewares/upload';
 
-// 快速模式需要 20 段录音，高质量模式需要 50 段
+// 快速模式需要 1 段录音，高质量模式需要 3 段
 const REQUIRED_RECORDINGS: Record<string, number> = {
-  quick: 20,
-  high: 50,
+  quick: 1,
+  high: 3,
 };
 
 // ==================== 用户接口 ====================
@@ -122,7 +122,7 @@ export const uploadRecording = async (req: AuthRequest, res: Response, next: Nex
     });
 
     // 更新 progress
-    const required = REQUIRED_RECORDINGS[voiceModel.quality || 'quick'] || 20;
+    const required = REQUIRED_RECORDINGS[voiceModel.quality || 'quick'] || 1;
     const newCount = recordingCount + 1;
     const progress = Math.min(newCount / required, 1);
 
@@ -175,7 +175,7 @@ export const deleteRecording = async (req: AuthRequest, res: Response, next: Nex
     const remainingCount = await prisma.recordingSample.count({
       where: { voiceModelId: recording.voiceModelId },
     });
-    const required = REQUIRED_RECORDINGS[recording.voiceModel.quality || 'quick'] || 20;
+    const required = REQUIRED_RECORDINGS[recording.voiceModel.quality || 'quick'] || 1;
     const progress = Math.min(remainingCount / required, 1);
 
     await prisma.voiceModel.update({
@@ -209,7 +209,7 @@ export const startTraining = async (req: AuthRequest, res: Response, next: NextF
       return fail(res, '无权操作', 403);
     }
 
-    const required = REQUIRED_RECORDINGS[voiceModel.quality || 'quick'] || 20;
+    const required = REQUIRED_RECORDINGS[voiceModel.quality || 'quick'] || 1;
     if (voiceModel._count.recordings < required) {
       return fail(res, `录音数量不足，需要 ${required} 段，当前 ${voiceModel._count.recordings} 段`, 400);
     }

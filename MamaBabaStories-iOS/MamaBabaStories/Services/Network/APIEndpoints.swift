@@ -17,6 +17,7 @@ enum APIEndpoint {
     case loginWithApple(token: String)
     case refreshToken(refreshToken: String)
     case logout
+    case getMe
     case updateProfile(nickname: String?, avatar: Data?)
 
     // MARK: - 用户
@@ -88,6 +89,8 @@ extension APIEndpoint {
             return "/auth/refresh"
         case .logout:
             return "/auth/logout"
+        case .getMe:
+            return "/auth/me"
         case .updateProfile:
             return "/user/profile"
 
@@ -179,7 +182,7 @@ extension APIEndpoint {
 
     var method: String {
         switch self {
-        case .sendCode, .login, .loginWithApple, .refreshToken,
+        case .sendCode, .login, .loginWithEmail, .deviceLogin, .loginWithApple, .refreshToken,
              .addChild, .createVoiceModel, .uploadRecording, .startTraining,
              .synthesizeSpeech, .createStory, .generateStory, .regenerateStory,
              .editStory, .synthesizeTTS:
@@ -265,6 +268,9 @@ extension APIEndpoint {
 
         case .refreshToken(let refreshToken):
             return ["refreshToken": refreshToken]
+
+        case .getMe:
+            return nil
 
         case .createVoiceModel(let name, let ownerType):
             return ["name": name, "ownerType": ownerType]

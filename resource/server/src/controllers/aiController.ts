@@ -46,7 +46,6 @@ export const generateStory = async (req: AuthRequest, res: Response, next: NextF
         voiceModelId: voiceModelId || null,
         status: 'completed',
         isPublic: false,
-        tags: JSON.stringify(story.tags),
       }
     });
 
@@ -84,7 +83,7 @@ export const myStories = async (req: AuthRequest, res: Response, next: NextFunct
       summary: s.content.substring(0, 80) + '...',
       wordCount: s.content.replace(/\s/g, '').length,
       suggestedDuration: s.duration || 0,
-      tags: safeParse(s.tags, []),
+      tags: [],
       characters: safeParse(s.characters, []),
       coverEmoji: '📖',
       audioUrl: s.audioUrl,

@@ -77,6 +77,9 @@ struct VoiceCloneView: View {
                     showingCreateSheet = false
                 }
             }
+            .onAppear {
+                Task { await voiceVM.loadData() }
+            }
         }
     }
 

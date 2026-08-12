@@ -77,6 +77,9 @@ struct AICreateView: View {
             .task {
                 await aiVM.loadData()
             }
+            .onAppear {
+                Task { await aiVM.loadData() }
+            }
         }
     }
 

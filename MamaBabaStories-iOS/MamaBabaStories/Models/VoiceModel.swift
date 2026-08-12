@@ -25,7 +25,7 @@ struct VoiceModel: Codable, Identifiable, Hashable {
     let modelPath: String?
     let count: RecordingCount?
 
-    // 嵌套的 _count 对象
+    // 后端返回的嵌套 _count 对象
     struct RecordingCount: Codable, Hashable {
         let recordings: Int?
     }
@@ -51,13 +51,11 @@ struct VoiceModel: Codable, Identifiable, Hashable {
         count?.recordings ?? 0
     }
 
-    var durationSeconds: Double {
-        0
-    }
-
+    var durationSeconds: Double { 0 }
     var coverColor: String? { nil }
     var lastUsedAt: Date? { nil }
     var isDefault: Bool { false }
+    var displayName: String { name }
 
     var formattedDuration: String {
         let minutes = Int(durationSeconds) / 60
@@ -75,10 +73,10 @@ struct VoiceModel: Codable, Identifiable, Hashable {
         }
     }
 
-    // 普通初始化方法
+    // 普通初始化方法（用于 Mock 和本地创建）
     init(id: String, name: String, ownerType: String, emoji: String? = nil, status: String,
          progress: Float, quality: String? = nil, previewUrl: String? = nil,
-         errorMessage: String? = nil, trainedAt: Date? = nil, createdAt: Date,
+         errorMessage: String? = nil, trainedAt: Date? = nil, createdAt: Date? = nil,
          updatedAt: Date? = nil, recordingsCount: Int? = nil) {
         self.id = id
         self.name = name
@@ -97,12 +95,88 @@ struct VoiceModel: Codable, Identifiable, Hashable {
         self.count = recordingsCount.map { RecordingCount(recordings: $0) }
     }
 
-    // CodingKeys 映射 snake_case → camelCase
-    enum CodingKeys: String, CodingKey {
-        case id, name, ownerType, emoji, status, progress, quality
-        case previewUrl, errorMessage, trainedAt, createdAt, updatedAt
-        case userId, modelPath
-        case count = "_count"
+    // 自定义解码，容错处理后端可能返回的额外字段
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: DynamicCodingKey.self)
+
+        func key(_ s: String) -> DynamicCodingKey { DynamicCodingKey(stringValue: s) }
+
+        id = try container.decode(String.self, forKey: key("id"))
+        name = try container.decode(String.self, forKey: key("name"))
+        ownerType = (try? container.decode(String.self, forKey: key("ownerType"))) ?? "other"
+        emoji = try? container.decodeIfPresent(String.self, forKey: key("emoji")) ?? nil
+        status = (try? container.decode(String.self, forKey: key("status"))) ?? "draft"
+        progress = (try? container.decode(Float.self, forKey: key("progress"))) ?? 0
+        quality = try? container.decodeIfPresent(String.self, forKey: key("quality")) ?? nil
+        previewUrl = try? container.decodeIfPresent(String.self, forKey: key("previewUrl"))
+        errorMessage = try? container.decodeIfPresent(String.self, forKey: key("errorMessage"))
+        trainedAt = container.decodeDateIfPresent(forKey: "trainedAt")
+        createdAt = container.decodeDateIfPresent(forKey: "createdAt")
+        updatedAt = container.decodeDateIfPresent(forKey: "updatedAt")
+        userId = try? container.decodeIfPresent(String.self, forKey: key("userId"))
+        modelPath = try? container.decodeIfPresent(String.self, forKey: key("modelPath"))
+        count = try? container.decodeIfPresent(RecordingCount.self, forKey: key("_count"))
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: DynamicCodingKey.self)
+        func key(_ s: String) -> DynamicCodingKey { DynamicCodingKey(stringValue: s) }
+        try container.encode(id, forKey: key("id"))
+        try container.encode(name, forKey: key("name"))
+        try container.encode(ownerType, forKey: key("ownerType"))
+        try container.encodeIfPresent(emoji, forKey: key("emoji"))
+        try container.encode(status, forKey: key("status"))
+        try container.encode(progress, forKey: key("progress"))
+        try container.encodeIfPresent(quality, forKey: key("quality"))
+        try container.encodeIfPresent(previewUrl, forKey: key("previewUrl"))
+        try container.encodeIfPresent(errorMessage, forKey: key("errorMessage"))
+        try container.encodeIfPresent(trainedAt, forKey: key("trainedAt"))
+        try container.encodeIfPresent(createdAt, forKey: key("createdAt"))
+        try container.encodeIfPresent(updatedAt, forKey: key("updatedAt"))
+        try container.encodeIfPresent(userId, forKey: key("userId"))
+        try container.encodeIfPresent(modelPath, forKey: key("modelPath"))
+        try container.encodeIfPresent(count, forKey: key("_count"))
+    }
+}
+
+// MARK: - 动态 CodingKey（支持任意字段名）
+struct DynamicCodingKey: CodingKey {
+    var stringValue: String
+    var intValue: Int?
+
+    init(stringValue: String) { self.stringValue = stringValue }
+    init?(intValue: Int) { self.intValue = intValue; self.stringValue = "\(intValue)" }
+}
+
+// MARK: - KeyedDecodingContainer 扩展：日期容错解码
+extension KeyedDecodingContainer where Key == DynamicCodingKey {
+    func decodeDateIfPresent(forKey key: String) -> Date? {
+        let k = DynamicCodingKey(stringValue: key)
+        // 尝试 Date 类型
+        if let d = try? decodeIfPresent(Date.self, forKey: k) { return d }
+        // 尝试 String 类型并解析
+        if let s = try? decodeIfPresent(String.self, forKey: k), let date = ISO8601DateParser.parse(s) {
+            return date
+        }
+        return nil
+    }
+}
+
+// MARK: - ISO8601 日期解析
+enum ISO8601DateParser {
+    static let formatters: [ISO8601DateFormatter] = {
+        let f1 = ISO8601DateFormatter()
+        f1.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        let f2 = ISO8601DateFormatter()
+        f2.formatOptions = [.withInternetDateTime]
+        return [f1, f2]
+    }()
+
+    static func parse(_ string: String) -> Date? {
+        for f in formatters {
+            if let d = f.date(from: string) { return d }
+        }
+        return nil
     }
 }
 
@@ -163,8 +237,8 @@ enum VoiceModelStatus: String, Codable {
 // MARK: - 录音样本
 struct RecordingSample: Codable, Identifiable {
     let id: String
-    let voiceModelId: String
-    let filePath: String
+    let voiceModelId: String?
+    let filePath: String?
     let duration: Float?
     let fileSize: Int?
     let quality: String?
@@ -179,6 +253,41 @@ struct RecordingSample: Codable, Identifiable {
     var durationTimeInterval: TimeInterval { TimeInterval(duration ?? 0) }
     var fileSizeInt64: Int64 { Int64(fileSize ?? 0) }
     var qualityObj: RecordingQuality? { nil }
+
+    // 本地初始化
+    init(id: String, voiceModelId: String, filePath: String, duration: Float?,
+         fileSize: Int?, quality: String?, promptText: String?, sortOrder: Int?, createdAt: Date?) {
+        self.id = id
+        self.voiceModelId = voiceModelId
+        self.filePath = filePath
+        self.duration = duration
+        self.fileSize = fileSize
+        self.quality = quality
+        self.promptText = promptText
+        self.sortOrder = sortOrder
+        self.createdAt = createdAt
+    }
+
+    // 自定义解码容错
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: DynamicCodingKey.self)
+        func key(_ s: String) -> DynamicCodingKey { DynamicCodingKey(stringValue: s) }
+
+        id = try container.decode(String.self, forKey: key("id"))
+        voiceModelId = try? container.decodeIfPresent(String.self, forKey: key("voiceModelId"))
+        filePath = try? container.decodeIfPresent(String.self, forKey: key("filePath"))
+        duration = try? container.decodeIfPresent(Float.self, forKey: key("duration"))
+        fileSize = try? container.decodeIfPresent(Int.self, forKey: key("fileSize"))
+        quality = try? container.decodeIfPresent(String.self, forKey: key("quality"))
+        promptText = try? container.decodeIfPresent(String.self, forKey: key("promptText"))
+        sortOrder = try? container.decodeIfPresent(Int.self, forKey: key("sortOrder"))
+        var created: Date? = nil
+        if let s = try? container.decodeIfPresent(String.self, forKey: key("createdAt")),
+           let d = ISO8601DateParser.parse(s) {
+            created = d
+        }
+        createdAt = created
+    }
 }
 
 // MARK: - 录音质量（本地使用）

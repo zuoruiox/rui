@@ -64,9 +64,9 @@ enum AudioConfig {
     static let clippingThreshold: Float = 0.95  // 削波阈值
 
     // 录音时长要求
-    static let minRecordingDuration: TimeInterval = 5   // 最少5秒（测试用，正式版改回30秒）
+    static let minRecordingDuration: TimeInterval = 10  // 最少10秒
     static let maxRecordingDuration: TimeInterval = 300  // 最多5分钟
-    static let recommendedDuration: TimeInterval = 30    // 推荐30秒
+    static let recommendedDuration: TimeInterval = 10    // 推荐10秒
 
     // 播放速度选项
     static let playbackSpeeds: [Float] = [0.5, 0.75, 1.0, 1.25, 1.5]

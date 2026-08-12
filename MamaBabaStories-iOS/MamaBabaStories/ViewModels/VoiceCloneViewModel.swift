@@ -54,8 +54,7 @@ class VoiceCloneViewModel: ObservableObject {
     }
 
     var progressText: String {
-        let current = min(currentPromptIndex + 1, RecordingPrompt.prompts.count)
-        return "第 \(current) 段 / 共 \(VoiceCloneConfig.maxRecordings) 段"
+        return "第 \(currentPromptIndex + 1) 段"
     }
 
     var recordingProgress: Double {

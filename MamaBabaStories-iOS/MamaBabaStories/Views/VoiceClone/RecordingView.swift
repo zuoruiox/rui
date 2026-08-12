@@ -152,7 +152,7 @@ struct RecordingView: View {
                 .foregroundColor(voiceVM.isRecordingLongEnough ? AppColors.success : AppColors.textPrimary)
                 .monospacedDigit()
 
-            Text(voiceVM.isRecordingLongEnough ? "时长已达标，可以停止" : "至少需要30秒")
+            Text(voiceVM.isRecordingLongEnough ? "时长已达标，可以停止" : "至少需要\(Int(AudioConfig.minRecordingDuration))秒")
                 .font(AppFonts.caption())
                 .foregroundColor(voiceVM.isRecordingLongEnough ? AppColors.success : AppColors.textTertiary)
 

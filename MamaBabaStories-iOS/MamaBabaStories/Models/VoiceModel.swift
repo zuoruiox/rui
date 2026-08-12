@@ -11,46 +11,120 @@ import Foundation
 struct VoiceModel: Codable, Identifiable, Hashable {
     let id: String
     let name: String
-    let ownerType: VoiceOwnerType
-    let ownerName: String
-    let status: VoiceModelStatus
-    let trainingProgress: Double  // 0.0 - 1.0
-    let sampleCount: Int
-    let durationSeconds: Double
-    let coverColor: String?  // hex color
-    let createdAt: Date
-    let updatedAt: Date
-    let lastUsedAt: Date?
-    let isDefault: Bool
+    let ownerType: String
+    let emoji: String?
+    let status: String
+    let progress: Float
+    let quality: String?
+    let previewUrl: String?
+    let errorMessage: String?
+    let trainedAt: Date?
+    let createdAt: Date?
+    let updatedAt: Date?
+    let userId: String?
+    let modelPath: String?
+    let count: RecordingCount?
 
-    // 格式化时长
+    // 嵌套的 _count 对象
+    struct RecordingCount: Codable, Hashable {
+        let recordings: Int?
+    }
+
+    // 兼容旧 UI 的计算属性
+    var ownerTypeEnum: VoiceOwnerType {
+        VoiceOwnerType(rawValue: ownerType) ?? .other
+    }
+
+    var ownerName: String {
+        ownerTypeEnum.displayName
+    }
+
+    var statusEnum: VoiceModelStatus {
+        VoiceModelStatus(rawValue: status) ?? .draft
+    }
+
+    var trainingProgress: Double {
+        Double(progress)
+    }
+
+    var sampleCount: Int {
+        count?.recordings ?? 0
+    }
+
+    var durationSeconds: Double {
+        0
+    }
+
+    var coverColor: String? { nil }
+    var lastUsedAt: Date? { nil }
+    var isDefault: Bool { false }
+
     var formattedDuration: String {
         let minutes = Int(durationSeconds) / 60
         let seconds = Int(durationSeconds) % 60
         return String(format: "%d分%02d秒", minutes, seconds)
     }
 
-    // 状态描述
     var statusDescription: String {
-        switch status {
+        switch statusEnum {
+        case .draft: return "待录制"
         case .recording: return "录制中"
-        case .uploading: return "上传中"
         case .training: return "训练中"
         case .ready: return "可用"
         case .failed: return "训练失败"
         }
     }
+
+    // 普通初始化方法
+    init(id: String, name: String, ownerType: String, emoji: String? = nil, status: String,
+         progress: Float, quality: String? = nil, previewUrl: String? = nil,
+         errorMessage: String? = nil, trainedAt: Date? = nil, createdAt: Date,
+         updatedAt: Date? = nil, recordingsCount: Int? = nil) {
+        self.id = id
+        self.name = name
+        self.ownerType = ownerType
+        self.emoji = emoji
+        self.status = status
+        self.progress = progress
+        self.quality = quality
+        self.previewUrl = previewUrl
+        self.errorMessage = errorMessage
+        self.trainedAt = trainedAt
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.userId = nil
+        self.modelPath = nil
+        self.count = recordingsCount.map { RecordingCount(recordings: $0) }
+    }
+
+    // CodingKeys 映射 snake_case → camelCase
+    enum CodingKeys: String, CodingKey {
+        case id, name, ownerType, emoji, status, progress, quality
+        case previewUrl, errorMessage, trainedAt, createdAt, updatedAt
+        case userId, modelPath
+        case count = "_count"
+    }
 }
 
 // MARK: - 声音归属类型
 enum VoiceOwnerType: String, Codable, CaseIterable, Identifiable {
-    case mom = "妈妈"
-    case dad = "爸爸"
-    case grandma = "奶奶"
-    case grandpa = "爷爷"
-    case other = "其他"
+    case mom = "mom"
+    case dad = "dad"
+    case grandma = "grandma"
+    case grandpa = "grandpa"
+    case other = "other"
 
     var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .mom: return "妈妈"
+        case .dad: return "爸爸"
+        case .grandma: return "奶奶"
+        case .grandpa: return "爷爷"
+        case .other: return "其他"
+        }
+    }
 
     var emoji: String {
         switch self {
@@ -63,22 +137,22 @@ enum VoiceOwnerType: String, Codable, CaseIterable, Identifiable {
     }
 
     var defaultName: String {
-        return rawValue + "的声音"
+        return displayName + "的声音"
     }
 }
 
 // MARK: - 声音模型状态
 enum VoiceModelStatus: String, Codable {
+    case draft = "draft"
     case recording = "recording"
-    case uploading = "uploading"
     case training = "training"
     case ready = "ready"
     case failed = "failed"
 
     var displayText: String {
         switch self {
+        case .draft: return "待录制"
         case .recording: return "录制中"
-        case .uploading: return "上传中"
         case .training: return "训练中"
         case .ready: return "已就绪"
         case .failed: return "训练失败"
@@ -90,24 +164,31 @@ enum VoiceModelStatus: String, Codable {
 struct RecordingSample: Codable, Identifiable {
     let id: String
     let voiceModelId: String
-    let localURL: URL?
-    let remoteURL: String?
-    let duration: TimeInterval
-    let fileSize: Int64
-    let quality: RecordingQuality
-    let createdAt: Date
-    var isUploaded: Bool
-    var uploadProgress: Double
+    let filePath: String
+    let duration: Float?
+    let fileSize: Int?
+    let quality: String?
+    let promptText: String?
+    let sortOrder: Int?
+    let createdAt: Date?
+
+    var localURL: URL? { nil }
+    var remoteURL: String? { filePath }
+    var isUploaded: Bool { true }
+    var uploadProgress: Double { 1.0 }
+    var durationTimeInterval: TimeInterval { TimeInterval(duration ?? 0) }
+    var fileSizeInt64: Int64 { Int64(fileSize ?? 0) }
+    var qualityObj: RecordingQuality? { nil }
 }
 
-// MARK: - 录音质量
+// MARK: - 录音质量（本地使用）
 struct RecordingQuality: Codable {
-    let snr: Double  // 信噪比 (dB)
-    let peakLevel: Float  // 峰值电平
+    let snr: Double
+    let peakLevel: Float
     let hasClipping: Bool
     let isTooQuiet: Bool
     let isTooLoud: Bool
-    let overallScore: Double  // 0-100
+    let overallScore: Double
 
     var isPassing: Bool {
         return !hasClipping && !isTooQuiet && !isTooLoud && overallScore >= 60
@@ -152,54 +233,62 @@ enum PromptCategory: String, CaseIterable {
     case poem = "诗歌"
 }
 
+// MARK: - 上传录音响应
+struct UploadRecordingResponse: Codable {
+    let recording: RecordingSample
+    let progress: Float?
+    let recordedCount: Int?
+    let requiredCount: Int?
+}
+
 // MARK: - Mock 数据
 extension VoiceModel {
     static let mockMom = VoiceModel(
         id: "voice_001",
         name: "妈妈的声音",
-        ownerType: .mom,
-        ownerName: "妈妈",
-        status: .ready,
-        trainingProgress: 1.0,
-        sampleCount: 5,
-        durationSeconds: 320,
-        coverColor: "#FFB74D",
+        ownerType: "mom",
+        emoji: "👩",
+        status: "ready",
+        progress: 1.0,
+        quality: "quick",
+        previewUrl: nil,
+        errorMessage: nil,
+        trainedAt: Date(),
         createdAt: Calendar.current.date(byAdding: .day, value: -30, to: Date()) ?? Date(),
         updatedAt: Calendar.current.date(byAdding: .day, value: -28, to: Date()) ?? Date(),
-        lastUsedAt: Date(),
-        isDefault: true
+        recordingsCount: 5
     )
 
     static let mockDad = VoiceModel(
         id: "voice_002",
         name: "爸爸的声音",
-        ownerType: .dad,
-        ownerName: "爸爸",
-        status: .ready,
-        trainingProgress: 1.0,
-        sampleCount: 3,
-        durationSeconds: 180,
-        coverColor: "#64B5F6",
+        ownerType: "dad",
+        emoji: "👨",
+        status: "ready",
+        progress: 1.0,
+        quality: "quick",
+        previewUrl: nil,
+        errorMessage: nil,
+        trainedAt: Date(),
         createdAt: Calendar.current.date(byAdding: .day, value: -15, to: Date()) ?? Date(),
         updatedAt: Calendar.current.date(byAdding: .day, value: -13, to: Date()) ?? Date(),
-        lastUsedAt: Calendar.current.date(byAdding: .day, value: -2, to: Date()),
-        isDefault: false
+        recordingsCount: 3
     )
 
     static let mockTraining = VoiceModel(
         id: "voice_003",
         name: "奶奶的声音",
-        ownerType: .grandma,
-        ownerName: "奶奶",
-        status: .training,
-        trainingProgress: 0.6,
-        sampleCount: 4,
-        durationSeconds: 240,
-        coverColor: "#F48FB1",
+        ownerType: "grandma",
+        emoji: "👵",
+        status: "training",
+        progress: 0.6,
+        quality: "quick",
+        previewUrl: nil,
+        errorMessage: nil,
+        trainedAt: nil,
         createdAt: Date(),
         updatedAt: Date(),
-        lastUsedAt: nil,
-        isDefault: false
+        recordingsCount: 4
     )
 }
 

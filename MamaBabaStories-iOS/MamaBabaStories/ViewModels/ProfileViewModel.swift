@@ -130,9 +130,9 @@ class ProfileViewModel: ObservableObject {
             if let expiry = user.membershipExpiryDate {
                 let formatter = DateFormatter()
                 formatter.dateFormat = "yyyy年MM月dd日"
-                return "\(user.membershipTier.rawValue) · 到期\(formatter.string(from: expiry))"
+                return "\(user.membershipTierEnum.displayName) · 到期\(formatter.string(from: expiry))"
             }
-            return user.membershipTier.rawValue
+            return user.membershipTierEnum.displayName
         }
         return "开通会员，解锁更多功能"
     }
@@ -164,8 +164,7 @@ class ProfileViewModel: ObservableObject {
     // MARK: - 退出登录
     func logout() {
         user = nil
-        KeychainHelper.shared.delete(for: KeychainKeys.authToken)
-        KeychainHelper.shared.delete(for: KeychainKeys.refreshToken)
+        AuthService.shared.logout()
     }
 }
 

@@ -28,6 +28,7 @@ class VoiceCloneViewModel: ObservableObject {
     @Published var isTraining = false
     @Published var trainingProgress: Double = 0
     @Published var isLoading = false
+    @Published var isCreating = false
     @Published var errorMessage: String?
     @Published var showError = false
     @Published var showNameInput = false
@@ -70,7 +71,7 @@ class VoiceCloneViewModel: ObservableObject {
     init(voiceService: VoiceCloneServiceProtocol = VoiceCloneService()) {
         self.voiceService = voiceService
         setupAudioRecorder()
-        loadMockData()
+        // 不再自动加载，等登录成功后由 App 入口触发 loadData()
     }
 
     deinit {
@@ -86,15 +87,11 @@ class VoiceCloneViewModel: ObservableObject {
 
         do {
             voiceModels = try await voiceService.getVoiceModels()
+            Logger.info("加载了 \(voiceModels.count) 个声音模型", category: .voice)
         } catch {
-            errorMessage = error.localizedDescription
-            showError = true
+            Logger.error("加载声音模型失败: \(error)", category: .voice)
+            voiceModels = []
         }
-    }
-
-    // MARK: - Mock 数据
-    private func loadMockData() {
-        voiceModels = [VoiceModel.mockMom, VoiceModel.mockDad, VoiceModel.mockTraining]
     }
 
     // MARK: - 设置录音器
@@ -103,16 +100,17 @@ class VoiceCloneViewModel: ObservableObject {
     }
 
     // MARK: - 创建新声音模型
-    func createVoiceModel() async {
-        guard !newVoiceName.isEmpty else { return }
+    func createVoiceModel() async -> Bool {
+        guard !newVoiceName.isEmpty else { return false }
 
-        isLoading = true
-        defer { isLoading = false }
+        isCreating = true
+        errorMessage = nil
+        defer { isCreating = false }
 
         do {
             let model = try await voiceService.createVoiceModel(
                 name: newVoiceName,
-                ownerType: selectedOwnerType
+                ownerType: selectedOwnerType.rawValue
             )
             currentVoiceModel = model
             voiceModels.insert(model, at: 0)
@@ -121,23 +119,26 @@ class VoiceCloneViewModel: ObservableObject {
             showNameInput = false
             newVoiceName = ""
             navigateToRecording = true
+            Logger.info("声音模型创建成功: \(model.id)", category: .voice)
+            return true
         } catch {
             errorMessage = error.localizedDescription
             showError = true
+            Logger.error("创建声音模型失败: \(error)", category: .voice)
+            return false
         }
     }
 
     // MARK: - 选择声音模型
     func selectVoiceModel(_ model: VoiceModel) {
         currentVoiceModel = model
-        // 加载该模型的录音样本
         recordings = []
-        currentPromptIndex = 0
+        currentPromptIndex = model.sampleCount
+        navigateToRecording = true
     }
 
     // MARK: - 开始录音
     func startRecording() {
-        // 检查权限
         if !audioRecorder.hasPermission {
             Task {
                 let granted = await audioRecorder.requestPermission()
@@ -162,19 +163,16 @@ class VoiceCloneViewModel: ObservableObject {
             currentMeterLevel = 0
             waveformData = Array(repeating: 0, count: 50)
 
-            // 启动计时器更新时长
             recordingTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
                 Task { @MainActor in
                     self?.recordingDuration = self?.audioRecorder.currentDuration ?? 0
                 }
             }
 
-            // 启动波形更新
             waveformUpdateTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { [weak self] _ in
                 Task { @MainActor in
                     guard let self = self else { return }
                     self.currentMeterLevel = self.audioRecorder.currentVolume
-                    // 更新波形
                     var newWaveform = self.waveformData
                     newWaveform.removeFirst()
                     newWaveform.append(self.currentMeterLevel)
@@ -237,63 +235,43 @@ class VoiceCloneViewModel: ObservableObject {
         guard let voiceModel = currentVoiceModel else { return }
 
         let duration = recordingDuration
-        let quality = audioRecorder.getRecordingQuality()
-        recordingQuality = quality
-
-        // 创建本地录音样本
-        let sample = RecordingSample(
-            id: "local_\(Date().timeIntervalSince1970)",
-            voiceModelId: voiceModel.id,
-            localURL: fileURL,
-            remoteURL: nil,
-            duration: duration,
-            fileSize: Int64((try? Data(contentsOf: fileURL).count) ?? 0),
-            quality: quality,
-            createdAt: Date(),
-            isUploaded: false,
-            uploadProgress: 0
-        )
-        recordings.append(sample)
 
         // 上传录音
         Task {
-            await uploadRecording(sample: sample, fileURL: fileURL)
-        }
-
-        // 进入下一段
-        currentPromptIndex += 1
-        recordingDuration = 0
-    }
-
-    // MARK: - 上传录音
-    private func uploadRecording(sample: RecordingSample, fileURL: URL) async {
-        guard let voiceModel = currentVoiceModel else { return }
-
-        isUploading = true
-        uploadProgress = 0
-
-        do {
-            let uploadedSample = try await voiceService.uploadRecording(
-                voiceModelId: voiceModel.id,
-                audioURL: fileURL,
-                duration: sample.duration
-            ) { [weak self] progress in
-                Task { @MainActor in
-                    self?.uploadProgress = progress
-                }
-            }
-
-            // 更新录音列表
-            if let index = recordings.firstIndex(where: { $0.id == sample.id }) {
-                recordings[index] = uploadedSample
-            }
-
-            isUploading = false
+            isUploading = true
             uploadProgress = 0
-        } catch {
-            isUploading = false
-            errorMessage = "上传失败: \(error.localizedDescription)"
-            showError = true
+
+            do {
+                let uploadedSample = try await voiceService.uploadRecording(
+                    voiceModelId: voiceModel.id,
+                    audioURL: fileURL,
+                    duration: duration
+                ) { [weak self] progress in
+                    Task { @MainActor in
+                        self?.uploadProgress = progress
+                    }
+                }
+
+                recordings.append(uploadedSample)
+
+                // 重新加载模型列表以更新录音数
+                if let updatedModels = try? await voiceService.getVoiceModels(),
+                   let updatedModel = updatedModels.first(where: { $0.id == voiceModel.id }) {
+                    if let index = voiceModels.firstIndex(where: { $0.id == voiceModel.id }) {
+                        voiceModels[index] = updatedModel
+                    }
+                    currentVoiceModel = updatedModel
+                }
+
+                isUploading = false
+                uploadProgress = 0
+                currentPromptIndex += 1
+                recordingDuration = 0
+            } catch {
+                isUploading = false
+                errorMessage = "上传失败: \(error.localizedDescription)"
+                showError = true
+            }
         }
     }
 
@@ -308,7 +286,6 @@ class VoiceCloneViewModel: ObservableObject {
             do {
                 try await voiceService.startTraining(voiceModelId: voiceModel.id)
 
-                // 轮询训练状态
                 trainingTask = Task {
                     do {
                         let trainedModel = try await voiceService.pollTrainingStatus(voiceModelId: voiceModel.id)
@@ -317,7 +294,6 @@ class VoiceCloneViewModel: ObservableObject {
                             self.trainingProgress = 1.0
                             self.isTraining = false
 
-                            // 更新模型列表
                             if let index = self.voiceModels.firstIndex(where: { $0.id == voiceModel.id }) {
                                 self.voiceModels[index] = trainedModel
                             }
@@ -333,7 +309,6 @@ class VoiceCloneViewModel: ObservableObject {
                     }
                 }
 
-                // 模拟进度更新
                 while isTraining && trainingProgress < 0.95 {
                     try await Task.sleep(nanoseconds: 500_000_000)
                     await MainActor.run {
@@ -366,40 +341,8 @@ class VoiceCloneViewModel: ObservableObject {
 
     // MARK: - 试听声音
     func tryVoiceModel(_ model: VoiceModel, text: String = "你好呀，宝贝！我是妈妈，今天给你讲一个好听的故事。") {
-        Task {
-            do {
-                let audioURL = try await voiceService.synthesizeSpeech(text: text, voiceModelId: model.id, config: nil)
-                AudioPlayerManager.shared.play(story: Story(
-                    id: "preview_\(model.id)",
-                    title: "试听 - \(model.name)",
-                    content: text,
-                    summary: nil,
-                    theme: "family",
-                    style: "warm",
-                    targetAgeGroup: "preschool",
-                    coverImageURL: nil,
-                    coverGradient: nil,
-                    coverEmoji: model.ownerType.emoji,
-                    audioURL: audioURL.absoluteString,
-                    localAudioPath: nil,
-                    duration: 5,
-                    wordCount: text.count,
-                    voiceModelId: model.id,
-                    voiceModelName: model.name,
-                    isAIGenerated: false,
-                    isFavorite: false,
-                    isDownloaded: false,
-                    playCount: 0,
-                    createdAt: Date(),
-                    updatedAt: Date(),
-                    tags: [],
-                    characters: nil
-                ))
-            } catch {
-                errorMessage = "语音合成失败: \(error.localizedDescription)"
-                showError = true
-            }
-        }
+        errorMessage = "语音合成功能即将上线"
+        showError = true
     }
 
     // MARK: - 取消录音
@@ -432,9 +375,7 @@ class VoiceCloneViewModel: ObservableObject {
 
 // MARK: - AudioRecorderDelegate
 extension VoiceCloneViewModel: AudioRecorderDelegate {
-    nonisolated func recorderDidStart(_ recorder: AudioRecorder) {
-        // 已在 startRecording 中处理
-    }
+    nonisolated func recorderDidStart(_ recorder: AudioRecorder) {}
 
     nonisolated func recorderDidStop(_ recorder: AudioRecorder, fileURL: URL) {
         Task { @MainActor in
@@ -453,20 +394,13 @@ extension VoiceCloneViewModel: AudioRecorderDelegate {
         }
     }
 
-    nonisolated func recorder(_ recorder: AudioRecorder, didUpdateMeterLevel level: Float) {
-        // 已在 timer 中处理
-    }
-
+    nonisolated func recorder(_ recorder: AudioRecorder, didUpdateMeterLevel level: Float) {}
     nonisolated func recorder(_ recorder: AudioRecorder, didDetectVoice isVoice: Bool) {
         Task { @MainActor in
             isVoiceDetected = isVoice
         }
     }
-
-    nonisolated func recorder(_ recorder: AudioRecorder, didUpdateDuration duration: TimeInterval) {
-        // 已在 timer 中处理
-    }
-
+    nonisolated func recorder(_ recorder: AudioRecorder, didUpdateDuration duration: TimeInterval) {}
     nonisolated func recorder(_ recorder: AudioRecorder, didDetectQuality quality: RecordingQuality) {
         Task { @MainActor in
             recordingQuality = quality

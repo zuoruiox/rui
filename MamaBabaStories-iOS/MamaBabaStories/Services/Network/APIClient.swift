@@ -437,13 +437,7 @@ class MockAPIClient: APIClientProtocol {
         case .getUserProfile:
             data = try JSONEncoder().encode(User.mock)
         case .getVoiceModels:
-            data = try JSONEncoder().encode(PaginatedResponse(
-                list: [VoiceModel.mockMom, VoiceModel.mockDad, VoiceModel.mockTraining],
-                total: 3,
-                page: 1,
-                pageSize: 20,
-                hasMore: false
-            ))
+            data = try JSONEncoder().encode([VoiceModel.mockMom, VoiceModel.mockDad, VoiceModel.mockTraining])
         case .getStories, .getFeaturedStories, .getRecentStories:
             data = try JSONEncoder().encode(PaginatedResponse(
                 list: Story.mockStories,

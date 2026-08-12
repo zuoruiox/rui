@@ -59,7 +59,7 @@ class AICreateViewModel: ObservableObject {
         do {
             availableVoiceModels = try await voiceService.getVoiceModels()
             if selectedVoiceModel == nil {
-                selectedVoiceModel = availableVoiceModels.first(where: { $0.status == .ready })
+                selectedVoiceModel = availableVoiceModels.first(where: { $0.statusEnum == .ready })
             }
         } catch {
             // 加载失败时使用 mock 数据
@@ -117,7 +117,7 @@ class AICreateViewModel: ObservableObject {
                 self.isGenerating = false
 
                 // 如果选择了声音模型，自动合成语音
-                if let voiceModel = selectedVoiceModel, voiceModel.status == .ready {
+                if let voiceModel = selectedVoiceModel, voiceModel.statusEnum == .ready {
                     await synthesizeAudio(for: story, voiceModel: voiceModel)
                 }
             } catch {
@@ -174,7 +174,7 @@ class AICreateViewModel: ObservableObject {
                 isGenerating = false
                 synthesizedAudioURL = nil
 
-                if let voiceModel = selectedVoiceModel, voiceModel.status == .ready {
+                if let voiceModel = selectedVoiceModel, voiceModel.statusEnum == .ready {
                     await synthesizeAudio(for: newStory, voiceModel: voiceModel)
                 }
             } catch {

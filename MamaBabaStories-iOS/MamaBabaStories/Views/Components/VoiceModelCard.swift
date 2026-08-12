@@ -15,6 +15,16 @@ struct VoiceModelCard: View {
     var onPlay: (() -> Void)? = nil
     var onDelete: (() -> Void)? = nil
 
+    private var cardColor: Color {
+        switch voiceModel.ownerTypeEnum {
+        case .mom: return Color(hex: "#FFB74D")
+        case .dad: return Color(hex: "#64B5F6")
+        case .grandma: return Color(hex: "#F48FB1")
+        case .grandpa: return Color(hex: "#A1887F")
+        case .other: return AppColors.softOrange
+        }
+    }
+
     var body: some View {
         Button(action: { onTap?() }) {
             VStack(spacing: 12) {
@@ -24,8 +34,8 @@ struct VoiceModelCard: View {
                         .fill(
                             LinearGradient(
                                 gradient: Gradient(colors: [
-                                    Color(hex: voiceModel.coverColor ?? "#FFB74D"),
-                                    Color(hex: voiceModel.coverColor ?? "#FFB74D").opacity(0.6)
+                                    cardColor,
+                                    cardColor.opacity(0.6)
                                 ]),
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
@@ -33,11 +43,11 @@ struct VoiceModelCard: View {
                         )
                         .frame(width: 64, height: 64)
 
-                    Text(voiceModel.ownerType.emoji)
+                    Text(voiceModel.emoji ?? voiceModel.ownerTypeEnum.emoji)
                         .font(.system(size: 32))
 
                     // 状态指示器
-                    if voiceModel.status == .ready {
+                    if voiceModel.statusEnum == .ready {
                         Circle()
                             .fill(AppColors.success)
                             .frame(width: 14, height: 14)
@@ -47,7 +57,7 @@ struct VoiceModelCard: View {
                                     .foregroundColor(.white)
                             )
                             .offset(x: 22, y: 22)
-                    } else if voiceModel.status == .training {
+                    } else if voiceModel.statusEnum == .training {
                         ProgressView()
                             .progressViewStyle(CircularProgressViewStyle(tint: AppColors.warning))
                             .frame(width: 18, height: 18)
@@ -68,14 +78,14 @@ struct VoiceModelCard: View {
                 }
 
                 // 训练进度
-                if voiceModel.status == .training {
+                if voiceModel.statusEnum == .training {
                     ProgressView(value: voiceModel.trainingProgress)
                         .progressViewStyle(LinearProgressViewStyle(tint: AppColors.warning))
                         .frame(width: 60)
                 }
 
                 // 操作按钮
-                if voiceModel.status == .ready {
+                if voiceModel.statusEnum == .ready {
                     HStack(spacing: 8) {
                         Button(action: { onPlay?() }) {
                             Image(systemName: "play.fill")
@@ -109,7 +119,7 @@ struct VoiceModelCard: View {
         }
         .buttonStyle(PlainButtonStyle())
         .contextMenu {
-            if voiceModel.status == .ready {
+            if voiceModel.statusEnum == .ready {
                 Button(action: { onPlay?() }) {
                     Label("试听", systemImage: "play.circle")
                 }
@@ -121,11 +131,11 @@ struct VoiceModelCard: View {
     }
 
     private var statusColor: Color {
-        switch voiceModel.status {
+        switch voiceModel.statusEnum {
         case .ready: return AppColors.success
-        case .training, .uploading: return AppColors.warning
+        case .training: return AppColors.warning
         case .failed: return AppColors.error
-        case .recording: return AppColors.info
+        case .recording, .draft: return AppColors.info
         }
     }
 }

@@ -11,13 +11,12 @@ import Combine
 // MARK: - 声音克隆服务协议
 protocol VoiceCloneServiceProtocol {
     func getVoiceModels() async throws -> [VoiceModel]
-    func createVoiceModel(name: String, ownerType: VoiceOwnerType) async throws -> VoiceModel
+    func createVoiceModel(name: String, ownerType: String) async throws -> VoiceModel
     func deleteVoiceModel(id: String) async throws
     func uploadRecording(voiceModelId: String, audioURL: URL, duration: TimeInterval, progressHandler: ((Double) -> Void)?) async throws -> RecordingSample
     func startTraining(voiceModelId: String) async throws
     func pollTrainingStatus(voiceModelId: String) async throws -> VoiceModel
     func synthesizeSpeech(text: String, voiceModelId: String, config: TTSConfig?) async throws -> URL
-    func setDefaultVoice(id: String) async throws
 }
 
 // MARK: - VoiceCloneService 实现
@@ -30,13 +29,14 @@ class VoiceCloneService: VoiceCloneServiceProtocol {
 
     // MARK: - 获取声音模型列表
     func getVoiceModels() async throws -> [VoiceModel] {
-        let response: PaginatedResponse<VoiceModel> = try await apiClient.request(.getVoiceModels)
-        return response.list
+        // 后端直接返回数组，不是 PaginatedResponse
+        let models: [VoiceModel] = try await apiClient.request(.getVoiceModels)
+        return models
     }
 
     // MARK: - 创建声音模型
-    func createVoiceModel(name: String, ownerType: VoiceOwnerType) async throws -> VoiceModel {
-        return try await apiClient.request(.createVoiceModel(name: name, ownerType: ownerType.rawValue))
+    func createVoiceModel(name: String, ownerType: String) async throws -> VoiceModel {
+        return try await apiClient.request(.createVoiceModel(name: name, ownerType: ownerType))
     }
 
     // MARK: - 删除声音模型
@@ -46,15 +46,14 @@ class VoiceCloneService: VoiceCloneServiceProtocol {
 
     // MARK: - 上传录音
     func uploadRecording(voiceModelId: String, audioURL: URL, duration: TimeInterval, progressHandler: ((Double) -> Void)?) async throws -> RecordingSample {
-        // 读取音频文件数据
         let audioData = try Data(contentsOf: audioURL)
 
-        // 上传
-        let sample: RecordingSample = try await apiClient.upload(
+        // 上传录音，后端返回 UploadRecordingResponse
+        let response: UploadRecordingResponse = try await apiClient.upload(
             .uploadRecording(voiceModelId: voiceModelId, data: audioData, duration: duration),
             progressHandler: progressHandler
         )
-        return sample
+        return response.recording
     }
 
     // MARK: - 开始训练
@@ -69,16 +68,16 @@ class VoiceCloneService: VoiceCloneServiceProtocol {
         let maxAttempts = VoiceCloneConfig.maxPollingAttempts
 
         while attempts < maxAttempts {
-            let voiceModel: VoiceModel = try await apiClient.request(.getTrainingStatus(voiceModelId: voiceModelId))
+            let voiceModel: VoiceModel = try await apiClient.request(.getVoiceModel(id: voiceModelId))
 
-            switch voiceModel.status {
+            switch voiceModel.statusEnum {
             case .ready:
                 Logger.info("声音模型训练完成: \(voiceModelId)", category: .voice)
                 return voiceModel
             case .failed:
                 Logger.error("声音模型训练失败: \(voiceModelId)", category: .voice)
-                throw NSError(domain: "VoiceClone", code: -1, userInfo: [NSLocalizedDescriptionKey: "声音模型训练失败，请重新录制"])
-            case .training, .uploading, .recording:
+                throw NSError(domain: "VoiceClone", code: -1, userInfo: [NSLocalizedDescriptionKey: voiceModel.errorMessage ?? "声音模型训练失败，请重新录制"])
+            case .draft, .recording, .training:
                 Logger.debug("训练进度: \(Int(voiceModel.trainingProgress * 100))%", category: .voice)
                 try await Task.sleep(nanoseconds: UInt64(VoiceCloneConfig.pollingInterval * 1_000_000_000))
                 attempts += 1
@@ -90,45 +89,8 @@ class VoiceCloneService: VoiceCloneServiceProtocol {
 
     // MARK: - 语音合成（TTS）
     func synthesizeSpeech(text: String, voiceModelId: String, config: TTSConfig? = nil) async throws -> URL {
-        let response: TTSSynthesisResponse = try await apiClient.request(
-            .synthesizeSpeech(voiceModelId: voiceModelId, text: text, config: config)
-        )
-
-        // 如果是异步合成，轮询等待完成
-        if response.status == "processing" || response.status == "pending" {
-            return try await pollSynthesisStatus(taskId: response.taskId)
-        }
-
-        guard let audioURLString = response.audioUrl,
-              let url = URL(string: audioURLString) else {
-            throw NSError(domain: "VoiceClone", code: -3, userInfo: [NSLocalizedDescriptionKey: "合成音频URL无效"])
-        }
-
-        return url
-    }
-
-    // MARK: - 轮询合成状态
-    private func pollSynthesisStatus(taskId: String) async throws -> URL {
-        for _ in 0..<60 { // 最多等60次，每次2秒
-            try await Task.sleep(nanoseconds: 2_000_000_000)
-
-            let response: TTSSynthesisResponse = try await apiClient.request(.getTTSStatus(taskId: taskId))
-
-            if response.status == "completed", let urlString = response.audioUrl, let url = URL(string: urlString) {
-                return url
-            }
-
-            if response.status == "failed" {
-                throw NSError(domain: "VoiceClone", code: -4, userInfo: [NSLocalizedDescriptionKey: "语音合成失败"])
-            }
-        }
-
-        throw NSError(domain: "VoiceClone", code: -5, userInfo: [NSLocalizedDescriptionKey: "语音合成超时"])
-    }
-
-    // MARK: - 设置默认声音
-    func setDefaultVoice(id: String) async throws {
-        let _: EmptyResponse? = try await apiClient.requestOptional(.setDefaultVoice(id: id))
+        // 后端暂未实现 TTS，返回错误
+        throw NSError(domain: "VoiceClone", code: -3, userInfo: [NSLocalizedDescriptionKey: "语音合成功能即将上线"])
     }
 }
 
@@ -141,22 +103,22 @@ class MockVoiceCloneService: VoiceCloneServiceProtocol {
         return [VoiceModel.mockMom, VoiceModel.mockDad, VoiceModel.mockTraining]
     }
 
-    func createVoiceModel(name: String, ownerType: VoiceOwnerType) async throws -> VoiceModel {
+    func createVoiceModel(name: String, ownerType: String) async throws -> VoiceModel {
         try await Task.sleep(nanoseconds: UInt64(mockDelay * 1_000_000_000))
         return VoiceModel(
             id: "voice_new_\(UUID().uuidString.prefix(8))",
             name: name,
             ownerType: ownerType,
-            ownerName: ownerType.rawValue,
-            status: .recording,
-            trainingProgress: 0,
-            sampleCount: 0,
-            durationSeconds: 0,
-            coverColor: nil,
+            emoji: "🎤",
+            status: "draft",
+            progress: 0,
+            quality: "quick",
+            previewUrl: nil,
+            errorMessage: nil,
+            trainedAt: nil,
             createdAt: Date(),
             updatedAt: Date(),
-            lastUsedAt: nil,
-            isDefault: false
+            recordingsCount: 0
         )
     }
 
@@ -165,7 +127,6 @@ class MockVoiceCloneService: VoiceCloneServiceProtocol {
     }
 
     func uploadRecording(voiceModelId: String, audioURL: URL, duration: TimeInterval, progressHandler: ((Double) -> Void)?) async throws -> RecordingSample {
-        // 模拟上传进度
         for progress in stride(from: 0.1, through: 1.0, by: 0.1) {
             progressHandler?(progress)
             try await Task.sleep(nanoseconds: 200_000_000)
@@ -174,21 +135,13 @@ class MockVoiceCloneService: VoiceCloneServiceProtocol {
         return RecordingSample(
             id: "sample_\(UUID().uuidString.prefix(8))",
             voiceModelId: voiceModelId,
-            localURL: audioURL,
-            remoteURL: nil,
-            duration: duration,
-            fileSize: Int64((try? Data(contentsOf: audioURL).count) ?? 0),
-            quality: RecordingQuality(
-                snr: 35,
-                peakLevel: 0.7,
-                hasClipping: false,
-                isTooQuiet: false,
-                isTooLoud: false,
-                overallScore: 85
-            ),
-            createdAt: Date(),
-            isUploaded: true,
-            uploadProgress: 1.0
+            filePath: "/mock/recording.wav",
+            duration: Float(duration),
+            fileSize: Int((try? Data(contentsOf: audioURL).count) ?? 0),
+            quality: nil,
+            promptText: nil,
+            sortOrder: 0,
+            createdAt: Date()
         )
     }
 
@@ -197,23 +150,14 @@ class MockVoiceCloneService: VoiceCloneServiceProtocol {
     }
 
     func pollTrainingStatus(voiceModelId: String) async throws -> VoiceModel {
-        // 模拟训练进度
-        for progress in stride(from: 0.2, through: 1.0, by: 0.2) {
+        for _ in stride(from: 0.2, through: 1.0, by: 0.2) {
             try await Task.sleep(nanoseconds: 500_000_000)
-            if progress >= 1.0 {
-                return VoiceModel.mockMom
-            }
         }
         return VoiceModel.mockMom
     }
 
     func synthesizeSpeech(text: String, voiceModelId: String, config: TTSConfig?) async throws -> URL {
         try await Task.sleep(nanoseconds: 2_000_000_000)
-        // 返回一个临时 URL（mock）
         return URL(string: "https://example.com/mock-audio.mp3")!
-    }
-
-    func setDefaultVoice(id: String) async throws {
-        try await Task.sleep(nanoseconds: 500_000_000)
     }
 }

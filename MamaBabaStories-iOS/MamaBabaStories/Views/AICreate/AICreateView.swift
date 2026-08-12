@@ -233,7 +233,7 @@ struct AICreateView: View {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
-                    ForEach(aiVM.availableVoiceModels.filter { $0.status == .ready }) { model in
+                    ForEach(aiVM.availableVoiceModels.filter { $0.statusEnum == .ready }) { model in
                         VoiceModelCard(voiceModel: model, isSelected: aiVM.selectedVoiceModel?.id == model.id) {
                             aiVM.selectedVoiceModel = model
                         } onPlay: {

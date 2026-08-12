@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MainTabView: View {
     @EnvironmentObject var playerVM: PlayerViewModel
+    @EnvironmentObject var voiceVM: VoiceCloneViewModel
     @State private var selectedTab = 0
 
     var body: some View {
@@ -30,7 +31,7 @@ struct MainTabView: View {
 
                 AICreateView()
                     .tabItem {
-                        Image(systemName: selectedTab == 2 ? "sparkles" : "sparkles")
+                        Image(systemName: "sparkles")
                         Text("AI创作")
                     }
                     .tag(2)
@@ -56,7 +57,7 @@ struct MainTabView: View {
                 VStack(spacing: 0) {
                     Spacer()
                     MiniPlayerView()
-                        .padding(.bottom, 49) // TabBar 高度
+                        .padding(.bottom, 49)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
                 .ignoresSafeArea(.keyboard)
@@ -64,6 +65,9 @@ struct MainTabView: View {
         }
         .fullScreenCover(isPresented: $playerVM.isFullScreenPlayerPresented) {
             StoryPlayerView()
+        }
+        .fullScreenCover(isPresented: $voiceVM.navigateToRecording) {
+            RecordingView()
         }
         .animation(.easeInOut(duration: 0.3), value: playerVM.isMiniPlayerVisible)
     }
@@ -78,13 +82,11 @@ struct MiniPlayerView: View {
             playerVM.showFullScreenPlayer()
         }) {
             HStack(spacing: 12) {
-                // 封面
                 if let story = playerVM.currentStory {
                     StoryCoverView(story: story, size: CGSize(width: 44, height: 44))
                         .cornerRadius(8)
                 }
 
-                // 信息
                 VStack(alignment: .leading, spacing: 2) {
                     Text(playerVM.currentStory?.title ?? "未知故事")
                         .font(AppFonts.body(size: 14, weight: .medium))
@@ -99,12 +101,10 @@ struct MiniPlayerView: View {
 
                 Spacer()
 
-                // 进度条
                 ProgressView(value: playerVM.progress)
                     .progressViewStyle(LinearProgressViewStyle(tint: AppColors.softOrange))
                     .frame(width: 60)
 
-                // 播放/暂停按钮
                 Button(action: {
                     playerVM.togglePlayPause()
                 }) {
@@ -114,7 +114,6 @@ struct MiniPlayerView: View {
                         .frame(width: 40, height: 40)
                 }
 
-                // 关闭按钮
                 Button(action: {
                     playerVM.stop()
                 }) {

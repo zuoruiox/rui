@@ -18,9 +18,9 @@ enum AppInfo {
 // MARK: - API 配置
 enum APIConfig {
     #if DEBUG
-    // 模拟器使用 Mac 的 IP 地址访问本地服务器
-    static let baseURL = "http://10.21.10.202:9999/api"
-    static let wsBaseURL = "ws://10.21.10.202:9999/api"
+    // 生产服务器
+    static let baseURL = "http://153.0.191.139:9999/api"
+    static let wsBaseURL = "ws://153.0.191.139:9999/api"
     #else
     static let baseURL = "https://api.mamababa-stories.com/api"
     static let wsBaseURL = "wss://api.mamababa-stories.com/api"
@@ -64,9 +64,9 @@ enum AudioConfig {
     static let clippingThreshold: Float = 0.95  // 削波阈值
 
     // 录音时长要求
-    static let minRecordingDuration: TimeInterval = 30  // 最少30秒
+    static let minRecordingDuration: TimeInterval = 5   // 最少5秒（测试用，正式版改回30秒）
     static let maxRecordingDuration: TimeInterval = 300  // 最多5分钟
-    static let recommendedDuration: TimeInterval = 60  // 推荐1分钟
+    static let recommendedDuration: TimeInterval = 30    // 推荐30秒
 
     // 播放速度选项
     static let playbackSpeeds: [Float] = [0.5, 0.75, 1.0, 1.25, 1.5]
@@ -242,9 +242,17 @@ enum AgeGroup: String, CaseIterable, Codable, Identifiable {
 
 // MARK: - 会员等级
 enum MembershipTier: String, Codable {
-    case free = "免费版"
-    case premium = "会员版"
-    case family = "家庭版"
+    case free = "free"
+    case premium = "premium"
+    case family = "family"
+
+    var displayName: String {
+        switch self {
+        case .free: return "免费版"
+        case .premium: return "会员版"
+        case .family: return "家庭版"
+        }
+    }
 
     var maxVoiceModels: Int {
         switch self {

@@ -29,9 +29,15 @@ struct VoiceCloneView: View {
                         .padding(.horizontal, Layout.horizontalPadding)
 
                     // 录制引导
-                    if voiceVM.voiceModels.isEmpty {
+                    if voiceVM.voiceModels.isEmpty && !voiceVM.isLoading {
                         emptyState
                             .padding(.horizontal, Layout.horizontalPadding)
+                    }
+
+                    // 加载中
+                    if voiceVM.isLoading {
+                        ProgressView("加载中...")
+                            .padding(.top, 40)
                     }
                 }
                 .padding(.top, 8)
@@ -42,7 +48,11 @@ struct VoiceCloneView: View {
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { showingCreateSheet = true }) {
+                    Button(action: {
+                        voiceVM.selectedOwnerType = .mom
+                        voiceVM.newVoiceName = VoiceOwnerType.mom.defaultName
+                        showingCreateSheet = true
+                    }) {
                         Image(systemName: "plus")
                             .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(AppColors.softOrange)
@@ -50,15 +60,22 @@ struct VoiceCloneView: View {
                 }
             }
             .sheet(isPresented: $showingCreateSheet) {
-                CreateVoiceView()
+                CreateVoiceView(isPresented: $showingCreateSheet)
             }
-            .fullScreenCover(isPresented: $voiceVM.navigateToRecording) {
-                RecordingView()
+            .alert("错误", isPresented: $voiceVM.showError) {
+                Button("好的", role: .cancel) {}
+            } message: {
+                Text(voiceVM.errorMessage ?? "未知错误")
             }
             .alert("训练完成！", isPresented: $voiceVM.showingTrainingSuccess) {
                 Button("好的", role: .cancel) {}
             } message: {
                 Text("你的声音模型已经训练完成，现在可以用你的声音来讲故事啦！")
+            }
+            .onChange(of: voiceVM.navigateToRecording) { _, isNavigating in
+                if isNavigating {
+                    showingCreateSheet = false
+                }
             }
         }
     }
@@ -84,7 +101,7 @@ struct VoiceCloneView: View {
 
             HStack(spacing: 12) {
                 StatBadge(icon: "mic.fill", value: "\(voiceVM.voiceModels.count)", label: "个声音")
-                StatBadge(icon: "checkmark.circle.fill", value: "\(voiceVM.voiceModels.filter { $0.status == .ready }.count)", label: "可用")
+                StatBadge(icon: "checkmark.circle.fill", value: "\(voiceVM.voiceModels.filter { $0.statusEnum == .ready }.count)", label: "可用")
                 StatBadge(icon: "clock.fill", value: "1分钟", label: "录制时长")
             }
         }
@@ -111,34 +128,32 @@ struct VoiceCloneView: View {
                 Spacer()
             }
 
-            if voiceVM.voiceModels.isEmpty {
-                // 空状态在下面单独处理
-            } else {
-                LazyVGrid(columns: [
-                    GridItem(.adaptive(minimum: 100), spacing: 12)
-                ], spacing: 12) {
-                    ForEach(voiceVM.voiceModels) { model in
-                        VoiceModelCard(
-                            voiceModel: model,
-                            isTraining: model.status == .training,
-                            onTap: {
-                                voiceVM.selectVoiceModel(model)
-                                if model.status == .recording || model.sampleCount < VoiceCloneConfig.minRecordings {
-                                    voiceVM.navigateToRecording = true
+            if !voiceVM.voiceModels.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        ForEach(voiceVM.voiceModels) { model in
+                            VoiceModelCard(
+                                voiceModel: model,
+                                isTraining: model.statusEnum == .training,
+                                onTap: {
+                                    voiceVM.selectVoiceModel(model)
+                                },
+                                onPlay: {
+                                    voiceVM.tryVoiceModel(model)
+                                },
+                                onDelete: {
+                                    Task { await voiceVM.deleteVoiceModel(model) }
                                 }
-                            },
-                            onPlay: {
-                                voiceVM.tryVoiceModel(model)
-                            },
-                            onDelete: {
-                                Task { await voiceVM.deleteVoiceModel(model) }
-                            }
-                        )
-                    }
+                            )
+                        }
 
-                    AddVoiceCard {
-                        showingCreateSheet = true
+                        AddVoiceCard {
+                            voiceVM.selectedOwnerType = .mom
+                            voiceVM.newVoiceName = VoiceOwnerType.mom.defaultName
+                            showingCreateSheet = true
+                        }
                     }
+                    .padding(.horizontal, 2)
                 }
             }
         }
@@ -155,7 +170,7 @@ struct VoiceCloneView: View {
                 TipRow(icon: "room", text: "选择安静的环境，避免背景噪音")
                 TipRow(icon: "mic", text: "距离麦克风20-30厘米，保持正常音量")
                 TipRow(icon: "text.bubble", text: "清晰自然地朗读提示文字")
-                TipRow(icon: "clock", text: "每段录音建议30秒到1分钟")
+                TipRow(icon: "clock", text: "每段录音建议5秒以上")
                 TipRow(icon: "number", text: "至少录制3段，越多效果越好")
             }
         }
@@ -183,6 +198,8 @@ struct VoiceCloneView: View {
                 .multilineTextAlignment(.center)
 
             PrimaryButton("开始录制", icon: "mic.fill") {
+                voiceVM.selectedOwnerType = .mom
+                voiceVM.newVoiceName = VoiceOwnerType.mom.defaultName
                 showingCreateSheet = true
             }
             .padding(.top, 8)
@@ -240,6 +257,7 @@ struct TipRow: View {
 struct CreateVoiceView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var voiceVM: VoiceCloneViewModel
+    @Binding var isPresented: Bool
 
     var body: some View {
         NavigationStack {
@@ -276,14 +294,14 @@ struct CreateVoiceView: View {
                                 ForEach(VoiceOwnerType.allCases) { type in
                                     Button(action: {
                                         voiceVM.selectedOwnerType = type
-                                        if voiceVM.newVoiceName.isEmpty {
+                                        if voiceVM.newVoiceName.isEmpty || VoiceOwnerType.allCases.contains(where: { $0.defaultName == voiceVM.newVoiceName }) {
                                             voiceVM.newVoiceName = type.defaultName
                                         }
                                     }) {
                                         VStack(spacing: 6) {
                                             Text(type.emoji)
                                                 .font(.system(size: 28))
-                                            Text(type.rawValue)
+                                            Text(type.displayName)
                                                 .font(AppFonts.caption(size: 12))
                                                 .foregroundColor(voiceVM.selectedOwnerType == type ? .white : AppColors.textSecondary)
                                         }
@@ -318,22 +336,39 @@ struct CreateVoiceView: View {
 
                 Spacer()
 
-                PrimaryButton("开始录制", icon: "mic.fill", isDisabled: voiceVM.newVoiceName.isEmpty) {
-                    Task {
-                        await voiceVM.createVoiceModel()
-                        dismiss()
+                // 创建按钮
+                if voiceVM.isCreating {
+                    ProgressView("创建中...")
+                        .padding(.bottom, 30)
+                } else {
+                    PrimaryButton("开始录制", icon: "mic.fill", isDisabled: voiceVM.newVoiceName.isEmpty) {
+                        Task {
+                            let success = await voiceVM.createVoiceModel()
+                            if success {
+                                isPresented = false
+                            }
+                            // 如果失败，showError alert 会显示错误信息
+                        }
                     }
+                    .padding(.horizontal, Layout.horizontalPadding)
+                    .padding(.bottom, 30)
                 }
-                .padding(.horizontal, Layout.horizontalPadding)
-                .padding(.bottom, 30)
             }
             .background(AppColors.background)
             .navigationTitle("新建声音")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("取消") { dismiss() }
+                    Button("取消") {
+                        isPresented = false
+                    }
+                    .disabled(voiceVM.isCreating)
                 }
+            }
+            .alert("错误", isPresented: $voiceVM.showError) {
+                Button("好的", role: .cancel) {}
+            } message: {
+                Text(voiceVM.errorMessage ?? "未知错误")
             }
         }
     }

@@ -12,6 +12,8 @@ enum APIEndpoint {
     // MARK: - 认证
     case sendCode(phone: String)
     case login(phone: String, code: String)
+    case loginWithEmail(email: String, password: String)
+    case deviceLogin(deviceId: String)
     case loginWithApple(token: String)
     case refreshToken(refreshToken: String)
     case logout
@@ -76,6 +78,10 @@ extension APIEndpoint {
             return "/auth/send-code"
         case .login:
             return "/auth/login"
+        case .loginWithEmail:
+            return "/auth/login"
+        case .deviceLogin:
+            return "/auth/device-login"
         case .loginWithApple:
             return "/auth/apple"
         case .refreshToken:
@@ -248,6 +254,12 @@ extension APIEndpoint {
         case .login(let phone, let code):
             return ["phone": phone, "code": code]
 
+        case .loginWithEmail(let email, let password):
+            return ["email": email, "password": password]
+
+        case .deviceLogin(let deviceId):
+            return ["deviceId": deviceId]
+
         case .loginWithApple(let token):
             return ["identityToken": token]
 
@@ -258,7 +270,7 @@ extension APIEndpoint {
             return ["name": name, "ownerType": ownerType]
 
         case .uploadRecording(_, _, let duration):
-            return ["duration": duration]
+            return ["duration": String(duration)]
 
         case .startTraining:
             return [:]
@@ -313,8 +325,9 @@ extension APIEndpoint {
     // MARK: - 是否需要认证
     var requiresAuth: Bool {
         switch self {
-        case .sendCode, .login, .loginWithApple, .refreshToken,
-             .getStories, .getStory, .getFeaturedStories, .getRecentStories:
+        case .sendCode, .login, .loginWithEmail, .deviceLogin, .loginWithApple, .refreshToken,
+             .getStories, .getStory, .getFeaturedStories, .getRecentStories,
+             .getVoiceModels:
             return false
         default:
             return true
@@ -347,7 +360,7 @@ extension APIEndpoint {
     var uploadFieldName: String {
         switch self {
         case .uploadRecording:
-            return "audio"
+            return "recording"
         case .updateProfile:
             return "avatar"
         default:

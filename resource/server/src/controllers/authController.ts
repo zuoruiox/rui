@@ -147,3 +147,34 @@ export const updateProfile = async (req: AuthRequest, res: Response, next: NextF
     next(err);
   }
 };
+
+// 设备自动登录 - 用设备ID创建或获取匿名用户
+export const deviceLogin = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const { deviceId } = req.body;
+    if (!deviceId) {
+      return fail(res, '设备ID不能为空', 400);
+    }
+
+    // 查找是否已有该设备的用户（通过 email 匹配 deviceId@device.local）
+    const deviceEmail = `device_${deviceId}@device.local`;
+    let user = await prisma.user.findUnique({ where: { email: deviceEmail } });
+
+    if (!user) {
+      // 自动创建匿名用户
+      user = await prisma.user.create({
+        data: {
+          email: deviceEmail,
+          nickname: '宝贝家长',
+          role: 'user',
+          membershipTier: 'free',
+        },
+      });
+    }
+
+    const token = signToken({ userId: user.id, role: user.role });
+    return success(res, { token, user: excludePassword(user) }, '登录成功');
+  } catch (err) {
+    next(err);
+  }
+};

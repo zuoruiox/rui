@@ -8,10 +8,12 @@
 
 import SwiftUI
 import AVFoundation
+import MediaPlayer
 
 @main
 struct MamaBabaStoriesApp: App {
     // MARK: - App State
+    @StateObject private var authService = AuthService.shared
     @StateObject private var playerViewModel = PlayerViewModel()
     @StateObject private var homeViewModel = HomeViewModel()
     @StateObject private var libraryViewModel = StoryLibraryViewModel()
@@ -27,16 +29,35 @@ struct MamaBabaStoriesApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainTabView()
-                .environmentObject(playerViewModel)
-                .environmentObject(homeViewModel)
-                .environmentObject(libraryViewModel)
-                .environmentObject(voiceCloneViewModel)
-                .environmentObject(aiCreateViewModel)
-                .environmentObject(profileViewModel)
-                .onAppear {
-                    setupRemoteCommandCenter()
+            Group {
+                if authService.isAuthenticated {
+                    MainTabView()
+                        .transition(.opacity)
+                } else {
+                    LoginView()
+                        .transition(.opacity)
                 }
+            }
+            .animation(.easeInOut(duration: 0.3), value: authService.isAuthenticated)
+            .environmentObject(authService)
+            .environmentObject(playerViewModel)
+            .environmentObject(homeViewModel)
+            .environmentObject(libraryViewModel)
+            .environmentObject(voiceCloneViewModel)
+            .environmentObject(aiCreateViewModel)
+            .environmentObject(profileViewModel)
+            .onAppear {
+                setupRemoteCommandCenter()
+            }
+            .onChange(of: authService.isAuthenticated) { _, authenticated in
+                if authenticated {
+                    Task {
+                        await homeViewModel.loadData()
+                        await libraryViewModel.loadData()
+                        await voiceCloneViewModel.loadData()
+                    }
+                }
+            }
         }
     }
 
@@ -55,7 +76,6 @@ struct MamaBabaStoriesApp: App {
 
     // MARK: - UI Appearance
     private func configureAppearance() {
-        // 导航栏外观
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = UIColor(AppColors.background)
@@ -66,7 +86,6 @@ struct MamaBabaStoriesApp: App {
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
         UINavigationBar.appearance().compactAppearance = appearance
 
-        // TabBar 外观
         let tabAppearance = UITabBarAppearance()
         tabAppearance.configureWithOpaqueBackground()
         tabAppearance.backgroundColor = UIColor(AppColors.surface)
@@ -115,6 +134,3 @@ struct MamaBabaStoriesApp: App {
         }
     }
 }
-
-// MARK: - MediaPlayer Import
-import MediaPlayer

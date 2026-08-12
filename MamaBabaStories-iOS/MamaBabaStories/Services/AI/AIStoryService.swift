@@ -73,8 +73,8 @@ class AIStoryService: AIStoryServiceProtocol {
             isFavorite: false,
             isDownloaded: false,
             playCount: 0,
-            createdAt: aiStory.createdAt,
-            updatedAt: aiStory.createdAt,
+            createdAt: aiStory.createdAt ?? Date(),
+            updatedAt: aiStory.createdAt ?? Date(),
             tags: aiStory.tags,
             characters: aiStory.characters
         )
@@ -187,8 +187,8 @@ class MockAIStoryService: AIStoryServiceProtocol {
             isFavorite: false,
             isDownloaded: false,
             playCount: 0,
-            createdAt: aiStory.createdAt,
-            updatedAt: aiStory.createdAt,
+            createdAt: aiStory.createdAt ?? Date(),
+            updatedAt: aiStory.createdAt ?? Date(),
             tags: aiStory.tags,
             characters: aiStory.characters
         )

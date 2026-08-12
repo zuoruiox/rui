@@ -16,6 +16,7 @@ struct AIStoryRequest: Codable {
     let wordCount: Int
     let customPrompt: String?
     let childName: String?
+    let voiceModelId: String?
     let includeMorals: Bool
     let language: String
 
@@ -27,6 +28,7 @@ struct AIStoryRequest: Codable {
         wordCount: Int = 500,
         customPrompt: String? = nil,
         childName: String? = nil,
+        voiceModelId: String? = nil,
         includeMorals: Bool = true
     ) {
         self.theme = theme
@@ -36,6 +38,7 @@ struct AIStoryRequest: Codable {
         self.wordCount = wordCount
         self.customPrompt = customPrompt
         self.childName = childName
+        self.voiceModelId = voiceModelId
         self.includeMorals = includeMorals
         self.language = "zh-CN"
     }
@@ -52,8 +55,8 @@ struct AIStoryResponse: Codable {
     let tags: [String]
     let characters: [String]
     let coverEmoji: String
-    let coverGradient: [String]
-    let createdAt: Date
+    let coverGradient: [String]?
+    let createdAt: Date?
 }
 
 // MARK: - 故事生成状态

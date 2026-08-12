@@ -69,6 +69,14 @@ struct AICreateView: View {
                     generatingOverlay
                 }
             }
+            .alert("错误", isPresented: $aiVM.showError) {
+                Button("好的", role: .cancel) {}
+            } message: {
+                Text(aiVM.errorMessage ?? "未知错误")
+            }
+            .task {
+                await aiVM.loadData()
+            }
         }
     }
 
@@ -100,8 +108,8 @@ struct AICreateView: View {
                 GridItem(.adaptive(minimum: 70), spacing: 10)
             ], spacing: 10) {
                 ForEach(StoryTheme.allCases) { theme in
-                    ThemeSelectCard(theme: theme, isSelected: aiVM.selectedTheme == theme.rawValue) {
-                        aiVM.selectedTheme = theme.rawValue
+                    ThemeSelectCard(theme: theme, isSelected: aiVM.selectedTheme == theme) {
+                        aiVM.selectedTheme = theme
                     }
                 }
             }
@@ -143,8 +151,8 @@ struct AICreateView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
                     ForEach(StoryStyle.allCases) { style in
-                        TagButton(title: style.rawValue, icon: nil, isSelected: aiVM.selectedStyle == style.rawValue) {
-                            aiVM.selectedStyle = style.rawValue
+                        TagButton(title: style.rawValue, icon: nil, isSelected: aiVM.selectedStyle == style) {
+                            aiVM.selectedStyle = style
                         }
                     }
                 }
@@ -162,8 +170,8 @@ struct AICreateView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
                     ForEach(AgeGroup.allCases) { age in
-                        TagButton(title: age.rawValue, icon: nil, isSelected: aiVM.selectedAgeGroup == age.rawValue) {
-                            aiVM.selectedAgeGroup = age.rawValue
+                        TagButton(title: age.rawValue, icon: nil, isSelected: aiVM.selectedAgeGroup == age) {
+                            aiVM.selectedAgeGroup = age
                         }
                     }
                 }
@@ -231,13 +239,27 @@ struct AICreateView: View {
                 .font(AppFonts.headline(size: 18))
                 .foregroundColor(AppColors.textPrimary)
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    ForEach(aiVM.availableVoiceModels.filter { $0.statusEnum == .ready }) { model in
-                        VoiceModelCard(voiceModel: model, isSelected: aiVM.selectedVoiceModel?.id == model.id) {
-                            aiVM.selectedVoiceModel = model
-                        } onPlay: {
-                            // 试听
+            if aiVM.availableVoiceModels.isEmpty {
+                HStack {
+                    Image(systemName: "mic.slash")
+                        .foregroundColor(AppColors.textTertiary)
+                    Text("还没有可用的声音，请先在「声音」页面录制")
+                        .font(AppFonts.caption())
+                        .foregroundColor(AppColors.textTertiary)
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(AppColors.surface)
+                .cornerRadius(12)
+            } else {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        ForEach(aiVM.availableVoiceModels.filter { $0.statusEnum == .ready }) { model in
+                            VoiceModelCard(voiceModel: model, isSelected: aiVM.selectedVoiceModel?.id == model.id) {
+                                aiVM.selectedVoiceModel = model
+                            } onPlay: {
+                                // 试听
+                            }
                         }
                     }
                 }
@@ -283,7 +305,6 @@ struct AICreateView: View {
         ZStack {
             Color.black.opacity(0.4).ignoresSafeArea()
             VStack(spacing: 20) {
-                // 动画图标
                 ZStack {
                     ForEach(0..<3) { i in
                         Circle()
@@ -327,15 +348,14 @@ struct ThemeSelectCard: View {
             VStack(spacing: 6) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 14)
-                        .fill(isSelected ? theme.color : theme.color.opacity(0.15))
+                        .fill(isSelected ? AppColors.softOrange : AppColors.softOrange.opacity(0.15))
                         .frame(width: 64, height: 64)
-                    Image(systemName: theme.icon)
+                    Text(theme.icon)
                         .font(.system(size: 24))
-                        .foregroundColor(isSelected ? .white : theme.color)
                 }
                 Text(theme.rawValue)
                     .font(AppFonts.caption(size: 11, weight: isSelected ? .semibold : .regular))
-                    .foregroundColor(isSelected ? theme.color : AppColors.textSecondary)
+                    .foregroundColor(isSelected ? AppColors.softOrange : AppColors.textSecondary)
             }
         }
         .buttonStyle(PlainButtonStyle())
@@ -358,7 +378,7 @@ struct GeneratedStoryView: View {
                             RoundedRectangle(cornerRadius: Layout.largeCornerRadius)
                                 .fill(
                                     LinearGradient(
-                                        gradient: Gradient(colors: story.coverGradient.map { Color(hex: $0) } + [AppColors.warmYellow]),
+                                        gradient: Gradient(colors: [AppColors.warmYellow, AppColors.softOrange]),
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
                                     )
@@ -380,7 +400,7 @@ struct GeneratedStoryView: View {
 
                             HStack(spacing: 12) {
                                 Label("\(story.wordCount)字", systemImage: "doc.text")
-                                Label(String(format: "约%.0f分钟", story.suggestedDuration / 60), systemImage: "clock")
+                                Label(String(format: "约%.0f分钟", max(1, story.suggestedDuration / 60)), systemImage: "clock")
                                 if let voice = aiVM.selectedVoiceModel {
                                     Label(voice.name, systemImage: "mic.fill")
                                 }
@@ -389,18 +409,6 @@ struct GeneratedStoryView: View {
                             .foregroundColor(AppColors.textSecondary)
                         }
                         .padding(.horizontal, Layout.horizontalPadding)
-
-                        // 合成状态
-                        if aiVM.isSynthesizing {
-                            HStack(spacing: 8) {
-                                ProgressView()
-                                    .scaleEffect(0.8)
-                                Text("正在合成语音...")
-                                    .font(AppFonts.caption())
-                                    .foregroundColor(AppColors.textSecondary)
-                            }
-                            .padding(.vertical, 8)
-                        }
 
                         // 故事内容
                         VStack(alignment: .leading, spacing: 8) {

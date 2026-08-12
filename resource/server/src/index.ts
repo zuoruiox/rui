@@ -13,6 +13,7 @@ import userRoutes from './routes/users';
 import storyRoutes from './routes/stories';
 import voiceRoutes from './routes/voices';
 import fileRoutes from './routes/files';
+import aiRoutes from './routes/ai';
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/stories', storyRoutes);
 app.use('/api/voices', voiceRoutes);
 app.use('/api/files', fileRoutes);
+app.use('/api/ai', aiRoutes);
 
 // 根路径重定向到管理后台
 app.get('/', (req, res) => {

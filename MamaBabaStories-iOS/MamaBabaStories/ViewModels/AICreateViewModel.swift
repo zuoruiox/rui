@@ -12,9 +12,9 @@ import SwiftUI
 @MainActor
 class AICreateViewModel: ObservableObject {
     // MARK: - Published Properties
-    @Published var selectedTheme: String = "adventure"
-    @Published var selectedStyle: String = "warm"
-    @Published var selectedAgeGroup: String = "preschool"
+    @Published var selectedTheme: StoryTheme = .adventure
+    @Published var selectedStyle: StoryStyle = .warm
+    @Published var selectedAgeGroup: AgeGroup = .preschool
     @Published var selectedWordCount: WordCountOption = .medium_500
     @Published var selectedEmotion: TTSemotion = .warm
     @Published var characterName = ""
@@ -40,7 +40,6 @@ class AICreateViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var showError = false
     @Published var showingStoryResult = false
-    @Published var showingVoiceSelector = false
     @Published var availableVoiceModels: [VoiceModel] = []
 
     // MARK: - Services
@@ -48,10 +47,9 @@ class AICreateViewModel: ObservableObject {
     private let voiceService: VoiceCloneServiceProtocol
 
     // MARK: - Init
-    init(aiService: AIStoryServiceProtocol = MockAIStoryService(), voiceService: VoiceCloneServiceProtocol = VoiceCloneService()) {
+    init(aiService: AIStoryServiceProtocol = AIStoryService(), voiceService: VoiceCloneServiceProtocol = VoiceCloneService()) {
         self.aiService = aiService
         self.voiceService = voiceService
-        loadMockData()
     }
 
     // MARK: - 加载数据
@@ -62,16 +60,9 @@ class AICreateViewModel: ObservableObject {
                 selectedVoiceModel = availableVoiceModels.first(where: { $0.statusEnum == .ready })
             }
         } catch {
-            // 加载失败时使用 mock 数据
-            loadMockData()
+            Logger.error("加载声音模型失败: \(error)", category: .ai)
+            availableVoiceModels = []
         }
-    }
-
-    // MARK: - Mock 数据
-    private func loadMockData() {
-        availableVoiceModels = [VoiceModel.mockMom, VoiceModel.mockDad]
-        selectedVoiceModel = VoiceModel.mockMom
-        selectedChild = Child.mock
     }
 
     // MARK: - 生成故事
@@ -81,26 +72,36 @@ class AICreateViewModel: ObservableObject {
         generationStage = "正在构思故事..."
         generatedStory = nil
         showingStoryResult = false
+        errorMessage = nil
+
+        var chars: [String] = []
+        if !characterName.isEmpty {
+            chars.append(characterName)
+        }
+        if includeChildName, let child = selectedChild, !child.name.isEmpty {
+            chars.append(child.name)
+        }
 
         let request = AIStoryRequest(
-            theme: selectedTheme,
-            characters: characterName.isEmpty ? [] : [characterName],
-            style: selectedStyle,
-            targetAge: selectedAgeGroup,
+            theme: selectedTheme.rawValue,
+            characters: chars,
+            style: selectedStyle.rawValue,
+            targetAge: selectedAgeGroup.rawValue,
             wordCount: selectedWordCount.rawValue,
             customPrompt: customPrompt.isEmpty ? nil : customPrompt,
             childName: includeChildName ? selectedChild?.name : nil,
+            voiceModelId: selectedVoiceModel?.id,
             includeMorals: true
         )
 
         Task {
             do {
-                // 模拟进度
-                for progress in stride(from: 0.1, through: 0.9, by: 0.15) {
-                    try await Task.sleep(nanoseconds: 300_000_000)
+                // 模拟进度（同步生成，等待期间显示进度）
+                for progress in stride(from: 0.1, through: 0.8, by: 0.1) {
+                    try await Task.sleep(nanoseconds: 400_000_000)
                     self.generationProgress = progress
                     if progress > 0.3 {
-                        self.generationStage = "正在编写故事内容..."
+                        self.generationStage = "AI正在编写故事..."
                     }
                     if progress > 0.6 {
                         self.generationStage = "正在润色文字..."
@@ -115,15 +116,11 @@ class AICreateViewModel: ObservableObject {
                 self.editedContent = story.content
                 self.showingStoryResult = true
                 self.isGenerating = false
-
-                // 如果选择了声音模型，自动合成语音
-                if let voiceModel = selectedVoiceModel, voiceModel.statusEnum == .ready {
-                    await synthesizeAudio(for: story, voiceModel: voiceModel)
-                }
             } catch {
                 self.isGenerating = false
                 self.errorMessage = error.localizedDescription
                 self.showError = true
+                Logger.error("生成故事失败: \(error)", category: .ai)
             }
         }
     }
@@ -154,8 +151,8 @@ class AICreateViewModel: ObservableObject {
             isSynthesizing = false
         } catch {
             isSynthesizing = false
-            errorMessage = "语音合成失败: \(error.localizedDescription)"
-            showError = true
+            // TTS 失败不阻塞，只是没有音频
+            Logger.warning("语音合成失败（不影响故事文本）: \(error)", category: .ai)
         }
     }
 
@@ -173,10 +170,6 @@ class AICreateViewModel: ObservableObject {
                 editedContent = newStory.content
                 isGenerating = false
                 synthesizedAudioURL = nil
-
-                if let voiceModel = selectedVoiceModel, voiceModel.statusEnum == .ready {
-                    await synthesizeAudio(for: newStory, voiceModel: voiceModel)
-                }
             } catch {
                 isGenerating = false
                 errorMessage = error.localizedDescription
@@ -217,23 +210,23 @@ class AICreateViewModel: ObservableObject {
             title: aiStory.title,
             content: editedContent,
             summary: aiStory.summary,
-            theme: selectedTheme,
-            style: selectedStyle,
-            targetAgeGroup: selectedAgeGroup,
+            theme: selectedTheme.rawValue,
+            style: selectedStyle.rawValue,
+            targetAgeGroup: selectedAgeGroup.rawValue,
             coverImageURL: nil,
             coverGradient: aiStory.coverGradient,
             coverEmoji: aiStory.coverEmoji,
             audioURL: synthesizedAudioURL?.absoluteString,
             localAudioPath: nil,
             duration: aiStory.suggestedDuration,
-            wordCount: editedContent.count,
+            wordCount: editedContent.replacingOccurrences(of: "\\s", with: "", options: .regularExpression).count,
             voiceModelId: selectedVoiceModel?.id,
             voiceModelName: selectedVoiceModel?.name,
             isAIGenerated: true,
             isFavorite: false,
             isDownloaded: false,
             playCount: 0,
-            createdAt: Date(),
+            createdAt: aiStory.createdAt ?? Date(),
             updatedAt: Date(),
             tags: aiStory.tags,
             characters: aiStory.characters
@@ -263,7 +256,7 @@ class AICreateViewModel: ObservableObject {
 
     // MARK: - 表单验证
     var canGenerate: Bool {
-        !isGenerating && selectedVoiceModel != nil
+        !isGenerating
     }
 
     // MARK: - 字数估算

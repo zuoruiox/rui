@@ -27,11 +27,12 @@ struct Child: Codable, Identifiable, Hashable {
     // 年龄段
     var ageGroup: AgeGroup {
         switch age {
+        case 0...1: return .baby
         case 2...3: return .toddler
         case 4...5: return .preschool
         case 6...8: return .earlyElementary
         case 9...12: return .lateElementary
-        default: return .preschool
+        default: return .baby
         }
     }
 }
@@ -57,21 +58,11 @@ enum Gender: String, Codable, CaseIterable, Identifiable {
 extension Child {
     static let mock = Child(
         id: "child_001",
-        name: "小豆豆",
-        gender: .boy,
-        birthDate: Calendar.current.date(byAdding: .year, value: -5, to: Date()) ?? Date(),
-        avatarEmoji: "🦁",
-        favoriteThemes: ["animals", "adventure", "magic"],
-        createdAt: Calendar.current.date(byAdding: .month, value: -2, to: Date()) ?? Date()
-    )
-
-    static let mockGirl = Child(
-        id: "child_002",
-        name: "小月亮",
-        gender: .girl,
-        birthDate: Calendar.current.date(byAdding: .year, value: -4, to: Date()) ?? Date(),
-        avatarEmoji: "🦄",
-        favoriteThemes: ["magic", "friendship", "family"],
+        name: "小马宝",
+        gender: .other,
+        birthDate: Calendar.current.date(byAdding: .month, value: -2, to: Date()) ?? Date(),
+        avatarEmoji: "🐴",
+        favoriteThemes: ["bedtime", "family", "animals"],
         createdAt: Date()
     )
 }

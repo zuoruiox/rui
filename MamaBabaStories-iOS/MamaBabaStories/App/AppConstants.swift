@@ -223,6 +223,7 @@ enum StoryStyle: String, CaseIterable, Codable, Identifiable {
 
 // MARK: - 年龄段
 enum AgeGroup: String, CaseIterable, Codable, Identifiable {
+    case baby = "0-1岁"
     case toddler = "2-3岁"
     case preschool = "4-5岁"
     case earlyElementary = "6-8岁"
@@ -232,6 +233,7 @@ enum AgeGroup: String, CaseIterable, Codable, Identifiable {
 
     var range: ClosedRange<Int> {
         switch self {
+        case .baby: return 0...1
         case .toddler: return 2...3
         case .preschool: return 4...5
         case .earlyElementary: return 6...8

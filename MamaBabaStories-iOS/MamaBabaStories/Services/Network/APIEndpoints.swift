@@ -331,9 +331,7 @@ extension APIEndpoint {
     // MARK: - 是否需要认证
     var requiresAuth: Bool {
         switch self {
-        case .sendCode, .login, .loginWithEmail, .deviceLogin, .loginWithApple, .refreshToken,
-             .getStories, .getStory, .getFeaturedStories, .getRecentStories,
-             .getVoiceModels:
+        case .sendCode, .login, .loginWithEmail, .deviceLogin, .loginWithApple, .refreshToken:
             return false
         default:
             return true

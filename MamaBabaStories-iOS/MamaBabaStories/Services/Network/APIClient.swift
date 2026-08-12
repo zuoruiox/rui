@@ -449,7 +449,7 @@ class MockAPIClient: APIClientProtocol {
         case .getFavorites:
             data = try JSONEncoder().encode(Story.mockFavorites)
         case .getChildren:
-            data = try JSONEncoder().encode([Child.mock, Child.mockGirl])
+            data = try JSONEncoder().encode([Child.mock])
         default:
             data = try JSONEncoder().encode(EmptyResponse())
         }

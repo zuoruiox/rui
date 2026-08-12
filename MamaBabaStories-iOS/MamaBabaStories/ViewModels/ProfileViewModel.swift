@@ -65,7 +65,7 @@ class ProfileViewModel: ObservableObject {
     // MARK: - Mock 数据
     private func loadMockData() {
         user = .mock
-        children = [.mock, .mockGirl]
+        children = [.mock]
         voiceModels = [.mockMom, .mockDad]
         totalStoriesPlayed = 42
         totalListeningMinutes = 380

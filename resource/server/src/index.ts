@@ -22,17 +22,7 @@ const PORT = parseInt(process.env.PORT || '3000', 10);
 // 中间件
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrcAttr: ["'unsafe-inline'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", 'data:', 'blob:'],
-      mediaSrc: ["'self'", 'blob:'],
-      connectSrc: ["'self'"],
-    },
-  },
+  contentSecurityPolicy: false, // 管理后台需要内联脚本，禁用 CSP
 }));
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));

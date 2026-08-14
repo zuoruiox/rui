@@ -70,7 +70,7 @@
 		28C890461F5BF3171E450287 /* AICreateViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AICreateViewModel.swift; sourceTree = "<group>"; };
 		2C5C1F8FB527424F6B5B4BAC /* Story.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Story.swift; sourceTree = "<group>"; };
 		3A4315878A8891B17E3B7764 /* MamaBabaStoriesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MamaBabaStoriesTests.swift; sourceTree = "<group>"; };
-		463D37542820309D53DC95ED /* MamaBabaStoriesTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MamaBabaStoriesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		463D37542820309D53DC95ED /* MamaBabaStoriesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MamaBabaStoriesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5568C81B9C201B009D88818A /* StoryLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryLibraryViewModel.swift; sourceTree = "<group>"; };
 		556E3628CC5616BF49D67DCC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		606464AC488B1988036C0BD8 /* APIEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoints.swift; sourceTree = "<group>"; };
@@ -92,7 +92,7 @@
 		C33F21E65BE2E04FC02EB94B /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		C5CFD482D9EFDADC0D953419 /* AICreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AICreateView.swift; sourceTree = "<group>"; };
 		D8427D31E083516D3C91E25E /* AudioPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerManager.swift; sourceTree = "<group>"; };
-		DAFDE5D41EF36673B424E526 /* MamaBabaStories.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MamaBabaStories.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DAFDE5D41EF36673B424E526 /* MamaBabaStories.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MamaBabaStories.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DCD2F9DC596973B1C7FA463C /* VoiceModelCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceModelCard.swift; sourceTree = "<group>"; };
 		E138A2840D69DEEBD52AC635 /* AIStoryRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIStoryRequest.swift; sourceTree = "<group>"; };
 		E1C5FB633901A9AC98A17D32 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
@@ -468,6 +468,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = FS75L43BXG;
 				INFOPLIST_FILE = MamaBabaStories/Info.plist;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要访问麦克风来录制您的声音，用于声音克隆功能";
 				INFOPLIST_KEY_UIBackgroundModes = audio;
@@ -485,6 +486,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = FS75L43BXG;
 				INFOPLIST_FILE = MamaBabaStories/Info.plist;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要访问麦克风来录制您的声音，用于声音克隆功能";
 				INFOPLIST_KEY_UIBackgroundModes = audio;
@@ -581,6 +583,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				DEVELOPMENT_TEAM = FS75L43BXG;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -597,6 +601,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				DEVELOPMENT_TEAM = FS75L43BXG;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

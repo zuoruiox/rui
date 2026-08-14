@@ -20,6 +20,7 @@ class StoryLibraryViewModel: ObservableObject {
     @Published var selectedTheme: String? = nil
     @Published var searchText = ""
     @Published var isLoading = false
+    @Published var isLoadingMore = false
     @Published var errorMessage: String?
     @Published var showError = false
     @Published var currentPage = 1
@@ -44,6 +45,16 @@ class StoryLibraryViewModel: ObservableObject {
         refreshDownloadedStatus()
         // 自动加载第一页
         Task { await loadData() }
+        // 监听AI创作保存故事后的刷新通知
+        NotificationCenter.default.addObserver(
+            forName: NSNotification.Name("StoryLibraryNeedsRefresh"),
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                await self?.refresh()
+            }
+        }
     }
 
     // MARK: - 加载数据
@@ -82,13 +93,35 @@ class StoryLibraryViewModel: ObservableObject {
 
     // MARK: - 加载更多
     func loadMore() async {
-        guard hasMore && !isLoading else { return }
-        currentPage += 1
-        await loadData()
+        guard hasMore && !isLoading && !isLoadingMore else { return }
+        isLoadingMore = true
+        defer { isLoadingMore = false }
+
+        let nextPage = currentPage + 1
+        do {
+            let response: PaginatedResponse<Story> = try await apiClient.request(
+                .getStories(page: nextPage, pageSize: pageSize, theme: selectedTheme, isFavorite: nil)
+            )
+
+            var stories = response.list
+            for i in 0..<stories.count {
+                stories[i].isDownloaded = AudioPlayerManager.shared.isDownloaded(storyId: stories[i].id)
+            }
+
+            allStories.append(contentsOf: stories)
+            currentPage = nextPage
+            hasMore = response.hasMore
+            filteredStories = filterStories(searchText: searchText, theme: selectedTheme)
+            favoriteStories = allStories.filter { $0.isFavorite }
+            downloadedStories = allStories.filter { $0.isDownloaded }
+        } catch {
+            Logger.error("加载更多故事失败: \(error)", category: .network)
+        }
     }
 
     // MARK: - 刷新
     func refresh() async {
+        isLoadingMore = false
         currentPage = 1
         hasMore = true
         await loadData()

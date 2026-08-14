@@ -159,11 +159,37 @@ struct StoryLibraryView: View {
                             }
                         }
                     }
+
+                    // 加载更多
+                    if libraryVM.hasMore && !stories.isEmpty && !libraryVM.isLoading {
+                        HStack {
+                            ProgressView()
+                            Text(libraryVM.isLoadingMore ? "加载中..." : "加载更多...")
+                                .font(AppFonts.caption())
+                                .foregroundColor(AppColors.textTertiary)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .onAppear {
+                            if !libraryVM.isLoadingMore && !libraryVM.isLoading {
+                                Task { await libraryVM.loadMore() }
+                            }
+                        }
+                    } else if !libraryVM.hasMore && !stories.isEmpty && !libraryVM.isLoading {
+                        Text("已经到底啦")
+                            .font(AppFonts.caption())
+                            .foregroundColor(AppColors.textTertiary)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                    }
                 }
             }
             .padding(.horizontal, Layout.horizontalPadding)
             .padding(.vertical, 16)
             .padding(.bottom, playerVM.isMiniPlayerVisible ? 80 : 20)
+        }
+        .refreshable {
+            await libraryVM.refresh()
         }
     }
 

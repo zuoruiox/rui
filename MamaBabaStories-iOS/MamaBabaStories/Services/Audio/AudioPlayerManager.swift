@@ -387,31 +387,25 @@ class AudioPlayerManager: NSObject, ObservableObject {
         playerItem?.removeObserver(self, forKeyPath: "status")
         playerItem?.removeObserver(self, forKeyPath: "loadedTimeRanges")
 
-        // 确定音频 URL
+        // 确定音频 URL - 优先级：本地路径 > 已下载文件 > 远程URL
         var audioURL: URL?
-        if let localPath = story.localAudioPath {
-            audioURL = URL(fileURLWithPath: localPath)
-        } else if isDownloaded(storyId: story.id) {
-            audioURL = localFileURL(for: story.id)
-        } else if let urlString = story.audioURL, !urlString.isEmpty {
-            if urlString.hasPrefix("http") {
-                audioURL = URL(string: urlString)
-            } else if urlString.hasPrefix("/api/") {
-                // 绝对路径，直接拼 host
-                let baseURLString = APIConfig.baseURL
-                if let baseURL = URL(string: baseURLString), let host = baseURL.host {
-                    let scheme = baseURL.scheme ?? "http"
-                    let portPart = baseURL.port != nil ? ":\(baseURL.port!)" : ""
-                    audioURL = URL(string: "\(scheme)://\(host)\(portPart)\(urlString)")
-                } else {
-                    audioURL = URL(string: baseURLString + urlString)
-                }
-            } else {
-                // 相对路径，拼接 baseURL
-                let baseURLString = APIConfig.baseURL
-                let fullPath = baseURLString + (urlString.hasPrefix("/") ? "" : "/") + urlString
-                audioURL = URL(string: fullPath)
+
+        // 1. 优先使用 localAudioPath
+        if let localPath = story.localAudioPath, !localPath.isEmpty {
+            let localURL = URL(fileURLWithPath: localPath)
+            if FileManager.default.fileExists(atPath: localPath) {
+                audioURL = localURL
             }
+        }
+
+        // 2. 检查下载目录
+        if audioURL == nil && isDownloaded(storyId: story.id) {
+            audioURL = localFileURL(for: story.id)
+        }
+
+        // 3. 使用远程 audioURL
+        if audioURL == nil, let urlString = story.audioURL, !urlString.isEmpty {
+            audioURL = resolveAudioURL(urlString)
         }
 
         // 如果没有有效音频，生成测试音频用于演示
@@ -424,6 +418,7 @@ class AudioPlayerManager: NSObject, ObservableObject {
             return
         }
 
+        Logger.info("播放音频: \(url.absoluteString), isLocal: \(url.isFileURL)", category: .audio)
         state = .loading
 
         // 创建 AVPlayerItem
@@ -449,6 +444,37 @@ class AudioPlayerManager: NSObject, ObservableObject {
             self.currentTime = time.seconds
             self.updateSleepTimer()
         }
+    }
+
+    // MARK: - 解析音频URL（处理各种路径格式）
+    private func resolveAudioURL(_ urlString: String) -> URL? {
+        // 完整HTTP URL
+        if urlString.hasPrefix("http://") || urlString.hasPrefix("https://") {
+            return URL(string: urlString)
+        }
+
+        let baseURLString = APIConfig.baseURL
+
+        // 绝对路径（以 / 开头，如 /api/files/audio/xxx 或 /files/audio/xxx）
+        if urlString.hasPrefix("/") {
+            // 从 baseURL 中提取 scheme://host:port
+            if let baseURL = URL(string: baseURLString), let host = baseURL.host {
+                let scheme = baseURL.scheme ?? "http"
+                let portPart = baseURL.port != nil ? ":\(baseURL.port!)" : ""
+                // 如果路径以 /api/ 开头且 baseURL 已经包含 /api，避免重复
+                var fullPath = urlString
+                if urlString.hasPrefix("/api/") && baseURLString.contains("/api") {
+                    // baseURL 已经是 http://host:port/api，urlString 是 /api/xxx，需要去掉 /api 前缀
+                    fullPath = String(urlString.dropFirst(4)) // 去掉 "/api"
+                }
+                return URL(string: "\(scheme)://\(host)\(portPart)\(fullPath)")
+            }
+            return URL(string: baseURLString + urlString)
+        }
+
+        // 相对路径，拼接 baseURL
+        let separator = baseURLString.hasSuffix("/") ? "" : "/"
+        return URL(string: baseURLString + separator + urlString)
     }
 
     // MARK: - KVO
@@ -596,42 +622,14 @@ class AudioPlayerManager: NSObject, ObservableObject {
             throw NSError(domain: "AudioPlayer", code: -3, userInfo: [NSLocalizedDescriptionKey: "音频URL无效"])
         }
 
-        // 处理相对路径
-        let url: URL
-        if audioURLString.hasPrefix("http") {
-            guard let remoteURL = URL(string: audioURLString) else {
-                throw NSError(domain: "AudioPlayer", code: -3, userInfo: [NSLocalizedDescriptionKey: "音频URL无效"])
-            }
-            url = remoteURL
-        } else if audioURLString.hasPrefix("/api/") {
-            // 绝对路径（如 /api/files/audio/xxx，直接拼 host
-            let baseURLString = APIConfig.baseURL
-            // 提取 host 部分（去掉 /api 后缀）
-            if let baseURL = URL(string: baseURLString), let host = baseURL.host {
-                let scheme = baseURL.scheme ?? "http"
-                let portPart = baseURL.port != nil ? ":\(baseURL.port!)" : ""
-                let fullPath = "\(scheme)://\(host)\(portPart)\(audioURLString)"
-                guard let remoteURL = URL(string: fullPath) else {
-                    throw NSError(domain: "AudioPlayer", code: -3, userInfo: [NSLocalizedDescriptionKey: "音频URL无效"])
-                }
-                url = remoteURL
-            } else {
-                guard let remoteURL = URL(string: baseURLString + audioURLString) else {
-                    throw NSError(domain: "AudioPlayer", code: -3, userInfo: [NSLocalizedDescriptionKey: "音频URL无效"])
-                }
-                url = remoteURL
-            }
-        } else {
-            // 相对路径，拼接 baseURL
-            let baseURLString = APIConfig.baseURL
-            let fullPath = baseURLString + (audioURLString.hasPrefix("/") ? "" : "/") + audioURLString
-            guard let remoteURL = URL(string: fullPath) else {
-                throw NSError(domain: "AudioPlayer", code: -3, userInfo: [NSLocalizedDescriptionKey: "音频URL无效"])
-            }
-            url = remoteURL
+        // 使用统一的URL解析方法
+        guard let url = resolveAudioURL(audioURLString) else {
+            throw NSError(domain: "AudioPlayer", code: -3, userInfo: [NSLocalizedDescriptionKey: "音频URL无效"])
         }
 
         let destinationURL = localFileURL(for: story.id)
+
+        Logger.info("开始下载音频: \(url.absoluteString)", category: .audio)
 
         // 使用 URLSession 下载（带进度）
         let downloadTask = downloadSession?.downloadTask(with: url)
@@ -643,7 +641,8 @@ class AudioPlayerManager: NSObject, ObservableObject {
         let startTime = Date()
         while let task = downloadTask, task.state == .running {
             try await Task.sleep(nanoseconds: 200_000_000) // 200ms
-            let progress = Double(task.countOfBytesReceived) / Double(max(task.countOfBytesExpectedToReceive, 1))
+            let expectedToReceive = max(task.countOfBytesExpectedToReceive, 1)
+            let progress = Double(task.countOfBytesReceived) / Double(expectedToReceive)
             if abs(progress - lastProgress) > 0.01 {
                 progressHandler?(progress)
                 lastProgress = progress
@@ -656,8 +655,8 @@ class AudioPlayerManager: NSObject, ObservableObject {
         }
 
         // 检查结果
-        if downloadTask?.error != nil {
-            throw downloadTask!.error!
+        if let error = downloadTask?.error {
+            throw error
         }
 
         // 文件已在 delegate 中移动，确认存在
@@ -666,7 +665,7 @@ class AudioPlayerManager: NSObject, ObservableObject {
         }
 
         progressHandler?(1.0)
-        Logger.info("故事下载完成: \(story.title)", category: .audio)
+        Logger.info("故事下载完成: \(story.title) -> \(destinationURL.path)", category: .audio)
     }
 
     func isDownloaded(storyId: String) -> Bool {

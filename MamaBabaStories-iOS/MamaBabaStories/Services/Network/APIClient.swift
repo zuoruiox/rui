@@ -196,7 +196,11 @@ class APIClient: APIClientProtocol {
         if let body = endpoint.body, endpoint.method != "GET", !endpoint.isUpload {
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             do {
-                request.httpBody = try JSONSerialization.data(withJSONObject: body)
+                let jsonData = try JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
+                request.httpBody = jsonData
+                if let jsonString = String(data: jsonData, encoding: .utf8) {
+                    Logger.debug("请求体: \(jsonString)", category: .network)
+                }
             } catch {
                 throw APIError.encodingError(error)
             }
@@ -212,6 +216,13 @@ class APIClient: APIClientProtocol {
             }
 
             Logger.debug("响应: \(httpResponse.statusCode) \(url.absoluteString)", category: .network)
+
+            // 打印错误响应体
+            if !(200...299).contains(httpResponse.statusCode) {
+                if let responseString = String(data: data, encoding: .utf8) {
+                    Logger.error("错误响应体: \(responseString)", category: .network)
+                }
+            }
 
             // 处理状态码
             switch httpResponse.statusCode {

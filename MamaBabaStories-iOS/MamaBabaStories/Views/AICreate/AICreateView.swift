@@ -446,13 +446,21 @@ struct GeneratedStoryView: View {
 
                         // 操作按钮
                         VStack(spacing: 12) {
-                            if aiVM.isSynthesizing {
+                            // 显示合成/保存/下载进度
+                            if aiVM.isSynthesizing || aiVM.isSavingToServer || aiVM.isDownloading {
                                 HStack(spacing: 8) {
                                     ProgressView()
                                         .progressViewStyle(CircularProgressViewStyle(tint: AppColors.softOrange))
-                                    Text("正在合成语音...")
-                                        .font(AppFonts.body(size: 14))
-                                        .foregroundColor(AppColors.textSecondary)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(aiVM.generationStage)
+                                            .font(AppFonts.body(size: 14))
+                                            .foregroundColor(AppColors.textSecondary)
+                                        if aiVM.isDownloading {
+                                            ProgressView(value: aiVM.downloadProgress)
+                                                .progressViewStyle(LinearProgressViewStyle(tint: AppColors.softOrange))
+                                                .frame(width: 150)
+                                        }
+                                    }
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding()
@@ -460,14 +468,27 @@ struct GeneratedStoryView: View {
                                 .cornerRadius(Layout.cornerRadius)
                             }
 
+                            // 保存成功提示
+                            if let msg = aiVM.saveSuccessMessage {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundColor(AppColors.softGreen)
+                                    Text(msg)
+                                        .font(AppFonts.body(size: 14))
+                                        .foregroundColor(AppColors.softGreen)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 8)
+                            }
+
                             PrimaryButton(
-                                aiVM.isSynthesizing ? "语音合成中..." : "播放故事",
-                                icon: aiVM.isSynthesizing ? nil : "play.fill",
-                                isDisabled: aiVM.isSynthesizing,
+                                aiVM.playButtonTitle,
+                                icon: aiVM.isPlayButtonDisabled ? nil : "play.fill",
+                                isDisabled: aiVM.isPlayButtonDisabled,
                                 height: Layout.largeButtonHeight
                             ) {
-                                if let savedStory = aiVM.saveStory() {
-                                    playerVM.play(story: savedStory)
+                                if let story = aiVM.buildPlayableStory() {
+                                    playerVM.play(story: story)
                                     dismiss()
                                 }
                             }
@@ -479,9 +500,19 @@ struct GeneratedStoryView: View {
                                 SecondaryButton("编辑修改", icon: "pencil") {
                                     aiVM.isEditing = true
                                 }
-                                SecondaryButton("保存", icon: "bookmark") {
-                                    _ = aiVM.saveStory()
-                                    dismiss()
+                                SecondaryButton(
+                                    aiVM.saveButtonTitle,
+                                    icon: aiVM.isStorySaved ? "checkmark" : "bookmark",
+                                    isDisabled: aiVM.isSaveButtonDisabled
+                                ) {
+                                    Task {
+                                        let success = await aiVM.saveStoryToServer()
+                                        if success {
+                                            // 保存成功后稍等一下让用户看到"已保存"状态，然后关闭
+                                            try? await Task.sleep(nanoseconds: 800_000_000)
+                                            dismiss()
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -506,6 +537,11 @@ struct GeneratedStoryView: View {
                 }
             } message: {
                 Text("描述你想要的修改，AI会重新调整故事")
+            }
+            .alert("保存失败", isPresented: $aiVM.showError) {
+                Button("好的", role: .cancel) {}
+            } message: {
+                Text(aiVM.errorMessage ?? "未知错误")
             }
         }
     }

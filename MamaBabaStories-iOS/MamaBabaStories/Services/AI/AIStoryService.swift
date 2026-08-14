@@ -13,7 +13,7 @@ protocol AIStoryServiceProtocol {
     func pollGenerationStatus(requestId: String) async throws -> StoryGenerationProgress
     func regenerateStory(storyId: String) async throws -> AIStoryResponse
     func editStory(storyId: String, edits: String) async throws -> AIStoryResponse
-    func saveStory(_ story: AIStoryResponse, voiceModelId: String?) async throws -> Story
+    func saveStory(_ story: AIStoryResponse, editedContent: String, audioURL: String?, theme: String, style: String, targetAgeGroup: String, voiceModelId: String?, voiceModelName: String?) async throws -> Story
 }
 
 // MARK: - AIStoryService 实现
@@ -50,36 +50,49 @@ class AIStoryService: AIStoryServiceProtocol {
         return try await apiClient.request(.editStory(id: storyId, edits: edits))
     }
 
-    // MARK: - 保存故事
-    func saveStory(_ aiStory: AIStoryResponse, voiceModelId: String?) async throws -> Story {
-        let story = Story(
-            id: aiStory.storyId,
+    // MARK: - 保存故事到服务器
+    func saveStory(_ aiStory: AIStoryResponse, editedContent: String, audioURL: String?, theme: String, style: String, targetAgeGroup: String, voiceModelId: String?, voiceModelName: String?) async throws -> Story {
+        Logger.info("保存故事到服务器: \(aiStory.title)", category: .ai)
+
+        let wordCount = editedContent.replacingOccurrences(of: "\\s", with: "", options: .regularExpression).count
+
+        // 将数组序列化为 JSON 字符串（服务器存储为 String 类型）
+        let tagsJSON = try? JSONSerialization.data(withJSONObject: aiStory.tags)
+        let tagsString = tagsJSON.flatMap { String(data: $0, encoding: .utf8) } ?? "[]"
+
+        let charsJSON = try? JSONSerialization.data(withJSONObject: aiStory.characters)
+        let charsString = charsJSON.flatMap { String(data: $0, encoding: .utf8) } ?? "[]"
+
+        // coverGradient: 非空数组序列化为 JSON 字符串，空数组传 null
+        let gradientString: String?
+        if let gradients = aiStory.coverGradient, !gradients.isEmpty {
+            let data = try? JSONSerialization.data(withJSONObject: gradients)
+            gradientString = data.flatMap { String(data: $0, encoding: .utf8) }
+        } else {
+            gradientString = nil
+        }
+
+        let createRequest = CreateStoryRequest(
             title: aiStory.title,
-            content: aiStory.content,
+            content: editedContent,
             summary: aiStory.summary,
-            theme: "adventure", // 需要从请求中获取
-            style: "warm",
-            targetAgeGroup: "preschool",
-            coverImageURL: nil,
-            coverGradient: aiStory.coverGradient,
+            theme: theme,
+            style: style,
+            targetAgeGroup: targetAgeGroup,
             coverEmoji: aiStory.coverEmoji,
-            audioURL: nil,
-            localAudioPath: nil,
+            coverGradient: gradientString,
+            audioUrl: audioURL ?? "",
             duration: aiStory.suggestedDuration,
-            wordCount: aiStory.wordCount,
-            voiceModelId: voiceModelId,
-            voiceModelName: nil,
+            wordCount: wordCount,
+            voiceModelId: voiceModelId ?? "",
+            voiceModelName: voiceModelName ?? "",
             isAIGenerated: true,
-            isFavorite: false,
-            isDownloaded: false,
-            playCount: 0,
-            createdAt: aiStory.createdAt ?? Date(),
-            updatedAt: aiStory.createdAt ?? Date(),
-            tags: aiStory.tags,
-            characters: aiStory.characters
+            tags: tagsString,
+            characters: charsString
         )
 
-        let savedStory: Story = try await apiClient.request(.createStory(aiStory))
+        let savedStory: Story = try await apiClient.request(.createStoryFull(createRequest))
+        Logger.info("故事保存成功: \(savedStory.id)", category: .ai)
         return savedStory
     }
 }
@@ -164,25 +177,25 @@ class MockAIStoryService: AIStoryServiceProtocol {
         )
     }
 
-    func saveStory(_ aiStory: AIStoryResponse, voiceModelId: String?) async throws -> Story {
+    func saveStory(_ aiStory: AIStoryResponse, editedContent: String, audioURL: String?, theme: String, style: String, targetAgeGroup: String, voiceModelId: String?, voiceModelName: String?) async throws -> Story {
         try await Task.sleep(nanoseconds: 500_000_000)
         return Story(
             id: aiStory.storyId,
             title: aiStory.title,
-            content: aiStory.content,
+            content: editedContent,
             summary: aiStory.summary,
-            theme: "adventure",
-            style: "warm",
-            targetAgeGroup: "preschool",
+            theme: theme,
+            style: style,
+            targetAgeGroup: targetAgeGroup,
             coverImageURL: nil,
             coverGradient: aiStory.coverGradient,
             coverEmoji: aiStory.coverEmoji,
-            audioURL: nil,
+            audioURL: audioURL,
             localAudioPath: nil,
             duration: aiStory.suggestedDuration,
-            wordCount: aiStory.wordCount,
+            wordCount: editedContent.count,
             voiceModelId: voiceModelId,
-            voiceModelName: nil,
+            voiceModelName: voiceModelName,
             isAIGenerated: true,
             isFavorite: false,
             isDownloaded: false,

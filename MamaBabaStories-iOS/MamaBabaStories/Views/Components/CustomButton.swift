@@ -65,17 +65,21 @@ struct SecondaryButton: View {
     let action: () -> Void
     var color: Color = AppColors.softOrange
     var height: CGFloat = Layout.buttonHeight
+    var isDisabled: Bool = false
 
-    init(_ title: String, icon: String? = nil, color: Color = AppColors.softOrange, height: CGFloat = Layout.buttonHeight, action: @escaping () -> Void) {
+    init(_ title: String, icon: String? = nil, color: Color = AppColors.softOrange, height: CGFloat = Layout.buttonHeight, isDisabled: Bool = false, action: @escaping () -> Void) {
         self.title = title
         self.icon = icon
         self.color = color
         self.height = height
+        self.isDisabled = isDisabled
         self.action = action
     }
 
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            if !isDisabled { action() }
+        }) {
             HStack(spacing: 8) {
                 if let icon = icon {
                     Image(systemName: icon)
@@ -84,18 +88,19 @@ struct SecondaryButton: View {
                 Text(title)
                     .font(AppFonts.button(size: 15))
             }
-            .foregroundColor(color)
+            .foregroundColor(isDisabled ? Color.gray.opacity(0.5) : color)
             .frame(maxWidth: .infinity)
             .frame(height: height)
             .background(
                 RoundedRectangle(cornerRadius: Layout.cornerRadius)
-                    .fill(color.opacity(0.12))
+                    .fill((isDisabled ? Color.gray : color).opacity(0.12))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: Layout.cornerRadius)
-                    .stroke(color.opacity(0.3), lineWidth: 1)
+                    .stroke((isDisabled ? Color.gray : color).opacity(0.3), lineWidth: 1)
             )
         }
+        .disabled(isDisabled)
     }
 }
 

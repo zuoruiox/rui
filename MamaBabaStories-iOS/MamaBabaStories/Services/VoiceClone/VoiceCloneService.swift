@@ -97,13 +97,30 @@ class VoiceCloneService: VoiceCloneServiceProtocol {
         }
         let response: TTSResponse = try await apiClient.request(.synthesizeSpeech(voiceModelId: voiceModelId, text: text, config: config))
         let audioUrlString = response.audioUrl
-        // 如果是相对路径，拼接 baseURL
-        if audioUrlString.hasPrefix("http") {
-            return URL(string: audioUrlString)!
+
+        // 处理URL：完整URL直接返回，相对路径拼接baseURL
+        if audioUrlString.hasPrefix("http://") || audioUrlString.hasPrefix("https://") {
+            guard let url = URL(string: audioUrlString) else {
+                throw NSError(domain: "VoiceClone", code: -1, userInfo: [NSLocalizedDescriptionKey: "音频URL无效"])
+            }
+            return url
         } else {
+            // 相对路径，拼接baseURL
             let base = APIConfig.baseURL
-            let fullUrl = base + audioUrlString
-            return URL(string: fullUrl)!
+            let separator = audioUrlString.hasPrefix("/") ? "" : "/"
+            let fullUrlString: String
+            if audioUrlString.hasPrefix("/api/") && base.hasSuffix("/api") {
+                // base 已经包含 /api，去掉 urlString 中的 /api 前缀
+                let path = String(audioUrlString.dropFirst(4))
+                fullUrlString = base + path
+            } else {
+                fullUrlString = base + separator + audioUrlString
+            }
+            guard let url = URL(string: fullUrlString) else {
+                throw NSError(domain: "VoiceClone", code: -1, userInfo: [NSLocalizedDescriptionKey: "音频URL无效"])
+            }
+            Logger.info("TTS音频URL: \(fullUrlString)", category: .voice)
+            return url
         }
     }
 }

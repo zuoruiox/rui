@@ -46,6 +46,7 @@ enum APIEndpoint {
     case getStories(page: Int, pageSize: Int, theme: String?, isFavorite: Bool?)
     case getStory(id: String)
     case createStory(AIStoryResponse)
+    case createStoryFull(CreateStoryRequest)
     case updateStory(Story)
     case deleteStory(id: String)
     case toggleFavorite(id: String)
@@ -139,6 +140,8 @@ extension APIEndpoint {
             return "/stories/\(id)"
         case .createStory:
             return "/stories"
+        case .createStoryFull:
+            return "/stories"
         case .updateStory(let story):
             return "/stories/\(story.id)"
         case .deleteStory(let id):
@@ -184,7 +187,7 @@ extension APIEndpoint {
         switch self {
         case .sendCode, .login, .loginWithEmail, .deviceLogin, .loginWithApple, .refreshToken,
              .addChild, .createVoiceModel, .uploadRecording, .startTraining,
-             .synthesizeSpeech, .createStory, .generateStory, .regenerateStory,
+             .synthesizeSpeech, .createStory, .createStoryFull, .generateStory, .regenerateStory,
              .editStory, .synthesizeTTS:
             return "POST"
         case .updateProfile, .updateUser, .updateChild, .setDefaultVoice,
@@ -296,6 +299,9 @@ extension APIEndpoint {
         case .createStory(let story):
             return try? story.toDictionary()
 
+        case .createStoryFull(let request):
+            return try? request.toDictionary()
+
         case .updateStory(let story):
             return try? story.toDictionary()
 
@@ -394,8 +400,30 @@ extension APIEndpoint {
 // MARK: - Codable 转 Dictionary 扩展
 extension Encodable {
     func toDictionary() throws -> [String: Any]? {
-        let data = try JSONEncoder().encode(self)
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let data = try encoder.encode(self)
         let dict = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
         return dict as? [String: Any]
     }
+}
+
+// MARK: - 创建故事请求体（完整字段）
+struct CreateStoryRequest: Codable {
+    let title: String
+    let content: String
+    let summary: String
+    let theme: String
+    let style: String
+    let targetAgeGroup: String
+    let coverEmoji: String
+    let coverGradient: String?
+    let audioUrl: String
+    let duration: TimeInterval
+    let wordCount: Int
+    let voiceModelId: String
+    let voiceModelName: String
+    let isAIGenerated: Bool
+    let tags: String
+    let characters: String
 }

@@ -1,10 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import fs from 'fs';
 import path from 'path';
+import FormData from 'form-data';
+import fetch from 'node-fetch';
 import { prisma } from '../utils/prisma';
 import { success, fail, paginated } from '../utils/response';
 import { AuthRequest } from '../middlewares/auth';
 import { uploadAudio, uploadDirs } from '../middlewares/upload';
+
+// TTS 服务地址
+const TTS_API_URL = process.env.TTS_API_URL || 'http://153.0.191.138:8000/tts';
 
 // 快速模式需要 1 段录音，高质量模式需要 3 段
 const REQUIRED_RECORDINGS: Record<string, number> = {
@@ -294,15 +299,18 @@ export const deleteVoiceModel = async (req: AuthRequest, res: Response, next: Ne
   }
 };
 
-// POST /api/voices/synthesize - 合成语音
+// POST /api/voices/synthesize - 合成语音（调用外部 TTS 服务）
 export const synthesizeSpeech = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const { voiceModelId, text, config } = req.body;
+    const { voiceModelId, text, language } = req.body;
     if (!voiceModelId || !text) {
       return fail(res, 'voiceModelId 和 text 不能为空', 400);
     }
 
-    const voiceModel = await prisma.voiceModel.findUnique({ where: { id: voiceModelId } });
+    const voiceModel = await prisma.voiceModel.findUnique({
+      where: { id: voiceModelId },
+      include: { recordings: { orderBy: { sortOrder: 'asc' } } },
+    });
     if (!voiceModel) {
       return fail(res, '声音模型不存在', 404);
     }
@@ -312,18 +320,62 @@ export const synthesizeSpeech = async (req: AuthRequest, res: Response, next: Ne
     if (voiceModel.status !== 'ready') {
       return fail(res, '声音模型尚未训练完成', 400);
     }
+    if (!voiceModel.recordings || voiceModel.recordings.length === 0) {
+      return fail(res, '该声音模型没有录音样本', 400);
+    }
 
-    // 模拟合成：返回一个测试音频 URL
-    // 实际项目中这里会调用 TTS 服务
-    const fakeAudioUrl = `/api/files/audio/synth_${voiceModelId}_${Date.now()}.mp3`;
+    // 取第一段录音作为参考音频
+    const refRecording = voiceModel.recordings[0];
+    const refFilename = path.basename(refRecording.filePath);
+    const refAudioPath = path.join(uploadDirs.recordings, refFilename);
+    if (!fs.existsSync(refAudioPath)) {
+      return fail(res, '参考音频文件不存在', 500);
+    }
+
+    // 参考文本：优先用录音时的 promptText，否则用默认文本
+    const refText = refRecording.promptText || '从前有一只可爱的小兔子，住在森林深处的蘑菇房子里。';
+
+    // 构建 form-data 请求到 TTS 服务
+    const form = new FormData();
+    form.append('ref_text', refText);
+    form.append('text', text);
+    form.append('language', language || 'zh');
+    form.append('ref_audio', fs.createReadStream(refAudioPath), {
+      filename: `${voiceModel.name}.wav`,
+      contentType: 'audio/wav',
+    });
+
+    // 调用 TTS 服务
+    const ttsResponse = await fetch(TTS_API_URL, {
+      method: 'POST',
+      body: form as any,
+      headers: form.getHeaders(),
+      timeout: 120000,
+    } as any);
+
+    if (!ttsResponse.ok) {
+      const errText = await ttsResponse.text();
+      console.error('TTS 服务调用失败:', ttsResponse.status, errText);
+      return fail(res, `语音合成失败: ${ttsResponse.status}`, 500);
+    }
+
+    // 获取音频数据并保存
+    const audioBuffer = await ttsResponse.buffer();
+    const outputFilename = `synth_${voiceModelId}_${Date.now()}.wav`;
+    const outputPath = path.join(uploadDirs.audio, outputFilename);
+    fs.writeFileSync(outputPath, audioBuffer);
+
+    const audioUrl = `/api/files/audio/${outputFilename}`;
+    const duration = Math.ceil(text.length / 4); // 粗略估算：中文每秒约4字
 
     success(res, {
-      audioUrl: fakeAudioUrl,
-      duration: Math.ceil(text.length / 5), // 粗略估算
+      audioUrl,
+      duration,
       voiceModelId,
-      config: config || {},
+      format: 'wav',
     });
   } catch (err) {
+    console.error('TTS 合成异常:', err);
     next(err);
   }
 };

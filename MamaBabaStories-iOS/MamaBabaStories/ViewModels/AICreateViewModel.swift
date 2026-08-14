@@ -116,6 +116,15 @@ class AICreateViewModel: ObservableObject {
                 self.editedContent = story.content
                 self.showingStoryResult = true
                 self.isGenerating = false
+
+                // 自动开始语音合成
+                if self.selectedVoiceModel != nil {
+                    self.generationStage = "正在合成语音..."
+                    self.isSynthesizing = true
+                    Task {
+                        await self.synthesizeAudio(for: story)
+                    }
+                }
             } catch {
                 self.isGenerating = false
                 self.errorMessage = error.localizedDescription

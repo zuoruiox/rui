@@ -89,8 +89,22 @@ class VoiceCloneService: VoiceCloneServiceProtocol {
 
     // MARK: - 语音合成（TTS）
     func synthesizeSpeech(text: String, voiceModelId: String, config: TTSConfig? = nil) async throws -> URL {
-        // 后端暂未实现 TTS，返回错误
-        throw NSError(domain: "VoiceClone", code: -3, userInfo: [NSLocalizedDescriptionKey: "语音合成功能即将上线"])
+        struct TTSResponse: Codable {
+            let audioUrl: String
+            let duration: Int?
+            let voiceModelId: String?
+            let format: String?
+        }
+        let response: TTSResponse = try await apiClient.request(.synthesizeSpeech(voiceModelId: voiceModelId, text: text, config: config))
+        let audioUrlString = response.audioUrl
+        // 如果是相对路径，拼接 baseURL
+        if audioUrlString.hasPrefix("http") {
+            return URL(string: audioUrlString)!
+        } else {
+            let base = APIConfig.baseURL
+            let fullUrl = base + audioUrlString
+            return URL(string: fullUrl)!
+        }
     }
 }
 

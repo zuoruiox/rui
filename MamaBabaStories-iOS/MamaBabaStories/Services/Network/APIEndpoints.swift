@@ -128,7 +128,7 @@ extension APIEndpoint {
         case .getTrainingStatus(let voiceModelId):
             return "/voices/\(voiceModelId)/status"
         case .synthesizeSpeech(let voiceModelId, _, _):
-            return "/voices/\(voiceModelId)/synthesize"
+            return "/voices/synthesize?voiceModelId=\(voiceModelId)"
         case .setDefaultVoice(let id):
             return "/voices/\(id)/default"
 
@@ -281,14 +281,8 @@ extension APIEndpoint {
         case .startTraining:
             return [:]
 
-        case .synthesizeSpeech(_, let text, let config):
-            var body: [String: Any] = ["text": text]
-            if let config = config {
-                body["speed"] = config.speed
-                body["pitch"] = config.pitch
-                body["emotion"] = config.emotion.rawValue
-            }
-            return body
+        case .synthesizeSpeech(let voiceModelId, let text, _):
+            return ["voiceModelId": voiceModelId, "text": text, "language": "zh"]
 
         case .addChild(let child):
             return try? child.toDictionary()

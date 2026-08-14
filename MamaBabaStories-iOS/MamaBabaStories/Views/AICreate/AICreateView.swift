@@ -446,7 +446,26 @@ struct GeneratedStoryView: View {
 
                         // 操作按钮
                         VStack(spacing: 12) {
-                            PrimaryButton("播放故事", icon: "play.fill", height: Layout.largeButtonHeight) {
+                            if aiVM.isSynthesizing {
+                                HStack(spacing: 8) {
+                                    ProgressView()
+                                        .progressViewStyle(CircularProgressViewStyle(tint: AppColors.softOrange))
+                                    Text("正在合成语音...")
+                                        .font(AppFonts.body(size: 14))
+                                        .foregroundColor(AppColors.textSecondary)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(AppColors.surface)
+                                .cornerRadius(Layout.cornerRadius)
+                            }
+
+                            PrimaryButton(
+                                aiVM.isSynthesizing ? "语音合成中..." : "播放故事",
+                                icon: aiVM.isSynthesizing ? nil : "play.fill",
+                                isDisabled: aiVM.isSynthesizing,
+                                height: Layout.largeButtonHeight
+                            ) {
                                 if let savedStory = aiVM.saveStory() {
                                     playerVM.play(story: savedStory)
                                     dismiss()

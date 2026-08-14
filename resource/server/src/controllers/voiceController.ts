@@ -9,7 +9,7 @@ import { AuthRequest } from '../middlewares/auth';
 import { uploadAudio, uploadDirs } from '../middlewares/upload';
 
 // TTS 服务地址
-const TTS_API_URL = process.env.TTS_API_URL || 'http://153.0.191.138:8000/tts';
+const TTS_API_URL = process.env.TTS_API_URL || 'http://10.86.18.13:8000/tts';
 
 // 快速模式需要 1 段录音，高质量模式需要 3 段
 const REQUIRED_RECORDINGS: Record<string, number> = {
@@ -340,23 +340,40 @@ export const synthesizeSpeech = async (req: AuthRequest, res: Response, next: Ne
     form.append('ref_text', refText);
     form.append('text', text);
     form.append('language', language || 'zh');
+
+    // 确定文件 MIME 类型
+    const ext = path.extname(refAudioPath).toLowerCase();
+    let contentType = 'audio/wav';
+    if (ext === '.m4a' || ext === '.mp4' || ext === '.aac') contentType = 'audio/mp4';
+    else if (ext === '.mp3') contentType = 'audio/mpeg';
+    else if (ext === '.ogg') contentType = 'audio/ogg';
+    else if (ext === '.webm') contentType = 'audio/webm';
+
     form.append('ref_audio', fs.createReadStream(refAudioPath), {
-      filename: `${voiceModel.name}.wav`,
-      contentType: 'audio/wav',
+      filename: path.basename(refAudioPath),
+      contentType,
     });
 
-    // 调用 TTS 服务
-    const ttsResponse = await fetch(TTS_API_URL, {
-      method: 'POST',
-      body: form as any,
-      headers: form.getHeaders(),
-      timeout: 120000,
-    } as any);
+    // 调用 TTS 服务（声音克隆耗时较长，设置 5 分钟超时）
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 300000);
+
+    let ttsResponse;
+    try {
+      ttsResponse = await fetch(TTS_API_URL, {
+        method: 'POST',
+        body: form as any,
+        headers: form.getHeaders(),
+        signal: controller.signal,
+      } as any);
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
     if (!ttsResponse.ok) {
       const errText = await ttsResponse.text();
       console.error('TTS 服务调用失败:', ttsResponse.status, errText);
-      return fail(res, `语音合成失败: ${ttsResponse.status}`, 500);
+      return fail(res, `语音合成失败: ${ttsResponse.status} - ${errText.substring(0, 200)}`, 500);
     }
 
     // 获取音频数据并保存

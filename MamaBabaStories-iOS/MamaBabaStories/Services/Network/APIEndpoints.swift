@@ -215,7 +215,7 @@ extension APIEndpoint {
         case .uploadRecording:
             return APIConfig.uploadTimeout
         case .generateStory, .synthesizeTTS, .synthesizeSpeech:
-            return 60
+            return 300
         default:
             return APIConfig.timeout
         }

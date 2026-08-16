@@ -165,12 +165,11 @@ export const deviceLogin = async (req: AuthRequest, res: Response, next: NextFun
       return fail(res, '设备ID不能为空', 400);
     }
 
-    // 查找是否已有该设备的用户（通过 email 匹配 deviceId@device.local）
-    const deviceEmail = `device_${deviceId}@device.local`;
+    // 使用特殊 email 标识设备用户
+    const deviceEmail = `device_${deviceId}@local`;
     let user = await prisma.user.findUnique({ where: { email: deviceEmail } });
 
     if (!user) {
-      // 自动创建匿名用户
       user = await prisma.user.create({
         data: {
           email: deviceEmail,
@@ -264,10 +263,10 @@ export const wechatLogin = async (req: AuthRequest, res: Response, next: NextFun
 
     // TODO: 接入微信开放平台，用 code 换取 openid 和 access_token
     // 目前使用 code 作为模拟 openid 方便开发测试
-    const mockOpenId = `wx_${code}`;
+    const openId = code.startsWith('wx_') ? code : `wx_${code}`;
+    const wechatEmail = `${openId}@wechat.local`;
 
-    // 用 openid 查找或创建用户（通过 email 字段存储 wx_openid 标识）
-    const wechatEmail = `${mockOpenId}@wechat.local`;
+    // 用 email 字段查找微信用户（不会与真实邮箱冲突）
     let user = await prisma.user.findUnique({ where: { email: wechatEmail } });
 
     if (!user) {
@@ -281,7 +280,6 @@ export const wechatLogin = async (req: AuthRequest, res: Response, next: NextFun
         },
       });
     } else if (wxNickname || wxAvatar) {
-      // 更新微信头像和昵称
       user = await prisma.user.update({
         where: { id: user.id },
         data: {

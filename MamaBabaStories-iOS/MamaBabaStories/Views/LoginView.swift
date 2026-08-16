@@ -9,7 +9,7 @@ import SwiftUI
 
 struct LoginView: View {
     @EnvironmentObject var authService: AuthService
-    @State private var showRegister = false
+    @State private var showPhoneLogin = false
     @State private var showEmailLogin = false
 
     var body: some View {
@@ -50,10 +50,7 @@ struct LoginView: View {
                 // 登录按钮区域
                 VStack(spacing: 14) {
                     // 手机号一键登录/注册
-                    NavigationLink {
-                        PhoneLoginView()
-                            .environmentObject(authService)
-                    } label: {
+                    Button(action: { showPhoneLogin = true }) {
                         HStack(spacing: 10) {
                             Image(systemName: "smartphone.fill")
                                 .font(.system(size: 18))
@@ -76,7 +73,7 @@ struct LoginView: View {
                     // 微信登录
                     Button(action: {
                         Task {
-                            _ = await authService.loginWithWechat(code: "mock_wx_\(UUID().uuidString.prefix(8))")
+                            await authService.loginWithWechat(code: "wx_\(UUID().uuidString.prefix(8))")
                         }
                     }) {
                         HStack(spacing: 10) {
@@ -151,11 +148,15 @@ struct LoginView: View {
                 .padding(.bottom, 20)
             }
         }
+        .sheet(isPresented: $showPhoneLogin) {
+            PhoneLoginView()
+                .environmentObject(authService)
+        }
         .sheet(isPresented: $showEmailLogin) {
             EmailLoginView()
                 .environmentObject(authService)
         }
-        .alert("登录失败", isPresented: $authService.showError) {
+        .alert("提示", isPresented: $authService.showError) {
             Button("好的", role: .cancel) {}
         } message: {
             Text(authService.errorMessage ?? "未知错误")
@@ -171,6 +172,8 @@ struct PhoneLoginView: View {
     @State private var code = ""
     @State private var countdown = 0
     @State private var timer: Timer?
+    @State private var showNicknameInput = false
+    @State private var nickname = ""
 
     var body: some View {
         NavigationStack {
@@ -198,7 +201,9 @@ struct PhoneLoginView: View {
                                 .font(AppFonts.body())
                                 .keyboardType(.numberPad)
                                 .onChange(of: phone) { newValue in
-                                    phone = String(newValue.prefix(11))
+                                    let filtered = newValue.filter { $0.isNumber }
+                                    if filtered != newValue { phone = filtered }
+                                    if phone.count > 11 { phone = String(phone.prefix(11)) }
                                 }
                         }
                         .padding()
@@ -219,18 +224,20 @@ struct PhoneLoginView: View {
                                 .font(AppFonts.body())
                                 .keyboardType(.numberPad)
                                 .onChange(of: code) { newValue in
-                                    code = String(newValue.prefix(6))
+                                    let filtered = newValue.filter { $0.isNumber }
+                                    if filtered != newValue { code = filtered }
+                                    if code.count > 6 { code = String(code.prefix(6)) }
                                 }
 
                             Button(action: sendCode) {
                                 Text(countdown > 0 ? "\(countdown)s后重发" : "获取验证码")
                                     .font(AppFonts.caption(size: 14, weight: .medium))
-                                    .foregroundColor(countdown > 0 ? AppColors.textTertiary : AppColors.softOrange)
-                                    .padding(.horizontal, 12)
+                                    .foregroundColor(countdown > 0 ? AppColors.textTertiary : .white)
+                                    .padding(.horizontal, 14)
                                     .padding(.vertical, 8)
                                     .background(
                                         RoundedRectangle(cornerRadius: 8)
-                                            .fill(countdown > 0 ? AppColors.surfaceVariant : AppColors.softOrange.opacity(0.1))
+                                            .fill(countdown > 0 ? AppColors.surfaceVariant : AppColors.softOrange)
                                     )
                             }
                             .disabled(countdown > 0 || phone.count != 11 || authService.isLoading)
@@ -242,12 +249,9 @@ struct PhoneLoginView: View {
                         )
                     }
 
-                    // 登录按钮
+                    // 登录/注册按钮
                     PrimaryButton("登录/注册", icon: "arrow.right", isDisabled: phone.count != 11 || code.count != 6, isLoading: authService.isLoading) {
-                        Task {
-                            let success = await authService.loginWithPhone(phone: phone, code: code)
-                            if success { dismiss() }
-                        }
+                        performLogin()
                     }
                     .padding(.top, 8)
 
@@ -265,7 +269,27 @@ struct PhoneLoginView: View {
             }
         }
         .onDisappear { timer?.invalidate() }
-        .alert("登录失败", isPresented: $authService.showError) {
+        .alert("设置昵称", isPresented: $showNicknameInput) {
+            TextField("请输入昵称", text: $nickname)
+            Button("确定") {
+                Task {
+                    let success = await authService.loginWithPhone(phone: phone, code: code, nickname: nickname)
+                    if success { dismiss() }
+                }
+            }
+            Button("跳过", role: .cancel) {
+                Task {
+                    let success = await authService.loginWithPhone(phone: phone, code: code)
+                    if success { dismiss() }
+                }
+            }
+        } message: {
+            Text("欢迎使用！请设置您的昵称")
+        }
+        .alert("登录失败", isPresented: Binding(
+            get: { authService.showError && !showNicknameInput },
+            set: { authService.showError = $0 }
+        )) {
             Button("好的", role: .cancel) {}
         } message: {
             Text(authService.errorMessage ?? "未知错误")
@@ -276,7 +300,7 @@ struct PhoneLoginView: View {
         guard phone.count == 11 else { return }
         Task {
             if let devCode = await authService.sendVerificationCode(phone: phone) {
-                // 开发模式自动填充验证码
+                // DEBUG 模式自动填充验证码方便测试
                 #if DEBUG
                 code = devCode
                 #endif
@@ -285,14 +309,26 @@ struct PhoneLoginView: View {
         }
     }
 
+    private func performLogin() {
+        Task {
+            let success = await authService.loginWithPhone(phone: phone, code: code)
+            if success {
+                dismiss()
+            }
+        }
+    }
+
     private func startCountdown() {
         countdown = 60
+        timer?.invalidate()
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            if countdown > 0 {
-                countdown -= 1
-            } else {
-                timer?.invalidate()
-                timer = nil
+            Task { @MainActor in
+                if countdown > 0 {
+                    countdown -= 1
+                } else {
+                    timer?.invalidate()
+                    timer = nil
+                }
             }
         }
     }
@@ -395,7 +431,10 @@ struct EmailLoginView: View {
             EmailRegisterView()
                 .environmentObject(authService)
         }
-        .alert("登录失败", isPresented: $authService.showError) {
+        .alert("登录失败", isPresented: Binding(
+            get: { authService.showError && !showRegister },
+            set: { authService.showError = $0 }
+        )) {
             Button("好的", role: .cancel) {}
         } message: {
             Text(authService.errorMessage ?? "未知错误")
@@ -503,7 +542,9 @@ struct EmailRegisterView: View {
                                 password: password,
                                 nickname: nickname.trimmingCharacters(in: .whitespaces)
                             )
-                            if success { dismiss() }
+                            if success {
+                                dismiss()
+                            }
                         }
                     }
                     .padding(.top, 8)

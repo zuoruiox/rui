@@ -72,9 +72,14 @@ struct HomeView: View {
     private var headerSection: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text(homeVM.greeting)
-                    .font(AppFonts.title(size: 26))
-                    .foregroundColor(AppColors.textPrimary)
+                HStack(spacing: 6) {
+                    Image(systemName: homeVM.greetingIcon)
+                        .font(.system(size: 22))
+                        .foregroundColor(AppColors.softOrange)
+                    Text(homeVM.greeting)
+                        .font(AppFonts.title(size: 26))
+                        .foregroundColor(AppColors.textPrimary)
+                }
 
                 if let child = homeVM.currentChild {
                     Text("今天给\(child.name)讲什么故事呢？")
@@ -91,11 +96,9 @@ struct HomeView: View {
             // 头像
             Button(action: {}) {
                 if let child = homeVM.currentChild {
-                    Text(child.avatarEmoji)
-                        .font(.system(size: 28))
-                        .frame(width: 50, height: 50)
-                        .background(AppColors.warmYellow.opacity(0.3))
-                        .clipShape(Circle())
+                    Image(systemName: "person.crop.circle.fill")
+                        .font(.system(size: 40))
+                        .foregroundColor(AppColors.warmYellow)
                 } else {
                     Image(systemName: "person.circle.fill")
                         .font(.system(size: 40))
@@ -189,7 +192,9 @@ struct HomeView: View {
     private var featuredStoriesSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
-                Text("✨ 精选推荐")
+                Image(systemName: "sparkles")
+                    .foregroundColor(AppColors.warmYellow)
+                Text("精选推荐")
                     .font(AppFonts.headline())
                     .foregroundColor(AppColors.textPrimary)
                 Spacer()
@@ -218,7 +223,9 @@ struct HomeView: View {
     private var voiceSelectionSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
-                Text("🎤 选择声音")
+                Image(systemName: "mic.fill")
+                    .foregroundColor(AppColors.softPink)
+                Text("选择声音")
                     .font(AppFonts.headline())
                     .foregroundColor(AppColors.textPrimary)
                 Spacer()
@@ -243,10 +250,14 @@ struct HomeView: View {
     // MARK: - 主题分类
     private var themeSection: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("📚 故事主题")
-                .font(AppFonts.headline())
-                .foregroundColor(AppColors.textPrimary)
-                .padding(.horizontal, Layout.horizontalPadding)
+            HStack {
+                Image(systemName: "books.vertical.fill")
+                    .foregroundColor(AppColors.gentleBlue)
+                Text("故事主题")
+                    .font(AppFonts.headline())
+                    .foregroundColor(AppColors.textPrimary)
+            }
+            .padding(.horizontal, Layout.horizontalPadding)
 
             LazyVGrid(columns: [
                 GridItem(.flexible(), spacing: 12),
@@ -267,7 +278,9 @@ struct HomeView: View {
     private var recentStoriesSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
-                Text("🕐 最近播放")
+                Image(systemName: "clock.fill")
+                    .foregroundColor(AppColors.softOrange)
+                Text("最近播放")
                     .font(AppFonts.headline())
                     .foregroundColor(AppColors.textPrimary)
                 Spacer()
@@ -336,7 +349,7 @@ struct ThemeCard: View {
                     .fill(theme.color.opacity(0.2))
                     .frame(width: 60, height: 60)
                 Image(systemName: theme.icon)
-                    .font(.system(size: 26))
+                    .font(.system(size: 24))
                     .foregroundColor(theme.color)
             }
 

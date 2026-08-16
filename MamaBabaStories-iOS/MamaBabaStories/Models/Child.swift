@@ -52,6 +52,19 @@ enum Gender: String, Codable, CaseIterable, Identifiable {
         case .other: return "🧒"
         }
     }
+
+    var icon: String {
+        switch self {
+        case .boy: return "figure.stand"
+        case .girl: return "figure.stand.dress"
+        case .other: return "person.fill"
+        }
+    }
+}
+
+// Need genderEnum accessor
+extension Child {
+    var genderEnum: Gender { gender }
 }
 
 // MARK: - Mock 数据
@@ -61,7 +74,7 @@ extension Child {
         name: "小马宝",
         gender: .other,
         birthDate: Calendar.current.date(byAdding: .month, value: -2, to: Date()) ?? Date(),
-        avatarEmoji: "🐴",
+        avatarEmoji: "person.fill",
         favoriteThemes: ["bedtime", "family", "animals"],
         createdAt: Date()
     )

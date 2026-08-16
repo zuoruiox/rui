@@ -11,6 +11,8 @@ struct VoiceCloneView: View {
     @EnvironmentObject var voiceVM: VoiceCloneViewModel
     @EnvironmentObject var playerVM: PlayerViewModel
     @State private var showingCreateSheet = false
+    @State private var voiceToDelete: VoiceModel?
+    @State private var showingDeleteConfirm = false
 
     var body: some View {
         NavigationStack {
@@ -72,6 +74,19 @@ struct VoiceCloneView: View {
             } message: {
                 Text("你的声音模型已经训练完成，现在可以用你的声音来讲故事啦！")
             }
+            .alert("确认删除", isPresented: $showingDeleteConfirm) {
+                Button("删除", role: .destructive) {
+                    if let model = voiceToDelete {
+                        Task { await voiceVM.deleteVoiceModel(model) }
+                        voiceToDelete = nil
+                    }
+                }
+                Button("取消", role: .cancel) {
+                    voiceToDelete = nil
+                }
+            } message: {
+                Text("删除后将无法恢复，确定要删除「\(voiceToDelete?.name ?? "该声音")」吗？")
+            }
             .onChange(of: voiceVM.navigateToRecording) { _, isNavigating in
                 if isNavigating {
                     showingCreateSheet = false
@@ -88,9 +103,13 @@ struct VoiceCloneView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("🎤 声音克隆")
-                        .font(AppFonts.headline())
-                        .foregroundColor(AppColors.textPrimary)
+                    HStack(spacing: 6) {
+                        Image(systemName: "mic.fill")
+                            .foregroundColor(AppColors.softOrange)
+                        Text("声音克隆")
+                            .font(AppFonts.headline())
+                            .foregroundColor(AppColors.textPrimary)
+                    }
                     Text("录制几段声音，AI就能模仿你的声音给宝贝讲故事")
                         .font(AppFonts.caption())
                         .foregroundColor(AppColors.textSecondary)
@@ -145,7 +164,8 @@ struct VoiceCloneView: View {
                                     voiceVM.tryVoiceModel(model)
                                 },
                                 onDelete: {
-                                    Task { await voiceVM.deleteVoiceModel(model) }
+                                    voiceToDelete = model
+                                    showingDeleteConfirm = true
                                 }
                             )
                         }
@@ -165,16 +185,20 @@ struct VoiceCloneView: View {
     // MARK: - 提示区
     private var tipsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("💡 录制小贴士")
-                .font(AppFonts.headline(size: 18))
-                .foregroundColor(AppColors.textPrimary)
+            HStack(spacing: 6) {
+                Image(systemName: "lightbulb.fill")
+                    .foregroundColor(AppColors.warmYellow)
+                Text("录制小贴士")
+                    .font(AppFonts.headline(size: 18))
+                    .foregroundColor(AppColors.textPrimary)
+            }
 
             VStack(spacing: 10) {
-                TipRow(icon: "room", text: "选择安静的环境，避免背景噪音")
+                TipRow(icon: "speaker.slash.fill", text: "选择安静的环境，避免背景噪音")
                 TipRow(icon: "mic", text: "距离麦克风20-30厘米，保持正常音量")
                 TipRow(icon: "text.bubble", text: "清晰自然地朗读提示文字")
                 TipRow(icon: "clock", text: "每段录音建议5秒以上")
-                TipRow(icon: "number", text: "录制1-3段即可，越多效果越好")
+                TipRow(icon: "list.number", text: "录制1-3段即可，越多效果越好")
             }
         }
         .padding(18)
@@ -302,8 +326,9 @@ struct CreateVoiceView: View {
                                         }
                                     }) {
                                         VStack(spacing: 6) {
-                                            Text(type.emoji)
-                                                .font(.system(size: 28))
+                                            Image(systemName: type.icon)
+                                                .font(.system(size: 24, weight: .medium))
+                                                .foregroundColor(voiceVM.selectedOwnerType == type ? .white : AppColors.textSecondary)
                                             Text(type.displayName)
                                                 .font(AppFonts.caption(size: 12))
                                                 .foregroundColor(voiceVM.selectedOwnerType == type ? .white : AppColors.textSecondary)

@@ -140,7 +140,7 @@ class MockVoiceCloneService: VoiceCloneServiceProtocol {
             id: "voice_new_\(UUID().uuidString.prefix(8))",
             name: name,
             ownerType: ownerType,
-            emoji: "🎤",
+            emoji: "mic.fill",
             status: "draft",
             progress: 0,
             quality: "quick",

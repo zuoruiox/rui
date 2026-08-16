@@ -115,9 +115,13 @@ struct RecordingView: View {
     // MARK: - 提示文本区
     private var promptSection: some View {
         VStack(spacing: 16) {
-            Text("📖 请朗读以下文字")
-                .font(AppFonts.caption())
-                .foregroundColor(AppColors.textTertiary)
+            HStack(spacing: 6) {
+                Image(systemName: "text.bubble.fill")
+                    .foregroundColor(AppColors.gentleBlue)
+                Text("请朗读以下文字")
+                    .font(AppFonts.caption())
+                    .foregroundColor(AppColors.textTertiary)
+            }
 
             Text(voiceVM.currentPrompt.text)
                 .font(AppFonts.body(size: 20))

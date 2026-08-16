@@ -210,6 +210,13 @@ enum VoiceOwnerType: String, Codable, CaseIterable, Identifiable {
         }
     }
 
+    var icon: String {
+        switch self {
+        case .mom, .grandma: return "person.dress.fill"
+        case .dad, .grandpa, .other: return "person.fill"
+        }
+    }
+
     var defaultName: String {
         return displayName + "的声音"
     }
@@ -356,7 +363,7 @@ extension VoiceModel {
         id: "voice_001",
         name: "妈妈的声音",
         ownerType: "mom",
-        emoji: "👩",
+        emoji: "person.dress.fill",
         status: "ready",
         progress: 1.0,
         quality: "quick",
@@ -372,7 +379,7 @@ extension VoiceModel {
         id: "voice_002",
         name: "爸爸的声音",
         ownerType: "dad",
-        emoji: "👨",
+        emoji: "person.fill",
         status: "ready",
         progress: 1.0,
         quality: "quick",
@@ -388,7 +395,7 @@ extension VoiceModel {
         id: "voice_003",
         name: "奶奶的声音",
         ownerType: "grandma",
-        emoji: "👵",
+        emoji: "person.dress.fill",
         status: "training",
         progress: 0.6,
         quality: "quick",

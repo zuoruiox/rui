@@ -48,8 +48,12 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
-# 创建上传目录
-RUN mkdir -p uploads/audio uploads/recordings uploads/voices uploads/avatars uploads/covers
+# 复制启动脚本
+COPY docker-entrypoint.sh ./
+RUN chmod +x docker-entrypoint.sh
+
+# 创建上传目录和数据目录
+RUN mkdir -p uploads/audio uploads/recordings uploads/voices uploads/avatars uploads/covers uploads/subtitles data
 
 EXPOSE 9999
 
@@ -57,5 +61,5 @@ EXPOSE 9999
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:9999/api/auth/me || exit 1
 
-# 启动脚本：生成 Prisma Client → 同步数据库 → 运行种子（编译后的 JS）→ 启动服务
-CMD ["sh", "-c", "npx prisma generate && npx prisma db push && node dist/prisma/seed.js && node dist/src/index.js"]
+# 使用启动脚本
+CMD ["./docker-entrypoint.sh"]

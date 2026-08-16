@@ -71,7 +71,7 @@ struct Story: Codable, Identifiable, Hashable {
         } else {
             coverGradient = nil
         }
-        coverEmoji = try container.decodeIfPresent(String.self, forKey: .coverEmoji) ?? "📖"
+        coverEmoji = try container.decodeIfPresent(String.self, forKey: .coverEmoji) ?? "book.fill"
         audioURL = try container.decodeIfPresent(String.self, forKey: .audioURL)
         localAudioPath = try container.decodeIfPresent(String.self, forKey: .localAudioPath)
         duration = try container.decodeIfPresent(TimeInterval.self, forKey: .duration) ?? 0
@@ -285,7 +285,7 @@ extension Story {
             targetAgeGroup: "4-5岁",
             coverImageURL: nil,
             coverGradient: ["#FFE0B2", "#FFCC80"],
-            coverEmoji: "🐰",
+            coverEmoji: "hare.fill",
             audioURL: "https://example.com/audio/story_001.mp3",
             localAudioPath: nil,
             duration: 360,
@@ -311,7 +311,7 @@ extension Story {
             targetAgeGroup: "2-3岁",
             coverImageURL: nil,
             coverGradient: ["#BBDEFB", "#90CAF9"],
-            coverEmoji: "⭐",
+            coverEmoji: "star.fill",
             audioURL: "https://example.com/audio/story_002.mp3",
             localAudioPath: nil,
             duration: 280,
@@ -337,7 +337,7 @@ extension Story {
             targetAgeGroup: "6-8岁",
             coverImageURL: nil,
             coverGradient: ["#C5CAE9", "#9FA8DA"],
-            coverEmoji: "🚂",
+            coverEmoji: "train.side.front.car",
             audioURL: "https://example.com/audio/story_003.mp3",
             localAudioPath: nil,
             duration: 320,
@@ -363,7 +363,7 @@ extension Story {
             targetAgeGroup: "4-5岁",
             coverImageURL: nil,
             coverGradient: ["#C8E6C9", "#A5D6A7"],
-            coverEmoji: "🐻",
+            coverEmoji: "teddybear.fill",
             audioURL: nil,
             localAudioPath: nil,
             duration: 300,
@@ -389,7 +389,7 @@ extension Story {
             targetAgeGroup: "4-5岁",
             coverImageURL: nil,
             coverGradient: ["#F8BBD0", "#F48FB1"],
-            coverEmoji: "🎨",
+            coverEmoji: "paintpalette.fill",
             audioURL: "https://example.com/audio/story_005.mp3",
             localAudioPath: nil,
             duration: 340,
@@ -415,7 +415,7 @@ extension Story {
             targetAgeGroup: "6-8岁",
             coverImageURL: nil,
             coverGradient: ["#80DEEA", "#4DD0E1"],
-            coverEmoji: "🐬",
+            coverEmoji: "fish.fill",
             audioURL: "https://example.com/audio/story_006.mp3",
             localAudioPath: nil,
             duration: 400,

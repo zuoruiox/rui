@@ -25,43 +25,67 @@ struct VoiceModelCard: View {
         }
     }
 
+    private var ownerTypeIcon: String {
+        switch voiceModel.ownerTypeEnum {
+        case .mom: return "person.dress.fill"
+        case .dad: return "person.fill"
+        case .grandma: return "person.dress.fill"
+        case .grandpa: return "person.fill"
+        case .other: return "person.fill"
+        }
+    }
+
     var body: some View {
         Button(action: { onTap?() }) {
             VStack(spacing: 12) {
                 // 头像区域
-                ZStack {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    cardColor,
-                                    cardColor.opacity(0.6)
-                                ]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 64, height: 64)
-
-                    Text(voiceModel.emoji ?? voiceModel.ownerTypeEnum.emoji)
-                        .font(.system(size: 32))
-
-                    // 状态指示器
-                    if voiceModel.statusEnum == .ready {
+                ZStack(alignment: .topTrailing) {
+                    ZStack {
                         Circle()
-                            .fill(AppColors.success)
-                            .frame(width: 14, height: 14)
-                            .overlay(
-                                Image(systemName: "checkmark")
-                                    .font(.system(size: 8, weight: .bold))
-                                    .foregroundColor(.white)
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        cardColor,
+                                        cardColor.opacity(0.6)
+                                    ]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
                             )
-                            .offset(x: 22, y: 22)
-                    } else if voiceModel.statusEnum == .training {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: AppColors.warning))
-                            .frame(width: 18, height: 18)
-                            .offset(x: 22, y: 22)
+                            .frame(width: 64, height: 64)
+
+                        Image(systemName: ownerTypeIcon)
+                            .font(.system(size: 28, weight: .medium))
+                            .foregroundColor(.white)
+
+                        // 状态指示器
+                        if voiceModel.statusEnum == .ready {
+                            Circle()
+                                .fill(AppColors.success)
+                                .frame(width: 14, height: 14)
+                                .overlay(
+                                    Image(systemName: "checkmark")
+                                        .font(.system(size: 8, weight: .bold))
+                                        .foregroundColor(.white)
+                                )
+                                .offset(x: 22, y: 22)
+                        } else if voiceModel.statusEnum == .training {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: AppColors.warning))
+                                .frame(width: 18, height: 18)
+                                .offset(x: 22, y: 22)
+                        }
+                    }
+
+                    // 删除按钮
+                    if onDelete != nil {
+                        Button(action: { onDelete?() }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: 20))
+                                .foregroundColor(AppColors.textTertiary)
+                                .background(Circle().fill(.white))
+                        }
+                        .offset(x: 6, y: -6)
                     }
                 }
 

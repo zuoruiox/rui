@@ -36,11 +36,15 @@ class ProfileViewModel: ObservableObject {
     @Published var showingMembershipPage = false
     @Published var showingSettings = false
     @Published var showingVoiceManagement = false
+    @Published var showingEditProfile = false
     @Published var editingChild: Child?
     @Published var newChildName = ""
     @Published var newChildGender: Gender = .boy
     @Published var newChildBirthDate = Date()
-    @Published var newChildEmoji = "🦁"
+    @Published var newChildEmoji = "hare.fill"
+
+    // 编辑昵称
+    @Published var editingNickname = ""
 
     // MARK: - Init
     init() {
@@ -120,7 +124,7 @@ class ProfileViewModel: ObservableObject {
         newChildName = ""
         newChildGender = .boy
         newChildBirthDate = Date()
-        newChildEmoji = "🦁"
+        newChildEmoji = "hare.fill"
     }
 
     // MARK: - 会员相关
@@ -141,7 +145,7 @@ class ProfileViewModel: ObservableObject {
     var settingsSections: [SettingsSection] {
         [
             SettingsSection(title: "播放设置", items: [
-                SettingsItem(icon: "speedometer", title: "播放速度", value: "1.0x", type: .navigation),
+                SettingsItem(icon: "dial.medium.fill", title: "播放速度", value: "1.0x", type: .navigation),
                 SettingsItem(icon: "timer", title: "睡眠定时", value: "未开启", type: .navigation),
                 SettingsItem(icon: "arrow.down.circle", title: "WiFi自动下载", value: nil, type: .toggle(\.autoDownloadOnWiFi)),
             ]),
@@ -166,6 +170,16 @@ class ProfileViewModel: ObservableObject {
         user = nil
         AuthService.shared.logout()
     }
+
+    // MARK: - 编辑资料
+    func prepareEditProfile() {
+        editingNickname = user?.nickname ?? ""
+    }
+
+    func saveProfile() {
+        guard !editingNickname.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+        user?.nickname = editingNickname.trimmingCharacters(in: .whitespaces)
+    }
 }
 
 // MARK: - 设置模型
@@ -181,6 +195,15 @@ struct SettingsItem: Identifiable {
     let title: String
     let value: String?
     let type: SettingsItemType
+    let action: (() -> Void)?
+
+    init(icon: String, title: String, value: String? = nil, type: SettingsItemType, action: (() -> Void)? = nil) {
+        self.icon = icon
+        self.title = title
+        self.value = value
+        self.type = type
+        self.action = action
+    }
 
     enum SettingsItemType {
         case navigation

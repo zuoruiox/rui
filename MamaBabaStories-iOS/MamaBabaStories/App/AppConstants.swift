@@ -180,16 +180,16 @@ enum StoryTheme: String, CaseIterable, Codable, Identifiable {
 
     var icon: String {
         switch self {
-        case .adventure: return "🗺️"
-        case .friendship: return "❤️"
-        case .family: return "🏠"
-        case .animals: return "🐾"
-        case .magic: return "✨"
-        case .space: return "🌙"
-        case .nature: return "🍃"
-        case .bedtime: return "🌛"
-        case .courage: return "🛡️"
-        case .kindness: return "🤝"
+        case .adventure: return "map.fill"
+        case .friendship: return "heart.fill"
+        case .family: return "house.fill"
+        case .animals: return "pawprint.fill"
+        case .magic: return "sparkles"
+        case .space: return "moon.stars.fill"
+        case .nature: return "leaf.fill"
+        case .bedtime: return "moon.fill"
+        case .courage: return "shield.fill"
+        case .kindness: return "hand.raised.fill"
         }
     }
 

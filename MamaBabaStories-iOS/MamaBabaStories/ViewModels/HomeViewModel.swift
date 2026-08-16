@@ -21,6 +21,7 @@ class HomeViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var showError = false
     @Published var greeting: String = ""
+    @Published var greetingIcon: String = "sun.max.fill"
     @Published var quickActions: [QuickAction] = []
 
     // MARK: - Services
@@ -86,17 +87,23 @@ class HomeViewModel: ObservableObject {
         let hour = Calendar.current.component(.hour, from: Date())
         switch hour {
         case 5..<8:
-            greeting = "早上好呀 ☀️"
+            greeting = "早上好呀"
+            greetingIcon = "sun.and.horizon.fill"
         case 8..<12:
-            greeting = "上午好 🌤️"
+            greeting = "上午好"
+            greetingIcon = "sun.max.fill"
         case 12..<14:
-            greeting = "中午好 🍱"
+            greeting = "中午好"
+            greetingIcon = "fork.knife"
         case 14..<18:
-            greeting = "下午好 🌻"
+            greeting = "下午好"
+            greetingIcon = "sun.max.fill"
         case 18..<22:
-            greeting = "晚上好 🌙"
+            greeting = "晚上好"
+            greetingIcon = "moon.stars.fill"
         default:
-            greeting = "夜深了 🌟"
+            greeting = "夜深了"
+            greetingIcon = "moon.fill"
         }
     }
 

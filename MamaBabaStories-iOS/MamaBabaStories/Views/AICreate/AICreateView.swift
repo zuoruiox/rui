@@ -86,9 +86,10 @@ struct AICreateView: View {
     // MARK: - 头部
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text("✨")
-                    .font(.system(size: 32))
+            HStack(spacing: 8) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 28))
+                    .foregroundColor(AppColors.warmYellow)
                 Text("AI故事创作")
                     .font(AppFonts.title(size: 26))
                     .foregroundColor(AppColors.textPrimary)
@@ -353,8 +354,9 @@ struct ThemeSelectCard: View {
                     RoundedRectangle(cornerRadius: 14)
                         .fill(isSelected ? AppColors.softOrange : AppColors.softOrange.opacity(0.15))
                         .frame(width: 64, height: 64)
-                    Text(theme.icon)
-                        .font(.system(size: 24))
+                    Image(systemName: theme.icon)
+                        .font(.system(size: 24, weight: .medium))
+                        .foregroundColor(isSelected ? .white : AppColors.softOrange)
                 }
                 Text(theme.rawValue)
                     .font(AppFonts.caption(size: 11, weight: isSelected ? .semibold : .regular))
@@ -388,8 +390,9 @@ struct GeneratedStoryView: View {
                                 )
                                 .frame(height: 200)
 
-                            Text(story.coverEmoji)
-                                .font(.system(size: 80))
+                            Image(systemName: "book.fill")
+                                .font(.system(size: 64, weight: .medium))
+                                .foregroundColor(.white.opacity(0.9))
                         }
                         .padding(.horizontal, Layout.horizontalPadding)
                         .padding(.top, 10)

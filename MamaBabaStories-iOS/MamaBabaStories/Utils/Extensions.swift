@@ -78,6 +78,29 @@ extension String {
         return NSPredicate(format: "SELF MATCHES %@", pattern).evaluate(with: self)
     }
 
+    /// 返回可渲染的 emoji，如果当前字符串为空或不含可渲染 emoji 则返回默认值
+    func safeEmoji(default defaultEmoji: String = "📖") -> String {
+        let trimmed = self.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return defaultEmoji }
+        // 检查是否包含至少一个 emoji 字符
+        let containsEmoji = trimmed.contains { char in
+            if let firstScalar = char.unicodeScalars.first {
+                let value = firstScalar.value
+                // Emoji 常见 Unicode 范围
+                return (0x1F300...0x1FAFF).contains(value)
+                    || (0x2600...0x27BF).contains(value)
+                    || (0x1F000...0x1F2FF).contains(value)
+                    || (0x2300...0x23FF).contains(value)
+                    || (0x2B00...0x2BFF).contains(value)
+                    || (0x3000...0x303F).contains(value)
+                    || (0x1F900...0x1F9FF).contains(value)
+                    || (0x1FA70...0x1FAFF).contains(value)
+            }
+            return false
+        }
+        return containsEmoji ? trimmed : defaultEmoji
+    }
+
     /// 计算文本高度
     func height(withConstrainedWidth width: CGFloat, font: UIFont) -> CGFloat {
         let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)

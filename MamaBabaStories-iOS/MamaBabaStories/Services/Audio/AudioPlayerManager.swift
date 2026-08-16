@@ -104,6 +104,8 @@ class AudioPlayerManager: NSObject, ObservableObject {
     // 下载管理
     private var downloadSession: URLSession?
     private var downloadTasks: [String: URLSessionDownloadTask] = [:]
+    private var downloadProgressHandlers: [String: (Double) -> Void] = [:]
+    private var downloadCompletions: [String: (Result<URL, Error>) -> Void] = [:]
     private let downloadsDirectory: URL
 
     // 后台任务
@@ -258,9 +260,14 @@ class AudioPlayerManager: NSObject, ObservableObject {
 
     // MARK: - 下载会话设置
     private func setupDownloadSession() {
-        let config = URLSessionConfiguration.background(withIdentifier: "com.mamababa.downloads")
-        config.isDiscretionary = true
-        config.sessionSendsLaunchEvents = true
+        // 使用前台会话配置，确保下载立即开始（后台会话的 isDiscretionary 会导致真机上延迟下载）
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = 30
+        config.timeoutIntervalForResource = 300
+        config.allowsCellularAccess = true
+        config.isDiscretionary = false
+        config.sessionSendsLaunchEvents = false
+        config.waitsForConnectivity = true
         downloadSession = URLSession(configuration: config, delegate: self, delegateQueue: nil)
     }
 
@@ -592,22 +599,26 @@ class AudioPlayerManager: NSObject, ObservableObject {
         nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = state == .playing ? playbackSpeed : 0
 
         // 设置封面图
-        if let emoji = story.coverEmoji as NSString? {
-            let size = CGSize(width: 300, height: 300)
-            UIGraphicsBeginImageContextWithOptions(size, false, 0)
-            UIColor.white.setFill()
+        let size = CGSize(width: 300, height: 300)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        let image = renderer.image { context in
+            UIColor(red: 1.0, green: 0.65, blue: 0.35, alpha: 1.0).setFill()
             UIRectFill(CGRect(origin: .zero, size: size))
-            let font = UIFont.systemFont(ofSize: 200)
-            let attributes: [NSAttributedString.Key: Any] = [.font: font]
-            let textSize = emoji.size(withAttributes: attributes)
-            let rect = CGRect(x: (size.width - textSize.width) / 2, y: (size.height - textSize.height) / 2, width: textSize.width, height: textSize.height)
-            emoji.draw(in: rect, withAttributes: attributes)
-            if let image = UIGraphicsGetImageFromCurrentImageContext() {
-                let artwork = MPMediaItemArtwork(boundsSize: size) { _ in image }
-                nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
+            if let symbolImage = UIImage(systemName: "book.fill") {
+                let config = UIImage.SymbolConfiguration(pointSize: 120, weight: .medium)
+                let sizedImage = symbolImage.withConfiguration(config)
+                    .withTintColor(.white, renderingMode: .alwaysOriginal)
+                let drawRect = CGRect(
+                    x: (size.width - sizedImage.size.width) / 2,
+                    y: (size.height - sizedImage.size.height) / 2,
+                    width: sizedImage.size.width,
+                    height: sizedImage.size.height
+                )
+                sizedImage.draw(in: drawRect)
             }
-            UIGraphicsEndImageContext()
         }
+        let artwork = MPMediaItemArtwork(boundsSize: size) { _ in image }
+        nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
 
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
@@ -622,50 +633,59 @@ class AudioPlayerManager: NSObject, ObservableObject {
             throw NSError(domain: "AudioPlayer", code: -3, userInfo: [NSLocalizedDescriptionKey: "音频URL无效"])
         }
 
-        // 使用统一的URL解析方法
         guard let url = resolveAudioURL(audioURLString) else {
             throw NSError(domain: "AudioPlayer", code: -3, userInfo: [NSLocalizedDescriptionKey: "音频URL无效"])
         }
 
         let destinationURL = localFileURL(for: story.id)
 
+        // 如果已下载，直接返回
+        if FileManager.default.fileExists(atPath: destinationURL.path) {
+            progressHandler?(1.0)
+            return
+        }
+
         Logger.info("开始下载音频: \(url.absoluteString)", category: .audio)
 
-        // 使用 URLSession 下载（带进度）
-        let downloadTask = downloadSession?.downloadTask(with: url)
-        downloadTask?.taskDescription = story.id
-        downloadTask?.resume()
+        // 使用 delegate 会话下载，支持增量进度回调
+        let session = downloadSession ?? URLSession.shared
+        let storyId = story.id
 
-        // 简单的进度轮询（实际项目可使用 delegate 模式）
-        var lastProgress: Double = 0
-        let startTime = Date()
-        while let task = downloadTask, task.state == .running {
-            try await Task.sleep(nanoseconds: 200_000_000) // 200ms
-            let expectedToReceive = max(task.countOfBytesExpectedToReceive, 1)
-            let progress = Double(task.countOfBytesReceived) / Double(expectedToReceive)
-            if abs(progress - lastProgress) > 0.01 {
-                progressHandler?(progress)
-                lastProgress = progress
+        // 注册进度回调和完成回调
+        if let progressHandler = progressHandler {
+            downloadProgressHandlers[storyId] = progressHandler
+        }
+
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            downloadCompletions[storyId] = { [weak self] result in
+                guard let self = self else { return }
+                self.downloadProgressHandlers.removeValue(forKey: storyId)
+                self.downloadCompletions.removeValue(forKey: storyId)
+                self.downloadTasks.removeValue(forKey: storyId)
+
+                switch result {
+                case .success(let tempURL):
+                    do {
+                        try? FileManager.default.removeItem(at: destinationURL)
+                        try FileManager.default.moveItem(at: tempURL, to: destinationURL)
+                        progressHandler?(1.0)
+                        Logger.info("故事下载完成: \(story.title) -> \(destinationURL.path)", category: .audio)
+                        continuation.resume()
+                    } catch {
+                        Logger.error("移动下载文件失败: \(error)", category: .audio)
+                        continuation.resume(throwing: error)
+                    }
+                case .failure(let error):
+                    Logger.error("下载音频失败: \(error)", category: .audio)
+                    continuation.resume(throwing: error)
+                }
             }
-            // 超时保护 5 分钟
-            if Date().timeIntervalSince(startTime) > 300 {
-                task.cancel()
-                throw NSError(domain: "AudioPlayer", code: -4, userInfo: [NSLocalizedDescriptionKey: "下载超时"])
-            }
-        }
 
-        // 检查结果
-        if let error = downloadTask?.error {
-            throw error
+            let task = session.downloadTask(with: url)
+            task.taskDescription = storyId
+            downloadTasks[storyId] = task
+            task.resume()
         }
-
-        // 文件已在 delegate 中移动，确认存在
-        if !FileManager.default.fileExists(atPath: destinationURL.path) {
-            throw NSError(domain: "AudioPlayer", code: -5, userInfo: [NSLocalizedDescriptionKey: "下载文件未找到"])
-        }
-
-        progressHandler?(1.0)
-        Logger.info("故事下载完成: \(story.title) -> \(destinationURL.path)", category: .audio)
     }
 
     func isDownloaded(storyId: String) -> Bool {
@@ -690,7 +710,6 @@ class AudioPlayerManager: NSObject, ObservableObject {
         let seconds = Int(time) % 60
         return String(format: "%02d:%02d", minutes, seconds)
     }
-}
 
     // MARK: - 生成测试音频
     /// 为没有有效音频的故事生成一段测试音频（正弦波音调），用于演示播放功能
@@ -766,23 +785,53 @@ class AudioPlayerManager: NSObject, ObservableObject {
             return nil
         }
     }
+}
 
 // MARK: - URLSessionDownloadDelegate
 extension AudioPlayerManager: URLSessionDownloadDelegate {
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         guard let storyId = downloadTask.taskDescription else { return }
-        let destinationURL = localFileURL(for: storyId)
-        try? FileManager.default.moveItem(at: location, to: destinationURL)
+
+        // 检查 HTTP 响应状态码
+        if let httpResponse = downloadTask.response as? HTTPURLResponse,
+           httpResponse.statusCode != 200 {
+            let error = NSError(domain: "AudioPlayer", code: -6,
+                                userInfo: [NSLocalizedDescriptionKey: "服务器响应错误，状态码: \(httpResponse.statusCode)"])
+            DispatchQueue.main.async { [weak self] in
+                self?.downloadCompletions[storyId]?(.failure(error))
+            }
+            return
+        }
+
+        // 将临时文件复制到一个持久位置（delegate 方法返回后临时文件会被删除）
+        let tempURL = downloadsDirectory.appendingPathComponent("temp_\(storyId)_\(UUID().uuidString).mp3")
+        do {
+            try? FileManager.default.removeItem(at: tempURL)
+            try FileManager.default.copyItem(at: location, to: tempURL)
+            DispatchQueue.main.async { [weak self] in
+                self?.downloadCompletions[storyId]?(.success(tempURL))
+            }
+        } catch {
+            DispatchQueue.main.async { [weak self] in
+                self?.downloadCompletions[storyId]?(.failure(error))
+            }
+        }
     }
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+        guard let storyId = downloadTask.taskDescription else { return }
+        guard totalBytesExpectedToWrite > 0 else { return }
+
         let progress = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)
-        DispatchQueue.main.async {
-            // 可以通过通知或回调传递进度
-            NotificationCenter.default.post(name: NSNotification.Name("DownloadProgress"), object: nil, userInfo: [
-                "storyId": downloadTask.taskDescription ?? "",
-                "progress": progress
-            ])
+        DispatchQueue.main.async { [weak self] in
+            self?.downloadProgressHandlers[storyId]?(progress)
+        }
+    }
+
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        guard let storyId = task.taskDescription, let error = error else { return }
+        DispatchQueue.main.async { [weak self] in
+            self?.downloadCompletions[storyId]?(.failure(error))
         }
     }
 }

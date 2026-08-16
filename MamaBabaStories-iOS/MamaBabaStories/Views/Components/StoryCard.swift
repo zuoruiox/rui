@@ -100,9 +100,10 @@ struct StoryCoverView: View {
                 endPoint: .bottomTrailing
             )
 
-            // Emoji
-            Text(story.coverEmoji)
-                .font(.system(size: size.width * 0.4))
+            // 封面图标
+            Image(systemName: story.coverEmoji.isEmpty ? "book.fill" : story.coverEmoji)
+                .font(.system(size: size.width * 0.35, weight: .medium))
+                .foregroundColor(.white.opacity(0.8))
 
             // 播放指示器
             if story.hasAudio {

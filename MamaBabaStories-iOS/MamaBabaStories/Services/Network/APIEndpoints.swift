@@ -13,6 +13,9 @@ enum APIEndpoint {
     case sendCode(phone: String)
     case login(phone: String, code: String)
     case loginWithEmail(email: String, password: String)
+    case registerWithEmail(email: String, password: String, nickname: String)
+    case phoneLogin(phone: String, code: String, nickname: String?)
+    case wechatLogin(code: String, nickname: String?, avatar: String?)
     case deviceLogin(deviceId: String)
     case loginWithApple(token: String)
     case refreshToken(refreshToken: String)
@@ -82,6 +85,12 @@ extension APIEndpoint {
             return "/auth/login"
         case .loginWithEmail:
             return "/auth/login"
+        case .registerWithEmail:
+            return "/auth/register"
+        case .phoneLogin:
+            return "/auth/phone-login"
+        case .wechatLogin:
+            return "/auth/wechat-login"
         case .deviceLogin:
             return "/auth/device-login"
         case .loginWithApple:
@@ -185,7 +194,8 @@ extension APIEndpoint {
 
     var method: String {
         switch self {
-        case .sendCode, .login, .loginWithEmail, .deviceLogin, .loginWithApple, .refreshToken,
+        case .sendCode, .login, .loginWithEmail, .registerWithEmail, .phoneLogin, .wechatLogin,
+             .deviceLogin, .loginWithApple, .refreshToken,
              .addChild, .createVoiceModel, .uploadRecording, .startTraining,
              .synthesizeSpeech, .createStory, .createStoryFull, .generateStory, .regenerateStory,
              .editStory, .synthesizeTTS:
@@ -263,6 +273,20 @@ extension APIEndpoint {
         case .loginWithEmail(let email, let password):
             return ["email": email, "password": password]
 
+        case .registerWithEmail(let email, let password, let nickname):
+            return ["email": email, "password": password, "nickname": nickname]
+
+        case .phoneLogin(let phone, let code, let nickname):
+            var body: [String: Any] = ["phone": phone, "code": code]
+            if let nickname = nickname { body["nickname"] = nickname }
+            return body
+
+        case .wechatLogin(let code, let nickname, let avatar):
+            var body: [String: Any] = ["code": code]
+            if let nickname = nickname { body["nickname"] = nickname }
+            if let avatar = avatar { body["avatar"] = avatar }
+            return body
+
         case .deviceLogin(let deviceId):
             return ["deviceId": deviceId]
 
@@ -331,7 +355,8 @@ extension APIEndpoint {
     // MARK: - 是否需要认证
     var requiresAuth: Bool {
         switch self {
-        case .sendCode, .login, .loginWithEmail, .deviceLogin, .loginWithApple, .refreshToken:
+        case .sendCode, .login, .loginWithEmail, .registerWithEmail, .phoneLogin, .wechatLogin,
+             .deviceLogin, .loginWithApple, .refreshToken:
             return false
         default:
             return true

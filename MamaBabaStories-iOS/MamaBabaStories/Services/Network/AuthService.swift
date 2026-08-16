@@ -104,6 +104,94 @@ class AuthService: ObservableObject {
         }
     }
 
+    // MARK: - 邮箱注册
+    func registerWithEmail(email: String, password: String, nickname: String) async -> Bool {
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+
+        do {
+            let response: LoginResponse = try await apiClient.request(
+                .registerWithEmail(email: email, password: password, nickname: nickname)
+            )
+            APIClient.shared.setAuthToken(response.token)
+            currentUser = response.user
+            isAuthenticated = true
+            Logger.info("邮箱注册成功: \(response.user.nickname)", category: .network)
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            showError = true
+            Logger.error("邮箱注册失败: \(error)", category: .network)
+            return false
+        }
+    }
+
+    // MARK: - 发送验证码
+    func sendVerificationCode(phone: String) async -> String? {
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+
+        do {
+            struct CodeResponse: Codable { let devCode: String? }
+            let response: CodeResponse = try await apiClient.request(.sendCode(phone: phone))
+            Logger.info("验证码发送成功", category: .network)
+            return response.devCode
+        } catch {
+            errorMessage = error.localizedDescription
+            showError = true
+            Logger.error("验证码发送失败: \(error)", category: .network)
+            return nil
+        }
+    }
+
+    // MARK: - 手机号登录/注册
+    func loginWithPhone(phone: String, code: String, nickname: String? = nil) async -> Bool {
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+
+        do {
+            let response: LoginResponse = try await apiClient.request(
+                .phoneLogin(phone: phone, code: code, nickname: nickname)
+            )
+            APIClient.shared.setAuthToken(response.token)
+            currentUser = response.user
+            isAuthenticated = true
+            Logger.info("手机号登录成功: \(response.user.nickname)", category: .network)
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            showError = true
+            Logger.error("手机号登录失败: \(error)", category: .network)
+            return false
+        }
+    }
+
+    // MARK: - 微信登录
+    func loginWithWechat(code: String, nickname: String? = nil, avatar: String? = nil) async -> Bool {
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+
+        do {
+            let response: LoginResponse = try await apiClient.request(
+                .wechatLogin(code: code, nickname: nickname, avatar: avatar)
+            )
+            APIClient.shared.setAuthToken(response.token)
+            currentUser = response.user
+            isAuthenticated = true
+            Logger.info("微信登录成功: \(response.user.nickname)", category: .network)
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            showError = true
+            Logger.error("微信登录失败: \(error)", category: .network)
+            return false
+        }
+    }
+
     // MARK: - 退出登录
     func logout() {
         APIClient.shared.setAuthToken(nil)

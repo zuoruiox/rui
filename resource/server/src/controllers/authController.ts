@@ -1,5 +1,6 @@
 import { Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
+import fetch from 'node-fetch';
 import { prisma } from '../utils/prisma';
 import { success, fail } from '../utils/response';
 import { signToken } from '../utils/jwt';
@@ -205,46 +206,6 @@ export const updateProfile = async (req: AuthRequest, res: Response, next: NextF
   }
 };
 
-// ==================== 设备自动登录（游客模式） ====================
-export const deviceLogin = async (req: AuthRequest, res: Response, next: NextFunction) => {
-  try {
-    const { deviceId } = req.body;
-    if (!deviceId) {
-      return fail(res, '设备ID不能为空', 400);
-    }
-
-    // 通过 deviceId 字段查找游客用户
-    let user = await prisma.user.findFirst({ where: { deviceId } });
-
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          deviceId,
-          nickname: '宝贝家长',
-          role: 'user',
-          status: 'active',
-          membershipTier: 'free',
-        },
-      });
-    }
-
-    if (user.status !== 'active') {
-      return fail(res, '该设备已被禁用', 403);
-    }
-
-    // 更新最后登录时间
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { lastLoginAt: new Date() },
-    });
-
-    const token = signToken({ userId: user.id, role: user.role });
-    return success(res, { token, user: excludePassword({ ...user, lastLoginAt: new Date() }) }, '登录成功');
-  } catch (err) {
-    next(err);
-  }
-};
-
 // ==================== 发送手机验证码 ====================
 export const sendCode = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
@@ -325,22 +286,57 @@ export const phoneLogin = async (req: AuthRequest, res: Response, next: NextFunc
 // ==================== 微信登录/注册 ====================
 export const wechatLogin = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const { code, nickname: wxNickname, avatar: wxAvatar, openId: clientOpenId } = req.body;
-    if (!code && !clientOpenId) {
+    const { code, nickname: wxNickname, avatar: wxAvatar } = req.body;
+    if (!code) {
       return fail(res, '微信授权code不能为空', 400);
     }
 
-    // TODO: 接入微信开放平台，用 code 换取 openid、unionid 和 access_token
-    // 目前使用 code 作为模拟 openid 方便开发测试
-    const openId = clientOpenId || (code.startsWith('wx_') ? code : `wx_${code}`);
+    let openId: string;
+    let unionId: string | undefined;
 
-    // 通过 wechatOpenId 字段查找微信用户
+    // 开发模式：code 以 wx_mock_ 开头时直接使用模拟 openId
+    if (code.startsWith('wx_mock_')) {
+      openId = code;
+      logger.info(`[微信登录] 开发模式，使用模拟 openId: ${openId}`);
+    } else {
+      // 生产模式：通过 code 调用微信 API 换取 openid 和 session_key
+      const appId = process.env.WECHAT_APP_ID;
+      const appSecret = process.env.WECHAT_APP_SECRET;
+
+      if (!appId || !appSecret) {
+        logger.error('[微信登录] WECHAT_APP_ID 或 WECHAT_APP_SECRET 未配置');
+        return fail(res, '微信登录未配置，请联系管理员', 500);
+      }
+
+      const url = `https://api.weixin.qq.com/sns/oauth2/access_token?appid=${appId}&secret=${appSecret}&code=${code}&grant_type=authorization_code`;
+
+      const wxResp = await fetch(url);
+      const wxData = await wxResp.json() as any;
+
+      if (wxData.errcode) {
+        logger.error(`[微信登录] 微信API错误: ${JSON.stringify(wxData)}`);
+        return fail(res, `微信授权失败: ${wxData.errmsg || '未知错误'}`, 400);
+      }
+
+      openId = wxData.openid;
+      unionId = wxData.unionid;
+
+      if (!openId) {
+        return fail(res, '获取微信用户信息失败', 400);
+      }
+
+      logger.info(`[微信登录] 微信授权成功，openId: ${openId}, unionId: ${unionId || '无'}`);
+    }
+
+    // 通过 wechatOpenId 查找微信用户
     let user = await prisma.user.findFirst({ where: { wechatOpenId: openId } });
 
     if (!user) {
+      // 新用户自动注册
       user = await prisma.user.create({
         data: {
           wechatOpenId: openId,
+          wechatUnionId: unionId,
           nickname: wxNickname || '微信用户',
           avatar: wxAvatar,
           role: 'user',
@@ -348,14 +344,20 @@ export const wechatLogin = async (req: AuthRequest, res: Response, next: NextFun
           membershipTier: 'free',
         },
       });
-    } else if (wxNickname || wxAvatar) {
-      user = await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          ...(wxNickname ? { nickname: wxNickname } : {}),
-          ...(wxAvatar ? { avatar: wxAvatar } : {}),
-        },
-      });
+      logger.info(`[微信登录] 新用户注册: ${user.id}, nickname: ${user.nickname}`);
+    } else {
+      // 已有用户，更新资料（如果有新的昵称/头像/unionId）
+      const updateData: any = {};
+      if (wxNickname && user.nickname !== wxNickname) updateData.nickname = wxNickname;
+      if (wxAvatar && user.avatar !== wxAvatar) updateData.avatar = wxAvatar;
+      if (unionId && !user.wechatUnionId) updateData.wechatUnionId = unionId;
+
+      if (Object.keys(updateData).length > 0) {
+        user = await prisma.user.update({
+          where: { id: user.id },
+          data: updateData,
+        });
+      }
     }
 
     if (user.status !== 'active') {

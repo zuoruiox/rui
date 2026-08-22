@@ -2,13 +2,14 @@
 //  LoginView.swift
 //  MamaBabaStories
 //
-//  登录页面 - 支持微信登录/注册、游客模式
+//  登录页面 - 微信登录/注册
 //
 
 import SwiftUI
 
 struct LoginView: View {
     @EnvironmentObject var authService: AuthService
+    @State private var isLoggingIn = false
 
     var body: some View {
         ZStack {
@@ -45,59 +46,32 @@ struct LoginView: View {
                 }
                 .padding(.bottom, 50)
 
-                // 登录按钮区域
-                VStack(spacing: 14) {
-                    // 微信登录/注册
-                    Button(action: {
-                        Task {
-                            // TODO: 集成微信开放平台 SDK
-                            // 1. 在 Info.plist 配置微信 URL Scheme（wx + appId）
-                            // 2. 调用 WXApi.send(AuthReq) 发起授权
-                            // 3. 在 AppDelegate/SceneDelegate 的 openURL 回调中获取 code
-                            // 4. 将 code 传给后端换取 openId 和 token
-                            // 当前使用基于设备ID的稳定 mock openId 方便开发测试
-                            let deviceId = UIDevice.current.identifierForVendor?.uuidString ?? UUID().uuidString
-                            let mockOpenId = "wx_mock_\(deviceId.prefix(12))"
-                            await authService.loginWithWechat(code: mockOpenId)
-                        }
-                    }) {
-                        HStack(spacing: 10) {
+                // 微信登录/注册按钮
+                Button(action: {
+                    isLoggingIn = true
+                    WeChatManager.shared.sendAuthRequest()
+                }) {
+                    HStack(spacing: 10) {
+                        if isLoggingIn || authService.isLoading {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                .scaleEffect(0.9)
+                        } else {
                             Image(systemName: "message.fill")
                                 .font(.system(size: 18))
-                            Text("微信登录/注册")
-                                .font(AppFonts.button())
                         }
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: Layout.buttonHeight)
-                        .background(Color(red: 0.07, green: 0.73, blue: 0.35))
-                        .clipShape(RoundedRectangle(cornerRadius: Layout.cornerRadius))
+                        Text("微信登录/注册")
+                            .font(AppFonts.button())
                     }
-                    .disabled(authService.isLoading)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: Layout.buttonHeight)
+                    .background(Color(red: 0.07, green: 0.73, blue: 0.35))
+                    .clipShape(RoundedRectangle(cornerRadius: Layout.cornerRadius))
                 }
+                .disabled(isLoggingIn || authService.isLoading)
                 .padding(.horizontal, Layout.horizontalPadding)
                 .padding(.top, 8)
-
-                // 游客模式
-                Button(action: {
-                    Task {
-                        await authService.deviceLogin()
-                    }
-                }) {
-                    HStack(spacing: 6) {
-                        if authService.isLoading {
-                            ProgressView()
-                                .scaleEffect(0.8)
-                        } else {
-                            Image(systemName: "person.crop.circle")
-                        }
-                        Text("游客模式，直接体验")
-                    }
-                    .font(AppFonts.caption())
-                    .foregroundColor(AppColors.textSecondary)
-                }
-                .padding(.top, 20)
-                .disabled(authService.isLoading)
 
                 Spacer()
 
@@ -120,9 +94,20 @@ struct LoginView: View {
             }
         }
         .alert("提示", isPresented: $authService.showError) {
-            Button("好的", role: .cancel) {}
+            Button("好的", role: .cancel) {
+                isLoggingIn = false
+            }
         } message: {
             Text(authService.errorMessage ?? "未知错误")
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .wechatLoginSuccess)) { _ in
+            isLoggingIn = false
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .wechatLoginFailure)) { _ in
+            isLoggingIn = false
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .wechatLoginCancel)) { _ in
+            isLoggingIn = false
         }
     }
 }

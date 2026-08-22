@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UIKit
 import Combine
 
 // MARK: - 登录响应
@@ -57,28 +56,6 @@ class AuthService: ObservableObject {
             currentUser = nil
         }
         hasValidatedToken = true
-    }
-
-    // MARK: - 设备自动登录（游客模式）
-    func deviceLogin() async {
-        guard !isAuthenticated else { return }
-
-        isLoading = true
-        errorMessage = nil
-        defer { isLoading = false }
-
-        do {
-            let deviceId = getOrCreateDeviceId()
-            let response: LoginResponse = try await apiClient.request(.deviceLogin(deviceId: deviceId))
-            APIClient.shared.setAuthToken(response.token)
-            currentUser = response.user
-            isAuthenticated = true
-            Logger.info("设备登录成功: \(response.user.nickname)", category: .network)
-        } catch {
-            errorMessage = error.localizedDescription
-            showError = true
-            Logger.error("设备登录失败: \(error)", category: .network)
-        }
     }
 
     // MARK: - 邮箱登录
@@ -198,16 +175,5 @@ class AuthService: ObservableObject {
         KeychainHelper.shared.delete(for: KeychainKeys.authToken)
         currentUser = nil
         isAuthenticated = false
-    }
-
-    // MARK: - 获取或创建设备 ID
-    private func getOrCreateDeviceId() -> String {
-        let key = "com.mamababa.deviceId"
-        if let existingId = UserDefaults.standard.string(forKey: key) {
-            return existingId
-        }
-        let newId = UIDevice.current.identifierForVendor?.uuidString ?? UUID().uuidString
-        UserDefaults.standard.set(newId, forKey: key)
-        return newId
     }
 }

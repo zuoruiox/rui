@@ -44,11 +44,6 @@ struct User: Codable, Identifiable {
         return expiry > Date()
     }
 
-    // 是否为游客（通过设备ID登录，无邮箱/手机号/微信绑定）
-    var isGuest: Bool {
-        deviceId != nil && email == nil && phone == nil && wechatOpenId == nil
-    }
-
     enum CodingKeys: String, CodingKey {
         case id, nickname, avatar, phone, email, role
         case wechatOpenId, deviceId
@@ -112,23 +107,6 @@ struct UserSettings: Codable {
         sleepTimerDefaultMinutes: nil,
         darkModeEnabled: nil
     )
-}
-
-// MARK: - 会员等级
-enum MembershipTier: String {
-    case free = "free"
-    case premium = "premium"
-    case vip = "vip"
-    case family = "family"
-
-    var displayName: String {
-        switch self {
-        case .free: return "普通用户"
-        case .premium: return "高级会员"
-        case .vip: return "VIP会员"
-        case .family: return "家庭会员"
-        }
-    }
 }
 
 // MARK: - Mock 数据

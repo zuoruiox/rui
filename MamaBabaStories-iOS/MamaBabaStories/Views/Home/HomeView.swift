@@ -16,42 +16,36 @@ struct HomeView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
-                if AuthService.shared.currentUser?.isGuest == true {
-                    guestView
-                } else {
-                    ScrollView(showsIndicators: false) {
-                        VStack(spacing: 24) {
-                            // 顶部问候区
-                            headerSection
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 24) {
+                    // 顶部问候区
+                    headerSection
 
-                            // 快捷操作
-                            quickActionsSection
+                    // 快捷操作
+                    quickActionsSection
 
-                            // 继续收听
-                            if let story = homeVM.featuredStories.first {
-                                continueListeningSection(story: story)
-                            }
-
-                            // 精选故事
-                            featuredStoriesSection
-
-                            // 声音选择
-                            voiceSelectionSection
-
-                            // 主题分类
-                            themeSection
-
-                            // 最近播放
-                            recentStoriesSection
-                        }
-                        .padding(.bottom, playerVM.isMiniPlayerVisible ? 80 : 20)
+                    // 继续收听
+                    if let story = homeVM.featuredStories.first {
+                        continueListeningSection(story: story)
                     }
-                    .background(AppColors.background)
-                    .refreshable {
-                        await homeVM.refresh()
-                    }
+
+                    // 精选故事
+                    featuredStoriesSection
+
+                    // 声音选择
+                    voiceSelectionSection
+
+                    // 主题分类
+                    themeSection
+
+                    // 最近播放
+                    recentStoriesSection
                 }
+                .padding(.bottom, playerVM.isMiniPlayerVisible ? 80 : 20)
+            }
+            .background(AppColors.background)
+            .refreshable {
+                await homeVM.refresh()
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -66,68 +60,12 @@ struct HomeView: View {
                             .font(.system(size: 18, weight: .medium))
                             .foregroundColor(AppColors.textPrimary)
                     }
-                    .disabled(AuthService.shared.currentUser?.isGuest == true)
                 }
             }
         }
         .sheet(isPresented: $showingSearch) {
             SearchView()
         }
-    }
-
-    // MARK: - 游客模式视图
-    private var guestView: some View {
-        VStack(spacing: 24) {
-            Spacer()
-
-            VStack(spacing: 16) {
-                ZStack {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                gradient: Gradient(colors: [AppColors.warmYellow, AppColors.softOrange]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 80, height: 80)
-
-                    Image(systemName: "book.fill")
-                        .font(.system(size: 36))
-                        .foregroundColor(.white)
-                }
-
-                Text("爸爸妈妈讲故事")
-                    .font(AppFonts.title(size: 24))
-                    .foregroundColor(AppColors.textPrimary)
-
-                Text("登录后即可体验完整功能\n浏览故事、AI创作、声音克隆")
-                    .font(AppFonts.body())
-                    .foregroundColor(AppColors.textSecondary)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(4)
-            }
-
-            Button(action: {
-                AuthService.shared.logout()
-            }) {
-                HStack(spacing: 10) {
-                    Image(systemName: "message.fill")
-                        .font(.system(size: 18))
-                    Text("微信登录/注册")
-                        .font(AppFonts.button())
-                }
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .frame(height: 50)
-                .background(Color(red: 0.07, green: 0.73, blue: 0.35))
-                .clipShape(RoundedRectangle(cornerRadius: Layout.cornerRadius))
-            }
-            .padding(.horizontal, 40)
-
-            Spacer()
-        }
-        .background(AppColors.background)
     }
 
     // MARK: - 头部问候

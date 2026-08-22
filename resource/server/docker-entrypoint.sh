@@ -47,9 +47,9 @@ else
     echo "✅ 生产数据库已有数据（${USER_COUNT} 个用户），跳过种子初始化"
 fi
 
-# 同步开发数据库结构
+# 同步开发数据库结构（accept-data-loss 因为新增唯一约束可能影响已有数据）
 echo "🔄 同步开发数据库结构..."
-DATABASE_URL="file:../$DEV_DB" npx prisma db push
+DATABASE_URL="file:../$DEV_DB" npx prisma db push --accept-data-loss
 
 # 检查开发数据库是否为空，如果为空则执行种子数据
 DEV_USER_COUNT=$(sqlite3 "$DEV_DB" "SELECT COUNT(*) FROM User;" 2>/dev/null || echo "0")

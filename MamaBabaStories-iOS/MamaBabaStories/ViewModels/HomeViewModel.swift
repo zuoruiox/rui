@@ -37,15 +37,6 @@ class HomeViewModel: ObservableObject {
 
     // MARK: - 加载数据
     func loadData() async {
-        // 游客模式不加载故事数据
-        guard let user = AuthService.shared.currentUser, !user.isGuest else {
-            featuredStories = []
-            recentStories = []
-            recommendedStories = []
-            voiceModels = []
-            return
-        }
-
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }

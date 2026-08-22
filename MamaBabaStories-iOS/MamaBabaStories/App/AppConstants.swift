@@ -18,9 +18,9 @@ enum AppInfo {
 // MARK: - API 配置
 enum APIConfig {
     #if DEBUG
-    // 生产服务器
-    static let baseURL = "http://153.0.191.139:9999/api"
-    static let wsBaseURL = "ws://153.0.191.139:9999/api"
+    // 本地开发服务器
+    static let baseURL = "http://localhost:9999/api"
+    static let wsBaseURL = "ws://localhost:9999/api"
     #else
     static let baseURL = "https://api.mamababa-stories.com/api"
     static let wsBaseURL = "wss://api.mamababa-stories.com/api"
@@ -246,12 +246,14 @@ enum AgeGroup: String, CaseIterable, Codable, Identifiable {
 enum MembershipTier: String, Codable {
     case free = "free"
     case premium = "premium"
+    case vip = "vip"
     case family = "family"
 
     var displayName: String {
         switch self {
         case .free: return "免费版"
-        case .premium: return "会员版"
+        case .premium: return "高级会员"
+        case .vip: return "VIP会员"
         case .family: return "家庭版"
         }
     }
@@ -260,6 +262,7 @@ enum MembershipTier: String, Codable {
         switch self {
         case .free: return 1
         case .premium: return 3
+        case .vip: return 6
         case .family: return 6
         }
     }
@@ -268,6 +271,7 @@ enum MembershipTier: String, Codable {
         switch self {
         case .free: return 3
         case .premium: return 20
+        case .vip: return 50
         case .family: return 50
         }
     }
@@ -275,7 +279,7 @@ enum MembershipTier: String, Codable {
     var canDownload: Bool {
         switch self {
         case .free: return false
-        case .premium, .family: return true
+        case .premium, .vip, .family: return true
         }
     }
 }

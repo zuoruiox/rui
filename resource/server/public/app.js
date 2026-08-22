@@ -204,7 +204,7 @@ function showConfirm(message, onOk, title = '确认操作', okText = '确认') {
 
 // ========== API 请求封装 ==========
 // 不需要携带 token 的公开接口
-const NO_AUTH_PATHS = ['/auth/login', '/auth/register', '/auth/send-code', '/auth/phone-login', '/auth/wechat-login', '/auth/device-login'];
+const NO_AUTH_PATHS = ['/auth/login', '/auth/register', '/auth/send-code', '/auth/phone-login', '/auth/wechat-login'];
 
 async function api(path, options = {}) {
   const url = API_BASE + path;

@@ -12,6 +12,9 @@ import MediaPlayer
 
 @main
 struct MamaBabaStoriesApp: App {
+    // MARK: - AppDelegate
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
     // MARK: - App State
     @StateObject private var authService = AuthService.shared
     @StateObject private var playerViewModel = PlayerViewModel()
@@ -51,7 +54,12 @@ struct MamaBabaStoriesApp: App {
             .environmentObject(voiceCloneViewModel)
             .environmentObject(aiCreateViewModel)
             .environmentObject(profileViewModel)
+            .onOpenURL { url in
+                _ = WeChatManager.shared.handleOpenURL(url)
+            }
             .task {
+                // 注册微信 SDK
+                WeChatManager.shared.registerApp()
                 // 启动时验证现有 token
                 await authService.validateExistingToken()
                 isAppReady = true
@@ -183,5 +191,20 @@ struct LaunchView: View {
         .onAppear {
             animate = true
         }
+    }
+}
+
+// MARK: - AppDelegate（处理微信回调）
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        return true
+    }
+
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        return WeChatManager.shared.handleOpenURL(url)
+    }
+
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        return WeChatManager.shared.handleUniversalLink(userActivity)
     }
 }

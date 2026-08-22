@@ -16,7 +16,6 @@ enum APIEndpoint {
     case registerWithEmail(email: String, password: String, nickname: String)
     case phoneLogin(phone: String, code: String, nickname: String?)
     case wechatLogin(code: String, nickname: String?, avatar: String?)
-    case deviceLogin(deviceId: String)
     case loginWithApple(token: String)
     case refreshToken(refreshToken: String)
     case logout
@@ -91,8 +90,6 @@ extension APIEndpoint {
             return "/auth/phone-login"
         case .wechatLogin:
             return "/auth/wechat-login"
-        case .deviceLogin:
-            return "/auth/device-login"
         case .loginWithApple:
             return "/auth/apple"
         case .refreshToken:
@@ -195,7 +192,7 @@ extension APIEndpoint {
     var method: String {
         switch self {
         case .sendCode, .login, .loginWithEmail, .registerWithEmail, .phoneLogin, .wechatLogin,
-             .deviceLogin, .loginWithApple, .refreshToken,
+             .loginWithApple, .refreshToken,
              .addChild, .createVoiceModel, .uploadRecording, .startTraining,
              .synthesizeSpeech, .createStory, .createStoryFull, .generateStory, .regenerateStory,
              .editStory, .synthesizeTTS:
@@ -287,9 +284,6 @@ extension APIEndpoint {
             if let avatar = avatar { body["avatar"] = avatar }
             return body
 
-        case .deviceLogin(let deviceId):
-            return ["deviceId": deviceId]
-
         case .loginWithApple(let token):
             return ["identityToken": token]
 
@@ -356,7 +350,7 @@ extension APIEndpoint {
     var requiresAuth: Bool {
         switch self {
         case .sendCode, .login, .loginWithEmail, .registerWithEmail, .phoneLogin, .wechatLogin,
-             .deviceLogin, .loginWithApple, .refreshToken:
+             .loginWithApple, .refreshToken:
             return false
         default:
             return true

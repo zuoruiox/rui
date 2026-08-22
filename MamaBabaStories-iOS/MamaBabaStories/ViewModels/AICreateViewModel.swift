@@ -65,6 +65,12 @@ class AICreateViewModel: ObservableObject {
 
     // MARK: - 加载数据
     func loadData() async {
+        // 游客模式不加载数据
+        guard let user = AuthService.shared.currentUser, !user.isGuest else {
+            availableVoiceModels = []
+            return
+        }
+
         do {
             availableVoiceModels = try await voiceService.getVoiceModels()
             if selectedVoiceModel == nil {

@@ -81,6 +81,12 @@ class VoiceCloneViewModel: ObservableObject {
 
     // MARK: - 加载数据
     func loadData() async {
+        // 游客模式不加载声音模型
+        guard let user = AuthService.shared.currentUser, !user.isGuest else {
+            voiceModels = []
+            return
+        }
+
         isLoading = true
         defer { isLoading = false }
 

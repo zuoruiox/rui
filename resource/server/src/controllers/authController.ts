@@ -205,7 +205,7 @@ export const updateProfile = async (req: AuthRequest, res: Response, next: NextF
   }
 };
 
-// ==================== 设备自动登录 ====================
+// ==================== 设备自动登录（游客模式） ====================
 export const deviceLogin = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { deviceId } = req.body;
@@ -213,14 +213,13 @@ export const deviceLogin = async (req: AuthRequest, res: Response, next: NextFun
       return fail(res, '设备ID不能为空', 400);
     }
 
-    // 使用特殊 email 标识设备用户
-    const deviceEmail = `device_${deviceId}@local`;
-    let user = await prisma.user.findUnique({ where: { email: deviceEmail } });
+    // 通过 deviceId 字段查找游客用户
+    let user = await prisma.user.findFirst({ where: { deviceId } });
 
     if (!user) {
       user = await prisma.user.create({
         data: {
-          email: deviceEmail,
+          deviceId,
           nickname: '宝贝家长',
           role: 'user',
           status: 'active',
@@ -233,8 +232,14 @@ export const deviceLogin = async (req: AuthRequest, res: Response, next: NextFun
       return fail(res, '该设备已被禁用', 403);
     }
 
+    // 更新最后登录时间
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { lastLoginAt: new Date() },
+    });
+
     const token = signToken({ userId: user.id, role: user.role });
-    return success(res, { token, user: excludePassword(user) }, '登录成功');
+    return success(res, { token, user: excludePassword({ ...user, lastLoginAt: new Date() }) }, '登录成功');
   } catch (err) {
     next(err);
   }
@@ -320,23 +325,22 @@ export const phoneLogin = async (req: AuthRequest, res: Response, next: NextFunc
 // ==================== 微信登录/注册 ====================
 export const wechatLogin = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const { code, nickname: wxNickname, avatar: wxAvatar } = req.body;
-    if (!code) {
+    const { code, nickname: wxNickname, avatar: wxAvatar, openId: clientOpenId } = req.body;
+    if (!code && !clientOpenId) {
       return fail(res, '微信授权code不能为空', 400);
     }
 
-    // TODO: 接入微信开放平台，用 code 换取 openid 和 access_token
+    // TODO: 接入微信开放平台，用 code 换取 openid、unionid 和 access_token
     // 目前使用 code 作为模拟 openid 方便开发测试
-    const openId = code.startsWith('wx_') ? code : `wx_${code}`;
-    const wechatEmail = `${openId}@wechat.local`;
+    const openId = clientOpenId || (code.startsWith('wx_') ? code : `wx_${code}`);
 
-    // 用 email 字段查找微信用户（不会与真实邮箱冲突）
-    let user = await prisma.user.findUnique({ where: { email: wechatEmail } });
+    // 通过 wechatOpenId 字段查找微信用户
+    let user = await prisma.user.findFirst({ where: { wechatOpenId: openId } });
 
     if (!user) {
       user = await prisma.user.create({
         data: {
-          email: wechatEmail,
+          wechatOpenId: openId,
           nickname: wxNickname || '微信用户',
           avatar: wxAvatar,
           role: 'user',

@@ -60,6 +60,17 @@ class StoryLibraryViewModel: ObservableObject {
     // MARK: - 加载数据
     func loadData() async {
         guard !isLoading else { return }
+
+        // 游客模式不加载故事数据
+        guard let user = AuthService.shared.currentUser, !user.isGuest else {
+            allStories = []
+            filteredStories = []
+            favoriteStories = []
+            downloadedStories = []
+            playHistory = []
+            return
+        }
+
         isLoading = true
         defer { isLoading = false }
 

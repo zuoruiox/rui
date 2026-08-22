@@ -15,12 +15,15 @@ struct User: Codable, Identifiable {
     var avatar: String?
     var phone: String?
     var email: String?
+    var wechatOpenId: String?
+    var deviceId: String?
     var role: String?
     var membershipTier: String?
     var membershipExpireAt: Date?
     var createdAt: Date?
     var updatedAt: Date?
     var children: [Child]?
+    var lastLoginAt: Date?
 
     // 兼容计算属性
     var avatarURL: String? { avatar }
@@ -41,9 +44,16 @@ struct User: Codable, Identifiable {
         return expiry > Date()
     }
 
+    // 是否为游客（通过设备ID登录，无邮箱/手机号/微信绑定）
+    var isGuest: Bool {
+        deviceId != nil && email == nil && phone == nil && wechatOpenId == nil
+    }
+
     enum CodingKeys: String, CodingKey {
         case id, nickname, avatar, phone, email, role
+        case wechatOpenId, deviceId
         case membershipTier, membershipExpireAt, createdAt, updatedAt, children
+        case lastLoginAt
     }
 
     init(from decoder: Decoder) throws {
@@ -53,28 +63,35 @@ struct User: Codable, Identifiable {
         avatar = try container.decodeIfPresent(String.self, forKey: .avatar)
         phone = try container.decodeIfPresent(String.self, forKey: .phone)
         email = try container.decodeIfPresent(String.self, forKey: .email)
+        wechatOpenId = try container.decodeIfPresent(String.self, forKey: .wechatOpenId)
+        deviceId = try container.decodeIfPresent(String.self, forKey: .deviceId)
         role = try container.decodeIfPresent(String.self, forKey: .role)
         membershipTier = try container.decodeIfPresent(String.self, forKey: .membershipTier)
         membershipExpireAt = try container.decodeIfPresent(Date.self, forKey: .membershipExpireAt)
         createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
         updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
         children = try container.decodeIfPresent([Child].self, forKey: .children)
+        lastLoginAt = try container.decodeIfPresent(Date.self, forKey: .lastLoginAt)
     }
 
     init(id: String, nickname: String, avatar: String? = nil, phone: String? = nil, email: String? = nil,
+         wechatOpenId: String? = nil, deviceId: String? = nil,
          role: String? = nil, membershipTier: String? = "free", membershipExpireAt: Date? = nil,
-         createdAt: Date? = nil, updatedAt: Date? = nil, children: [Child]? = nil) {
+         createdAt: Date? = nil, updatedAt: Date? = nil, children: [Child]? = nil, lastLoginAt: Date? = nil) {
         self.id = id
         self.nickname = nickname
         self.avatar = avatar
         self.phone = phone
         self.email = email
+        self.wechatOpenId = wechatOpenId
+        self.deviceId = deviceId
         self.role = role
         self.membershipTier = membershipTier
         self.membershipExpireAt = membershipExpireAt
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.children = children
+        self.lastLoginAt = lastLoginAt
     }
 }
 
@@ -95,6 +112,23 @@ struct UserSettings: Codable {
         sleepTimerDefaultMinutes: nil,
         darkModeEnabled: nil
     )
+}
+
+// MARK: - 会员等级
+enum MembershipTier: String {
+    case free = "free"
+    case premium = "premium"
+    case vip = "vip"
+    case family = "family"
+
+    var displayName: String {
+        switch self {
+        case .free: return "普通用户"
+        case .premium: return "高级会员"
+        case .vip: return "VIP会员"
+        case .family: return "家庭会员"
+        }
+    }
 }
 
 // MARK: - Mock 数据

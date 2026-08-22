@@ -47,6 +47,7 @@ RUN npm ci --omit=dev && npm install prisma@5.22.0 @prisma/client@5.22.0
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/public ./dist/public
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
 # 复制启动脚本
@@ -62,7 +63,7 @@ EXPOSE 9999
 
 # 健康检查
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:9999/api/auth/me || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:9999/health || exit 1
 
 # 使用启动脚本
 CMD ["./docker-entrypoint.sh"]

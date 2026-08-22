@@ -49,6 +49,11 @@ app.get('/', (req, res) => {
   res.redirect('/admin');
 });
 
+// 健康检查（无需认证）
+app.get('/health', (req, res) => {
+  res.json({ code: 0, message: 'ok', data: { status: 'healthy', timestamp: new Date().toISOString() } });
+});
+
 // API 404
 app.use('/api', (req, res) => {
   res.status(404).json({ code: 404, message: '接口不存在', data: null });

@@ -30,7 +30,12 @@ export const listVoiceModels = async (req: AuthRequest, res: Response, next: Nex
       },
     });
 
-    success(res, voiceModels);
+    const list = voiceModels.map(v => ({
+      ...v,
+      recordingCount: v._count.recordings,
+    }));
+
+    success(res, list);
   } catch (err) {
     next(err);
   }
@@ -66,20 +71,28 @@ export const getVoiceModel = async (req: AuthRequest, res: Response, next: NextF
 // POST /api/voices - 创建声音模型
 export const createVoiceModel = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const { name, ownerType, emoji, quality } = req.body;
+    const { name, ownerType, type, emoji, quality, description } = req.body;
     if (!name) {
       return fail(res, '名称不能为空', 400);
     }
+
+    // 兼容前端传 type 字段
+    let resolvedOwnerType = ownerType || type || 'mom';
+    const typeMap: Record<string, string> = { female: 'mom', male: 'dad', child: 'child', custom: 'custom' };
+    resolvedOwnerType = typeMap[resolvedOwnerType] || resolvedOwnerType;
 
     const voiceModel = await prisma.voiceModel.create({
       data: {
         userId: req.userId!,
         name,
-        ownerType: ownerType || 'mom',
+        ownerType: resolvedOwnerType,
         emoji: emoji || '🎤',
         quality: quality || 'quick',
         status: 'draft',
         progress: 0,
+      },
+      include: {
+        _count: { select: { recordings: true } },
       },
     });
 
@@ -423,7 +436,13 @@ export const listAllVoiceModels = async (req: AuthRequest, res: Response, next: 
       prisma.voiceModel.count({ where }),
     ]);
 
-    paginated(res, voiceModels, total, page, pageSize);
+    const list = voiceModels.map(v => ({
+      ...v,
+      userNickname: v.user?.nickname || v.user?.email || '-',
+      recordingCount: v._count.recordings,
+    }));
+
+    paginated(res, list, total, page, pageSize);
   } catch (err) {
     next(err);
   }

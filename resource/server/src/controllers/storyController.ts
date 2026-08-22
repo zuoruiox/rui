@@ -373,6 +373,7 @@ export const createStory = async (req: AuthRequest, res: Response, next: NextFun
       theme,
       style,
       targetAgeGroup,
+      targetAge,
       coverEmoji,
       coverGradient,
       audioUrl,
@@ -385,9 +386,11 @@ export const createStory = async (req: AuthRequest, res: Response, next: NextFun
       status,
     } = req.body;
 
-    if (!title || !content || !theme || !style || !targetAgeGroup) {
+    if (!title || !content || !theme || !style || !(targetAgeGroup || targetAge)) {
       return fail(res, '缺少必填字段', 400);
     }
+
+    const resolvedTargetAgeGroup = targetAgeGroup || targetAge;
 
     // Helper to normalize tags/characters: accept array or comma-separated string
     const toJsonArray = (val: any): string | null => {
@@ -411,7 +414,7 @@ export const createStory = async (req: AuthRequest, res: Response, next: NextFun
         summary: summary || null,
         theme,
         style,
-        targetAgeGroup,
+        targetAgeGroup: resolvedTargetAgeGroup,
         coverEmoji: coverEmoji || '📖',
         coverGradient: coverGradient || null,
         audioUrl: audioUrl || null,
@@ -444,6 +447,7 @@ export const updateStory = async (req: AuthRequest, res: Response, next: NextFun
       theme,
       style,
       targetAgeGroup,
+      targetAge,
       coverEmoji,
       coverGradient,
       audioUrl,
@@ -468,6 +472,7 @@ export const updateStory = async (req: AuthRequest, res: Response, next: NextFun
     if (theme !== undefined) data.theme = theme;
     if (style !== undefined) data.style = style;
     if (targetAgeGroup !== undefined) data.targetAgeGroup = targetAgeGroup;
+    if (targetAge !== undefined) data.targetAgeGroup = targetAge;
     if (coverEmoji !== undefined) data.coverEmoji = coverEmoji;
     if (coverGradient !== undefined) data.coverGradient = coverGradient;
     if (audioUrl !== undefined) data.audioUrl = audioUrl;
@@ -647,6 +652,7 @@ export const uploadStory = async (req: AuthRequest, res: Response, next: NextFun
       theme,
       style,
       targetAgeGroup,
+      targetAge,
       coverEmoji,
       tags,
       characters,
@@ -668,7 +674,7 @@ export const uploadStory = async (req: AuthRequest, res: Response, next: NextFun
     if (!theme) {
       return fail(res, '请选择故事主题', 400);
     }
-    if (!targetAgeGroup) {
+    if (!(targetAgeGroup || targetAge)) {
       return fail(res, '请选择适合年龄段', 400);
     }
 
@@ -755,7 +761,7 @@ export const uploadStory = async (req: AuthRequest, res: Response, next: NextFun
         summary: summary || null,
         theme,
         style: style || 'warm',
-        targetAgeGroup,
+        targetAgeGroup: targetAgeGroup || targetAge,
         coverEmoji: coverEmoji || '📖',
         coverImageUrl,
         audioUrl,

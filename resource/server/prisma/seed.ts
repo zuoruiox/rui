@@ -6,25 +6,32 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 开始播种数据...');
 
-  // 创建管理员账号
+  // 创建管理员账号（超级管理员，能看到所有信息）
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@mamababa.com';
   const adminPassword = process.env.ADMIN_PASSWORD || 'admin123456';
   const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },
-    update: {},
+    update: {
+      password: hashedPassword,
+      role: 'admin',
+      status: 'active',
+      membershipTier: 'family',
+      nickname: '超级管理员',
+    },
     create: {
       email: adminEmail,
       password: hashedPassword,
-      nickname: '管理员',
+      nickname: '超级管理员',
       role: 'admin',
+      status: 'active',
       membershipTier: 'family',
     },
   });
   console.log('✅ 管理员账号创建成功:', admin.email);
 
-  // 创建测试用户
+  // 创建测试用户（普通用户）
   const testUser = await prisma.user.upsert({
     where: { email: 'test@mamababa.com' },
     update: {},
@@ -33,6 +40,7 @@ async function main() {
       password: await bcrypt.hash('test123456', 10),
       nickname: '测试用户',
       role: 'user',
+      status: 'active',
       membershipTier: 'premium',
       children: {
         create: {

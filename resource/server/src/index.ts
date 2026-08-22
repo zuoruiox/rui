@@ -30,10 +30,10 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(morgan('dev'));
 
-// 静态文件 - 管理前端
-app.use('/admin', express.static(path.join(__dirname, '../../public')));
+// 静态文件 - 前端（管理后台 + 用户端）
+app.use(express.static(path.join(__dirname, '../public')));
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../public/index.html'));
+  res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 // API 路由

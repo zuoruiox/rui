@@ -201,10 +201,26 @@ backup() {
     mkdir -p "$BACKUP_DIR"
 
     cd "$PROJECT_DIR"
-    if [ -f "data/prod.db" ]; then
+
+    # 从运行中的容器备份数据库（bind mount 挂载到 ./data）
+    if docker ps --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+        # 容器运行中，从容器内复制数据库
+        TMP_DIR=$(mktemp -d)
+        docker cp "${CONTAINER_NAME}:/app/data/prod.db" "$TMP_DIR/prod.db" 2>/dev/null || true
+        docker cp "${CONTAINER_NAME}:/app/data/dev.db" "$TMP_DIR/dev.db" 2>/dev/null || true
+        docker cp "${CONTAINER_NAME}:/app/uploads" "$TMP_DIR/uploads" 2>/dev/null || true
+        if [ -f "$TMP_DIR/prod.db" ] || [ -f "$TMP_DIR/dev.db" ]; then
+            tar -czf "${BACKUP_DIR}/${BACKUP_NAME}" -C "$TMP_DIR" . 2>/dev/null || true
+            rm -rf "$TMP_DIR"
+            info "备份完成: ${BACKUP_DIR}/${BACKUP_NAME}"
+            info "备份大小: $(du -h ${BACKUP_DIR}/${BACKUP_NAME} | cut -f1)"
+        else
+            warn "容器内未找到数据库文件"
+        fi
+    elif [ -d "data" ] && ls data/*.db >/dev/null 2>&1; then
+        # 容器未运行，直接从本地挂载目录备份
         tar -czf "${BACKUP_DIR}/${BACKUP_NAME}" data/ uploads/ 2>/dev/null || true
-        info "备份完成: ${BACKUP_DIR}/${BACKUP_NAME}"
-        info "备份大小: $(du -h ${BACKUP_DIR}/${BACKUP_NAME} | cut -f1)"
+        info "备份完成（本地数据）: ${BACKUP_DIR}/${BACKUP_NAME}"
     else
         warn "暂无数据需要备份"
     fi

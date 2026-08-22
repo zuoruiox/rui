@@ -20,26 +20,52 @@ function excludePassword(user: any) {
   return rest;
 }
 
+// ==================== 注册（仅普通用户） ====================
 export const register = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const { email, password, nickname } = req.body;
+    const { email, password, nickname, phone } = req.body;
 
-    if (!email || !password || !nickname) {
-      return fail(res, '邮箱、密码和昵称不能为空', 400);
+    if (!nickname) {
+      return fail(res, '昵称不能为空', 400);
+    }
+    if (!email && !phone) {
+      return fail(res, '邮箱或手机号至少填写一个', 400);
+    }
+    if (!password) {
+      return fail(res, '密码不能为空', 400);
+    }
+    if (password.length < 6) {
+      return fail(res, '密码长度不能少于6位', 400);
     }
 
-    const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) {
-      return fail(res, '该邮箱已注册', 400);
+    // 检查邮箱是否已注册
+    if (email) {
+      const existingEmail = await prisma.user.findUnique({ where: { email } });
+      if (existingEmail) {
+        return fail(res, '该邮箱已注册', 400);
+      }
+    }
+
+    // 检查手机号是否已注册
+    if (phone) {
+      const existingPhone = await prisma.user.findUnique({ where: { phone } });
+      if (existingPhone) {
+        return fail(res, '该手机号已注册', 400);
+      }
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // 注册接口只能创建普通用户，强制 role=user, status=active
     const user = await prisma.user.create({
       data: {
-        email,
+        email: email || null,
+        phone: phone || null,
         password: hashedPassword,
         nickname,
+        role: 'user',
+        status: 'active',
+        membershipTier: 'free',
       },
     });
 
@@ -51,6 +77,7 @@ export const register = async (req: AuthRequest, res: Response, next: NextFuncti
   }
 };
 
+// ==================== 登录 ====================
 export const login = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
@@ -64,19 +91,31 @@ export const login = async (req: AuthRequest, res: Response, next: NextFunction)
       return fail(res, '邮箱或密码错误', 401);
     }
 
+    // 检查账号状态（active 以外的状态均禁止登录）
+    if (user.status !== 'active') {
+      return fail(res, '该账号已被禁用，请联系管理员', 403);
+    }
+
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
       return fail(res, '邮箱或密码错误', 401);
     }
 
+    // 更新最后登录时间
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { lastLoginAt: new Date() },
+    });
+
     const token = signToken({ userId: user.id, role: user.role });
 
-    return success(res, { token, user: excludePassword(user) }, '登录成功');
+    return success(res, { token, user: excludePassword({ ...user, lastLoginAt: new Date() }) }, '登录成功');
   } catch (err) {
     next(err);
   }
 };
 
+// ==================== 获取当前用户信息 ====================
 export const me = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const userId = req.userId;
@@ -93,12 +132,17 @@ export const me = async (req: AuthRequest, res: Response, next: NextFunction) =>
       return fail(res, '用户不存在', 404);
     }
 
+    if (user.status !== 'active') {
+      return fail(res, '该账号已被禁用', 403);
+    }
+
     return success(res, excludePassword(user));
   } catch (err) {
     next(err);
   }
 };
 
+// ==================== 修改密码 ====================
 export const changePassword = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const userId = req.userId;
@@ -109,6 +153,9 @@ export const changePassword = async (req: AuthRequest, res: Response, next: Next
     const { oldPassword, newPassword } = req.body;
     if (!oldPassword || !newPassword) {
       return fail(res, '旧密码和新密码不能为空', 400);
+    }
+    if (newPassword.length < 6) {
+      return fail(res, '新密码长度不能少于6位', 400);
     }
 
     const user = await prisma.user.findUnique({ where: { id: userId } });
@@ -133,6 +180,7 @@ export const changePassword = async (req: AuthRequest, res: Response, next: Next
   }
 };
 
+// ==================== 更新个人资料 ====================
 export const updateProfile = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const userId = req.userId;
@@ -157,7 +205,7 @@ export const updateProfile = async (req: AuthRequest, res: Response, next: NextF
   }
 };
 
-// 设备自动登录 - 用设备ID创建或获取匿名用户
+// ==================== 设备自动登录 ====================
 export const deviceLogin = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { deviceId } = req.body;
@@ -175,9 +223,14 @@ export const deviceLogin = async (req: AuthRequest, res: Response, next: NextFun
           email: deviceEmail,
           nickname: '宝贝家长',
           role: 'user',
+          status: 'active',
           membershipTier: 'free',
         },
       });
+    }
+
+    if (user.status !== 'active') {
+      return fail(res, '该设备已被禁用', 403);
     }
 
     const token = signToken({ userId: user.id, role: user.role });
@@ -187,7 +240,7 @@ export const deviceLogin = async (req: AuthRequest, res: Response, next: NextFun
   }
 };
 
-// 发送手机验证码
+// ==================== 发送手机验证码 ====================
 export const sendCode = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { phone } = req.body;
@@ -208,7 +261,7 @@ export const sendCode = async (req: AuthRequest, res: Response, next: NextFuncti
   }
 };
 
-// 手机号验证码登录/注册（一键注册）
+// ==================== 手机号验证码登录/注册 ====================
 export const phoneLogin = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { phone, code, nickname } = req.body;
@@ -235,25 +288,36 @@ export const phoneLogin = async (req: AuthRequest, res: Response, next: NextFunc
     // 查找或创建用户
     let user = await prisma.user.findUnique({ where: { phone } });
     if (!user) {
-      // 新用户自动注册
+      // 新用户自动注册（仅普通用户）
       user = await prisma.user.create({
         data: {
           phone,
           nickname: nickname || `用户${phone.slice(-4)}`,
           role: 'user',
+          status: 'active',
           membershipTier: 'free',
         },
       });
     }
 
+    if (user.status !== 'active') {
+      return fail(res, '该账号已被禁用', 403);
+    }
+
+    // 更新最后登录时间
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { lastLoginAt: new Date() },
+    });
+
     const token = signToken({ userId: user.id, role: user.role });
-    return success(res, { token, user: excludePassword(user) }, user.createdAt === user.updatedAt ? '注册成功' : '登录成功');
+    return success(res, { token, user: excludePassword({ ...user, lastLoginAt: new Date() }) }, user.createdAt.getTime() === user.updatedAt.getTime() ? '注册成功' : '登录成功');
   } catch (err) {
     next(err);
   }
 };
 
-// 微信登录/注册
+// ==================== 微信登录/注册 ====================
 export const wechatLogin = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { code, nickname: wxNickname, avatar: wxAvatar } = req.body;
@@ -276,6 +340,7 @@ export const wechatLogin = async (req: AuthRequest, res: Response, next: NextFun
           nickname: wxNickname || '微信用户',
           avatar: wxAvatar,
           role: 'user',
+          status: 'active',
           membershipTier: 'free',
         },
       });
@@ -289,8 +354,17 @@ export const wechatLogin = async (req: AuthRequest, res: Response, next: NextFun
       });
     }
 
+    if (user.status !== 'active') {
+      return fail(res, '该账号已被禁用', 403);
+    }
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { lastLoginAt: new Date() },
+    });
+
     const token = signToken({ userId: user.id, role: user.role });
-    return success(res, { token, user: excludePassword(user) }, '登录成功');
+    return success(res, { token, user: excludePassword({ ...user, lastLoginAt: new Date() }) }, '登录成功');
   } catch (err) {
     next(err);
   }

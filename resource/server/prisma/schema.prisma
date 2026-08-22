@@ -10,6 +10,8 @@ datasource db {
 }
 
 // ==================== 用户系统 ====================
+// 角色: admin(管理员) | user(普通用户)
+// 状态: active(正常) | banned(禁用)
 
 model User {
   id                String         @id @default(cuid())
@@ -19,8 +21,10 @@ model User {
   nickname          String
   avatar            String?
   role              String         @default("user")
+  status            String         @default("active")
   membershipTier    String         @default("free")
   membershipExpireAt DateTime?
+  lastLoginAt       DateTime?
   children          Child[]
   voiceModels       VoiceModel[]
   favorites         Favorite[]
@@ -33,6 +37,7 @@ model User {
   updatedAt         DateTime       @updatedAt
 
   @@index([role])
+  @@index([status])
 }
 
 model Child {

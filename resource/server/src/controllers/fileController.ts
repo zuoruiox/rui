@@ -166,7 +166,7 @@ export const listFiles = async (req: AuthRequest, res: Response, next: NextFunct
       return null;
     }).filter((f): f is NonNullable<typeof f> => f !== null).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
-    success(res, { files });
+    success(res, files);
   } catch (err) {
     next(err);
   }

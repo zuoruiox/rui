@@ -36,6 +36,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     openssl \
     ca-certificates \
     wget \
+    sqlite3 \
     && rm -rf /var/lib/apt/lists/*
 
 # 安装运行时依赖（生产依赖 + prisma CLI）
@@ -52,7 +53,9 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY docker-entrypoint.sh ./
 RUN chmod +x docker-entrypoint.sh
 
-# 创建上传目录和数据目录
+# 创建数据目录和上传目录（挂载点）
+# 数据库通过 docker-compose 的 bind mount 挂载到 ./data:/app/data
+# 上传文件挂载到 ./uploads:/app/uploads
 RUN mkdir -p uploads/audio uploads/recordings uploads/voices uploads/avatars uploads/covers uploads/subtitles data
 
 EXPOSE 9999
